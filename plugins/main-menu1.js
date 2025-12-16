@@ -111,6 +111,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • tiks
 ┃★│ • twitter
 ┃★│ • twitt2
+┃★│ • downurl
 ┃★│ • movie
 ┃★│ • xnxx
 ┃★│ • xvideo
@@ -425,6 +426,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • fancy 
 ┃★│ • getnumber
 ┃★│ • githubstalk
+┃★│ • lirik
 ┃★│ • npm
 ┃★│ • news
 ┃★│ • news1

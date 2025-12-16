@@ -207,6 +207,7 @@ cmd({
 ┃★│ • tiks
 ┃★│ • twitter
 ┃★│ • twitt2
+┃★│ • downurl
 ┃★│ • movie
 ┃★│ • xnxx
 ┃★│ • xvideo
@@ -553,6 +554,7 @@ cmd({
 ┃★│ • fancy 
 ┃★│ • getnumber
 ┃★│ • githubstalk
+┃★│ • lirik
 ┃★│ • npm
 ┃★│ • news
 ┃★│ • news1

@@ -71,3 +71,48 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         reply("An error occurred while communicating with Gemini AI.");
     }
 });
+
+
+cmd({
+    pattern: "lirik",
+    desc: "Get song lyrics",
+    category: "tools",
+    react: "🎵",
+    filename: __filename
+},
+async (conn, mek, m, { from, q, reply, react }) => {
+    try {
+        if (!q) {
+            return reply(
+                "Please provide a song title.\n\nExample: .lirik Lelena"
+            );
+        }
+
+        const apiUrl = `https://api.zenzxz.my.id/api/tools/lirik?title=${encodeURIComponent(q)}`;
+        const { data } = await axios.get(apiUrl);
+
+        if (!data.success || !data.data || !data.data.result || data.data.result.length === 0) {
+            await react("❌");
+            return reply("Lyrics not found.");
+        }
+
+        const song = data.data.result[0];
+
+        let text = `🔍 *Lyrics Track Found* 🎵\n\n`;
+        text += `*📝 Name / TrackName:* ${song.trackName}\n`;
+        text += `*🕵️ ArtistName:* ${song.artistName}\n`;
+        text += `*💽 AlbumName:* ${song.albumName}\n`;
+        text += `*⏱️ Duration:* ${song.duration}s\n\n`;
+        text += `*📃 PlainLyrics:*\n ${song.plainLyrics}\n\n`;
+        text += `*📊 SyncedLyrics:*\n ${song.syncedLyrics}\n\n`;
+        text += `> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
+       
+        await reply(text);
+        await react("✅");
+
+    } catch (e) {
+        console.error("Lirik Error:", e);
+        await react("❌");
+        reply("An error occurred while fetching lyrics.");
+    }
+});

@@ -32,7 +32,7 @@ async (conn, mek, m, { from, q, reply }) => {
         });
 
         // Create temp file path
-        const savePath = path.join(os.tmpdir(), file.name || "mega_file.zip");
+        const savePath = path.join(os.tmpdir(), file.name || "mega_file.octet-stream");
 
         // Save file locally
         fs.writeFileSync(savePath, data);
@@ -40,9 +40,9 @@ async (conn, mek, m, { from, q, reply }) => {
         // Send file
         await conn.sendMessage(from, {
             document: fs.readFileSync(savePath),
-            fileName: file.name || "JawadTechX.zip",
-            mimetype: "application/zip",
-            caption: "📦 Downloaded from Mega NZ\n\nPowered By Jawad TechX"
+            fileName: file.name || "DARK-KNIGHT-XMD",
+            mimetype: "application/octet-stream",
+            caption: "📦 Downloaded from Mega NZ\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳"
         }, { quoted: mek });
 
         // Delete temp file

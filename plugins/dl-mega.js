@@ -1,37 +1,45 @@
-const { cmd } = require('../command');
-const { File } = require('megajs');
-const tharuzz_footer = "> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳";
+const { cmd, commands } = require('../command');
+const { File } = require("megajs");
 
 cmd({
     pattern: "mega",
-    desc: "Download mwga files",
-    react: "☁️",
-    category: "download",
-    use: '.mega < mega file link >',
+    desc: "commands panel",
+    react: "🎀",
     filename: __filename
-}, async (conn, mek, m, {from, reply, q}) => {
-    
-    if (!q || !q.includes('mega.nz')) {
-        await reply("Please enter mega.nz file url !!")
-    }
+},
+async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
     try {
-        await reply('☁️ start downloading mega.nz file...')
-        
-        const file = File.fromURL(megaUrl);
-        await file.loadAttributes();
-        const fileName = file.name || 'dark-knight-xmd_mega_download';
-        const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        const buffer = await file.downloadBuffer();
-        
-        await conn.sendMessage(from, {
-            document: buffer,
-            caption: `*📥 \`MEGA file Download Successfull:\`*\n\n*📌 Name:* ${fileName}\n*📂 Size:* ${fileSizeMB} MB\n\n${tharuzz_footer}`,
-            mimetype: 'application/octet-stream',
-            fileName: fileName 
-        }, {quoted: mek});
-
-    } catch (e) {
-        console.log("❌ Mega download Error: " + e);
-        await reply("❌ Mega download Error: " + e);
+    // Validate the provided URL
+    if (!q || !isUrl(q) || !q.includes("mega.nz")) {
+      return reply("Please provide a valid Mega.nz file URL.");
     }
+
+    // Extract file URL and decryption key
+    const [fileUrl, decryptionKey] = q.split('#');
+    if (!decryptionKey) {
+      return reply("Error: Decryption key is missing in the provided URL.");
+    }
+
+    // Start file download
+    const megaFile = File.fromURL(fileUrl + '#' + decryptionKey);
+    megaFile.on("progress", (downloaded, total) => {
+      const progressPercentage = ((downloaded / total) * 100).toFixed(2);
+      reply(`Downloading: ${progressPercentage}% (${(downloaded / 1024 / 1024).toFixed(2)} MB of ${(total / 1024 / 1024).toFixed(2)} MB)`);
+    });
+
+    // Download file and send it
+    const fileBuffer = await megaFile.downloadBuffer();
+    const documentMessage = {
+      document: fileBuffer,
+      mimetype: "application/octet-stream",
+      fileName: "mega_downloaded_file"
+    };
+
+    const options = { quoted: message };
+    await conn.sendMessage(from, documentMessage, options);
+    reply("*create by pakaya*");
+  } catch (error) {
+    console.error(error);
+    reply("Error: " + error.message);
+  }
 });

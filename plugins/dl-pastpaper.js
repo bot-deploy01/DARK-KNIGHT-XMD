@@ -4,9 +4,9 @@ const axios = require("axios");
 cmd({
   pattern: "pastpaper",
   alias: ["pastp"],
-  desc: "📄 Search & download Past Papers",
+  desc: "Search & download Past Papers",
   category: "education",
-  react: "📘",
+  react: "🗂️",
   filename: __filename
 }, async (conn, mek, m, { from, q }) => {
 
@@ -34,13 +34,13 @@ cmd({
       desc: v.description
     }));
 
-    let text = "🔢 *Reply with number*\n━━━━━━━━━━━━━━\n\n";
+    let text = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━\n\n";
     list.forEach(p => {
-      text += `📄 *${p.id}. ${p.title}*\n`;
+      text += `📄 *${p.id}. ${p.title}*\n\n`;
     });
 
     const listMsg = await conn.sendMessage(from, {
-      text: `*📘 PAST PAPERS SEARCH*\n\n${text}`
+      text: `🔍 𝐏𝐀𝐒𝐓 𝐏𝐀𝐏𝐄𝐑𝐒 𝐒𝐄𝐀𝐑𝐂𝐇 🗂️\n\n${text}`
     }, { quoted: mek });
 
     const listener = async (update) => {
@@ -58,19 +58,18 @@ cmd({
         return conn.sendMessage(from, { text: "❌ Invalid number." }, { quoted: msg });
       }
 
-      await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
+      await conn.sendMessage(from, { react: { text: "📃", key: msg.key } });
 
-      // 📥 DOWNLOAD DETAILS
       const dUrl = `https://api-pass.vercel.app/api/download?url=${encodeURIComponent(selected.url)}`;
       const dRes = await axios.get(dUrl);
       const d = dRes.data;
 
       const info =
-        `📄 *${d.download_info.file_title}*\n\n` +
-        `📝 *Exam:* ${d.paper_details.examination}\n` +
-        `📚 *Medium:* ${d.paper_details.medium}\n\n` +
-        `🔗 *Source:* ${d.source_url}\n\n` +
-        `⬇️ *Reply with* 1 *to download*`;
+        `📑 *${d.download_info.file_title}*\n\n` +
+        `📝 *Examination:* ${d.paper_details.examination}\n` +
+        `📖 *Medium:* ${d.paper_details.medium}\n` +
+        `📚 *Description:* ${selected.desc}\n\n` +
+        `⬇️ *Reply with* 1 *to download*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
       const detailMsg = await conn.sendMessage(from, {
         image: { url: selected.thumb },
@@ -90,11 +89,13 @@ cmd({
           return conn.sendMessage(from, { text: "❌ Invalid option." }, { quoted: m2 });
         }
 
+        await conn.sendMessage(from, { react: { text: "🗃️", key: msg.key } });
+        
         await conn.sendMessage(from, {
           document: { url: d.download_info.download_url },
           mimetype: "application/pdf",
           fileName: d.download_info.file_name,
-          caption: `📘 *Past Paper*\n\n> Powered by DARK-KNIGHT-XMD`
+          caption: `${d.download_info.file_title}\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
         }, { quoted: m2 });
 
         conn.ev.off("messages.upsert", downloadListener);

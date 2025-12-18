@@ -36,7 +36,7 @@ cmd({
 
     let text = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━\n\n";
     list.forEach(p => {
-      text += `📄 *${p.id}. ${p.title}*\n\n`;
+      text += `📘 *${p.id}. ${p.title}*\n\n`;
     });
 
     const listMsg = await conn.sendMessage(from, {
@@ -89,13 +89,13 @@ cmd({
           return conn.sendMessage(from, { text: "❌ Invalid option." }, { quoted: m2 });
         }
 
-        await conn.sendMessage(from, { react: { text: "🗃️", key: msg.key } });
+        await conn.sendMessage(from, { react: { text: "🗃️", key: m2.key } });
         
         await conn.sendMessage(from, {
           document: { url: d.download_info.download_url },
           mimetype: "application/pdf",
           fileName: d.download_info.file_name,
-          caption: `${d.download_info.file_title}\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+          caption: `📚 ${d.download_info.file_title}\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
         }, { quoted: m2 });
 
         conn.ev.off("messages.upsert", downloadListener);

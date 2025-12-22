@@ -99,9 +99,12 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • mediafire
 ┃★│ • mfire2
 ┃★│ • mega
+┃★│ • mega2
 ┃★│ • pinterest
 ┃★│ • pindl2
 ┃★│ • pins
+┃★│ • pastpaper
+┃★│ • pixeldrain
 ┃★│ • ringtone
 ┃★│ • ring2
 ┃★│ • spotify

@@ -1,103 +1,127 @@
-const { cmd } = require('../command');
-const axios = require('axios');
+const axios = require("axios");
+const { cmd } = require("../command");
+const { proto, generateWAMessageFromContent } = require("@whiskeysockets/baileys");
 
+/* ───── Fake Meta Quote ───── */
+const fakeMeta = (from) => ({
+  key: {
+    participant: "13135550002@s.whatsapp.net",
+    remoteJid: from,
+    fromMe: false,
+    id: "FAKE_META_NEWS"
+  },
+  message: {
+    contactMessage: {
+      displayName: "©WHITESHADOW-X",
+      vcard: `BEGIN:VCARD
+VERSION:3.0
+N:Meta AI;;;;
+FN:Meta AI
+TEL;waid=13135550002:+1 313 555 0002
+END:VCARD`,
+      sendEphemeral: true
+    }
+  },
+  pushName: "Meta AI",
+  messageTimestamp: Math.floor(Date.now() / 1000)
+});
 
-
+/* ───── Command ───── */
 cmd({
-    pattern: "newss1",
-    desc: "Get latest Sri Lankan news (Carousel)",
-    category: "news",
-    react: "📰",
-    filename: __filename
-},
-async (conn, mek, m, { from, reply }) => {
+  pattern: "newss1",
+  desc: "Latest Sri Lankan News (Carousel)",
+  category: "news",
+  react: "📰",
+  filename: __filename
+}, async (conn, m, store, { from }) => {
+
+  const sources = [
+    { name: "Lankadeepa", url: "https://saviya-kolla-api.koyeb.app/news/lankadeepa" },
+    { name: "Ada", url: "https://saviya-kolla-api.koyeb.app/news/ada" },
+    { name: "Sirasa", url: "https://saviya-kolla-api.koyeb.app/news/sirasa" },
+    { name: "Gagana", url: "https://saviya-kolla-api.koyeb.app/news/gagana" },
+    { name: "LNW", url: "https://vajira-api.vercel.app/news/lnw" },
+    { name: "Siyatha", url: "https://vajira-api.vercel.app/news/siyatha" },
+    { name: "Gossip Lanka", url: "https://vajira-api.vercel.app/news/gossiplankanews" }
+  ];
+
+  await store.react("⌛");
+
+  const cards = [];
+
+  for (const src of sources) {
     try {
+      const { data } = await axios.get(src.url, { timeout: 10000 });
+      const r = data?.result;
+      if (!r) continue;
 
-        const sources = [
-            { name: "Lankadeepa LK", url: "https://saviya-kolla-api.koyeb.app/news/lankadeepa" },
-            { name: "Ada News", url: "https://saviya-kolla-api.koyeb.app/news/ada" },
-            { name: "Sirasa News", url: "https://saviya-kolla-api.koyeb.app/news/sirasa" },
-            { name: "Gagana News", url: "https://saviya-kolla-api.koyeb.app/news/gagana" },
-            { name: "Lankadeepa", url: "https://vajira-api.vercel.app/news/lankadeepa" },
-            { name: "Lanka News Web", url: "https://vajira-api.vercel.app/news/lnw" },
-            { name: "Siyatha News", url: "https://vajira-api.vercel.app/news/siyatha" },
-            { name: "Gossip Lanka", url: "https://vajira-api.vercel.app/news/gossiplankanews" }
-        ];
-
-        const defaultImage = "https://files.catbox.moe/hspst7.jpg";
-        let cards = [];
-
-        reply("📡 *Fetching latest Sri Lankan news…*");
-
-        for (const src of sources) {
-            try {
-                const res = await axios.get(src.url, { timeout: 15000 });
-                const result = res.data?.result;
-                if (!result) continue;
-
-                cards.push({
-                    header: {
-                        title: src.name,
-                        hasMediaAttachment: true,
-                        imageMessage: {
-                            url: result.image || result.thumbnail || defaultImage
-                        }
-                    },
-                    body: {
-                        text:
-                            `🗞️ *${result.title || "No Title"}*\n\n` +
-                            `${result.desc || "No description available."}`
-                    },
-                    footer: {
-                        text: result.date || "Latest Update"
-                    },
-                    nativeFlowMessage: {
-                        buttons: [
-                            {
-                                name: "cta_url",
-                                buttonParamsJson: JSON.stringify({
-                                    display_text: "🔗 Read Full News",
-                                    url: result.url || result.link || "https://google.com"
-                                })
-                            }
-                        ]
-                    }
-                });
-
-            } catch (err) {
-                console.log(`❌ Failed: ${src.name}`);
-            }
-        }
-
-        if (cards.length === 0) {
-            return reply("❌ No news available right now.");
-        }
-
-        const carouselMessage = {
-            interactiveMessage: {
-                header: {
-                    title: "📰 Sri Lankan Latest News",
-                    subtitle: "Multiple Trusted Sources",
-                    hasMediaAttachment: false
-                },
-                body: {
-                    text: "Swipe ▶️ to read the latest headlines"
-                },
-                footer: {
-                    text: "© Powered by DARK-KNIGHT-XMD"
-                },
-                carouselMessage: {
-                    cards: cards
-                }
-            }
-        };
-
-        await conn.sendMessage(from, carouselMessage, { quoted: mek });
+      cards.push({
+        body: proto.Message.InteractiveMessage.Body.fromObject({
+          text: r.desc || "No description available"
+        }),
+        footer: proto.Message.InteractiveMessage.Footer.fromObject({
+          text: src.name
+        }),
+        header: proto.Message.InteractiveMessage.Header.fromObject({
+          title: r.title || "No Title",
+          subtitle: r.date || "",
+          hasMediaAttachment: false
+        }),
+        nativeFlowMessage:
+          proto.Message.InteractiveMessage.NativeFlowMessage.fromObject({
+            buttons: r.url || r.link ? [
+              {
+                name: "cta_url",
+                buttonParamsJson: JSON.stringify({
+                  display_text: "Read More",
+                  url: r.url || r.link
+                })
+              }
+            ] : []
+          })
+      });
 
     } catch (e) {
-        console.error(e);
-        reply("⚠️ Error fetching news. Try again later.");
+      console.error(`News error (${src.name}):`, e.message);
     }
+  }
+
+  if (!cards.length) {
+    await store.react("❌");
+    return;
+  }
+
+  const msg = generateWAMessageFromContent(
+    from,
+    {
+      viewOnceMessage: {
+        message: {
+          messageContextInfo: {
+            deviceListMetadata: {},
+            deviceListMetadataVersion: 2
+          },
+          interactiveMessage:
+            proto.Message.InteractiveMessage.fromObject({
+              body: {
+                text: "📰 *Latest Sri Lankan News*\n\nSwipe cards to read headlines ➡️"
+              },
+              footer: {
+                text: "> 𝐏𝙾𝚆𝙴𝚁𝙳 𝐁𝚈 pakaya"
+              },
+              header: { hasMediaAttachment: false },
+              carouselMessage: { cards }
+            })
+        }
+      }
+    },
+    { quoted: fakeMeta(from) }
+  );
+
+  await conn.relayMessage(from, msg.message, {
+    messageId: msg.key.id
+  });
+
+  await store.react("✅");
 });
 
 

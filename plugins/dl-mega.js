@@ -22,7 +22,7 @@ cmd({
     
     await conn.sendMessage(from, { react: { text: "⬇️", key: m.key } });
 
-    const apiUrl = `https://api-dark-shan-yt.koyeb.app/download/meganz?url=${encodedUrl}&apikey=1234567890qazwsx`;
+    const apiUrl = `https://api-dark-shan-yt.koyeb.app/download/meganz?url=${encodedUrl}&apikey=65d6c884d8624c71`;
     const { data } = await axios.get(apiUrl);
 
     console.log("API Response:", JSON.stringify(data, null, 2));

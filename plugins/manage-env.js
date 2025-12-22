@@ -12,6 +12,21 @@ const { writeFileSync } = require('fs');
 const path = require('path');
 
 
+cmd({ 
+    pattern: "dots", 
+    desc: "Change bot prefix", 
+    category: "config", 
+    filename: __filename 
+  },
+  async (sock, m, msg, { args, reply }) => {
+    if (!args.length) return reply("❌ Usage: .setprefix <newprefix>");
+    const config = loadConfig();
+    config.prefix = args[0];
+    saveConfig(config);
+    reply(`✅ Prefix updated to *${args[0]}*`);
+  }
+);
+
 cmd({
     pattern: "admin-events",
     alias: ["adminevents"],

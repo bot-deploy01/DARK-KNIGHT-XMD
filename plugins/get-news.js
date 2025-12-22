@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { cmd } = require("../command");
-const { proto, generateWAMessageFromContent } = require("@whiskeysockets/baileys");
+const { proto, generateWAMessageFromContent, prepareWAMessageMedia } = require("@whiskeysockets/baileys");
 
 /* ───── Fake Meta Quote ───── */
 const fakeMeta = (from) => ({
@@ -29,71 +29,70 @@ END:VCARD`,
 /* ───── Command ───── */
 cmd({
   pattern: "newss1",
-  desc: "Latest Sri Lankan News (Carousel)",
-  category: "news",
+  alias: ["news1", "lkanews"],
+  desc: "Sri Lanka News (Carousel Preview)",
   react: "📰",
+  category: "news",
   filename: __filename
-}, async (conn, m, store, { from }) => {
-
-  const sources = [
-    { name: "Lankadeepa", url: "https://saviya-kolla-api.koyeb.app/news/lankadeepa" },
-    { name: "Ada", url: "https://saviya-kolla-api.koyeb.app/news/ada" },
-    { name: "Sirasa", url: "https://saviya-kolla-api.koyeb.app/news/sirasa" },
-    { name: "Gagana", url: "https://saviya-kolla-api.koyeb.app/news/gagana" },
-    { name: "LNW", url: "https://vajira-api.vercel.app/news/lnw" },
-    { name: "Siyatha", url: "https://vajira-api.vercel.app/news/siyatha" },
-    { name: "Gossip Lanka", url: "https://vajira-api.vercel.app/news/gossiplankanews" }
-  ];
+}, async (conn, m, store, { from, reply }) => {
 
   await store.react("⌛");
 
-  const cards = [];
+  try {
+    const sources = [
+      { name: "Lankadeepa", url: "https://vajira-api.vercel.app/news/lankadeepa" },
+      { name: "Ada", url: "https://saviya-kolla-api.koyeb.app/news/ada" },
+      { name: "Sirasa", url: "https://saviya-kolla-api.koyeb.app/news/sirasa" },
+      { name: "Siyatha", url: "https://vajira-api.vercel.app/news/siyatha" },
+      { name: "Gossip Lanka", url: "https://vajira-api.vercel.app/news/gossiplankanews" }
+    ];
 
-  for (const src of sources) {
-    try {
-      const { data } = await axios.get(src.url, { timeout: 10000 });
-      const r = data?.result;
-      if (!r) continue;
+    const cards = [];
 
-      cards.push({
-        body: proto.Message.InteractiveMessage.Body.fromObject({
-          text: r.desc || "No description available"
-        }),
-        footer: proto.Message.InteractiveMessage.Footer.fromObject({
-          text: src.name
-        }),
-        header: proto.Message.InteractiveMessage.Header.fromObject({
-          title: r.title || "No Title",
-          subtitle: r.date || "",
-          hasMediaAttachment: false
-        }),
-        nativeFlowMessage:
-          proto.Message.InteractiveMessage.NativeFlowMessage.fromObject({
-            buttons: r.url || r.link ? [
-              {
-                name: "cta_url",
-                buttonParamsJson: JSON.stringify({
-                  display_text: "Read More",
-                  url: r.url || r.link
-                })
-              }
-            ] : []
-          })
-      });
+    for (const src of sources) {
+      try {
+        const { data } = await axios.get(src.url);
+        const news = data.result;
+        if (!news) continue;
 
-    } catch (e) {
-      console.error(`News error (${src.name}):`, e.message);
+        let media = null;
+        if (news.image || news.thumbnail) {
+          media = await prepareWAMessageMedia(
+            { image: { url: news.image || news.thumbnail } },
+            { upload: conn.waUploadToServer }
+          );
+        }
+
+        cards.push({
+          body: proto.Message.InteractiveMessage.Body.fromObject({
+            text: news.desc || "No description available"
+          }),
+          footer: proto.Message.InteractiveMessage.Footer.fromObject({
+            text: "WHITESHADOW LITE 𝐁𝙾𝚃"
+          }),
+          header: proto.Message.InteractiveMessage.Header.fromObject({
+            title: `${src.name} News`,
+            subtitle: news.date || "",
+            hasMediaAttachment: !!media,
+            imageMessage: media?.imageMessage
+          }),
+          nativeFlowMessage:
+            proto.Message.InteractiveMessage.NativeFlowMessage.fromObject({
+              buttons: []
+            })
+        });
+
+      } catch (e) {
+        console.error(`Error loading ${src.name}`, e.message);
+      }
     }
-  }
 
-  if (!cards.length) {
-    await store.react("❌");
-    return;
-  }
+    if (!cards.length) {
+      await store.react("❌");
+      return reply("❌ No news available right now.");
+    }
 
-  const msg = generateWAMessageFromContent(
-    from,
-    {
+    const msg = generateWAMessageFromContent(from, {
       viewOnceMessage: {
         message: {
           messageContextInfo: {
@@ -103,25 +102,26 @@ cmd({
           interactiveMessage:
             proto.Message.InteractiveMessage.fromObject({
               body: {
-                text: "📰 *Latest Sri Lankan News*\n\nSwipe cards to read headlines ➡️"
+                text: "📰 *Sri Lanka Latest News*\n\nSwipe cards to read headlines 👇"
               },
               footer: {
-                text: "> 𝐏𝙾𝚆𝙴𝚁𝙳 𝐁𝚈 pakaya"
+                text: "> 𝐏𝙾𝚆𝙴𝚁𝙳 𝐁𝚈 WHITESHADOW-𝐌𝙳"
               },
               header: { hasMediaAttachment: false },
               carouselMessage: { cards }
             })
         }
       }
-    },
-    { quoted: fakeMeta(from) }
-  );
+    }, { quoted: fakeMeta(from) });
 
-  await conn.relayMessage(from, msg.message, {
-    messageId: msg.key.id
-  });
+    await conn.relayMessage(from, msg.message, { messageId: msg.key.id });
+    await store.react("✅");
 
-  await store.react("✅");
+  } catch (err) {
+    console.error(err);
+    await store.react("❌");
+    reply("❌ News fetch failed. Try again later.");
+  }
 });
 
 

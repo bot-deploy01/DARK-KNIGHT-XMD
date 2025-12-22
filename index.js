@@ -41,9 +41,9 @@ const {
   const os = require('os')
   const Crypto = require('crypto')
   const path = require('path')
-  const { getPrefix } = require('./lib/prefix')
+  const prefix = config.PREFIX
   
-  const ownerNumber = ['94771825192']
+  const ownerNumber = ['94763934860']
   
   const tempDir = path.join(os.tmpdir(), 'cache-temp')
   if (!fs.existsSync(tempDir)) {

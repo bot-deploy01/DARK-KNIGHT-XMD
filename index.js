@@ -108,12 +108,6 @@ const port = process.env.PORT || 9090;
   console.log('Plugins Installed Successful ✅')
   console.log('Bot Connected To Whatsapp ✅')
   
-  const metadata = await conn.newsletterMetadata("jid", "120363400240662312@newsletter")	      
-  if (metadata.viewer_metadata === null){
-  await conn.newsletterFollow("120363400240662312@newsletter")
-  console.log("DARK-KNIGHT-XMD Channel Follow  ✅")
-  }
-  
   let up = `*✨ Hello, 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳 Legend! ✨*
 
 ╭─〔 *🤖 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳* 〕  

@@ -76,14 +76,14 @@ cmd({
 
         await reply(`🔍 Searching Images for *"${query}"*...`);
 
-        const apiUrl = `https://www.movanest.xyz/v2/googleimage?query=${encodeURIComponent(query)}`;
+        const apiUrl = `https://www.movanest.xyz/v2/wallpaper?name=${encodeURIComponent(query)}`;
         const response = await axios.get(apiUrl);
 
-        if (!response.data?.status || !response.data?.results?.images?.length) {
+        if (!response.data?.status || !response.data?.results?.length) {
             return reply("❌ No Images found. Try a different keyword.");
         }
 
-        const results = response.data.results.images;
+        const results = response.data.results;
         await reply(`✅ Found *${results.length}* Images for *"${query}"*. Sending top 5...`);
 
         // Randomly pick 5 images
@@ -91,19 +91,19 @@ cmd({
             .sort(() => 0.5 - Math.random())
             .slice(0, 5);
 
-        for (const url of selectedImages) {
+        for (const imageUrl of selectedImages) {
             try {
                 await conn.sendMessage(
                     from,
                     {
-                        image: { url: url },
+                        image: { url: imageUrl },
                         caption: `🖼️ Image for: *${query}*\n\nRequested by: @${m.sender.split('@')[0]}\n> © Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`,
                         contextInfo: { mentionedJid: [m.sender] }
                     },
                     { quoted: mek }
                 );
             } catch (err) {
-                console.warn(`⚠️ Failed to send Image: ${url}`);
+                console.warn(`⚠️ Failed to send Image: ${imageUrl}`);
             }
 
             await new Promise(resolve => setTimeout(resolve, 1000));

@@ -94,7 +94,6 @@ cmd({
   }
 });
 
-
 cmd({
   pattern: "facebook2",
   alias: ["fb2"], 
@@ -104,35 +103,26 @@ cmd({
 }, async (conn, m, store, { from, quoted, q, reply }) => {
   try {
     if (!q || !q.startsWith("https://")) {
-      return conn.sendMessage(from, { text: "❌ Please provide a valid Facebook video Url." }, { quoted: m });
+      return conn.sendMessage(from, { text: "❌ Please provide a valid Facebook video URL." }, { quoted: m });
     }
 
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-    // ✅ Use the new universal downloader API
-    const response = await axios.get(`https://lance-frank-asta.onrender.com/api/downloader?url=${q}`);
-    const res = response.data;
+    // ✅ Fetching data from Aswin API
+    const apiUrl = `https://api.vreden.my.id/api/v1/download/facebook?url=${encodeURIComponent(q)}`;
+    const response = await axios.get(apiUrl);
+    const data = response.data;
 
-    if (!res || !res.content || !res.content.status) {
-      return reply("⚠️ Failed to retrieve video. Please check the link and try again.");
+    if (!data?.status || !data?.result) {
+      return reply("⚠️ Failed to retrieve Facebook media. Please check the link and try again.");
     }
 
-    const content = res.content;
-    const resultArray = content.data?.result || [];
+    const { title, thumbnail } = data.result;
 
-    if (!resultArray.length) {
-      return reply("❌ No downloadable media found.");
-    }
-
-    // Extract HD and SD URLs
-    const hdVideo = resultArray.find(v => v.quality?.toUpperCase() === "HD")?.url;
-    const sdVideo = resultArray.find(v => v.quality?.toUpperCase() === "SD")?.url;
-
-    const thumbnail = "https://files.catbox.moe/36ndl3.jpg";
-    
     const caption = `
 📺 *Facebook Downloader.* 📥
 
+📑 *Title:* ${title || "No title"}
 🔗 *Link:* ${q}
 
 🔢 *Reply Below Number*
@@ -150,7 +140,7 @@ cmd({
 
     const messageID = sentMsg.key.id;
 
-    // 🧠 Handle reply-based selection
+    // 🧠 Interactive Reply System
     conn.ev.on("messages.upsert", async (msgData) => {
       const receivedMsg = msgData.messages[0];
       if (!receivedMsg?.message) return;
@@ -164,37 +154,35 @@ cmd({
 
         switch (receivedText.trim()) {
           case "1":
-            if (!sdVideo) return reply("❌ SD video not available.");
             await conn.sendMessage(senderID, {
-              video: { url: sdVideo },
+              video: { url: download.sd },
               caption: "📥 *Downloaded in SD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "2":
-            if (!hdVideo) return reply("❌ HD video not available.");
             await conn.sendMessage(senderID, {
-              video: { url: hdVideo },
+              video: { url: download.hd },
               caption: "📥 *Downloaded in HD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "3": 
             await conn.sendMessage(senderID, { 
-              audio: { url: sdVideo || hdVideo }, 
+              audio: { url: download.sd || download.hd}, 
               mimetype: "audio/mp4", 
               ptt: false 
           }, { quoted: receivedMsg }); 
-          break;          
-          
-          default:
+          break;
+            
+           default:
             reply("❌ Invalid option! Please reply with 1, 2, or 3.");
         }
       }
     });
 
   } catch (error) {
-    console.error("Downloader Plugin Error:", error);
+    console.error("Facebook Plugin Error:", error);
     reply("❌ An error occurred while processing your request. Please try again later.");
   }
 });

@@ -112,8 +112,8 @@ cmd({
       return reply("⚠️ Failed to retrieve Instagram media. Please check the link and try again.");
     }
 
-    const videoLink = data.result?.downloads?.video;
-    const thumbnail = "data.result?.downloads?.image";
+    const videoLink = data.result.downloads.video;
+    const thumbnail = data.result.downloads.image;
     
     const caption = `
 📺 Instagram Downloader. 📥

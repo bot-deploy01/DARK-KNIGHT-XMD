@@ -113,12 +113,13 @@ cmd({
     const response = await axios.get(apiUrl);
     const data = response.data;
 
-    if (!data?.status || !data?.result) {
+    if (!data?.status || !data?.result || !data?.result?.download) {
       return reply("⚠️ Failed to retrieve Facebook media. Please check the link and try again.");
     }
 
     const { title, thumbnail } = data.result;
-
+    const { sd, hd } = data.result.download;  
+    
     const caption = `
 📺 *Facebook Downloader.* 📥
 
@@ -155,21 +156,21 @@ cmd({
         switch (receivedText.trim()) {
           case "1":
             await conn.sendMessage(senderID, {
-              video: { url: download.sd },
+              video: { url: sd },
               caption: "📥 *Downloaded in SD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "2":
             await conn.sendMessage(senderID, {
-              video: { url: download.hd },
+              video: { url: hd },
               caption: "📥 *Downloaded in HD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "3": 
             await conn.sendMessage(senderID, { 
-              audio: { url: download.sd || download.hd}, 
+              audio: { url: sd || hd}, 
               mimetype: "audio/mp4", 
               ptt: false 
           }, { quoted: receivedMsg }); 

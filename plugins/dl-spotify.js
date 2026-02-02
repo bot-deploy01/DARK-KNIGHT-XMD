@@ -14,8 +14,8 @@ async (conn, mek, m, { from, args, q, reply }) => {
 
         reply("🔍 *Searching Spotify... Please wait!*");
 
-        const { data } = await axios.get(`https://sadiya-tech-apis.vercel.app/search/spotify`, {
-            params: { q, apikey: "YOU_API_KEY" }
+        const { data } = await axios.get(`https://vajira-api.vercel.app/search/spotify?q=`, {
+            params: { q }
         });
 
         if (!data.status || !data.result || data.result.length === 0)

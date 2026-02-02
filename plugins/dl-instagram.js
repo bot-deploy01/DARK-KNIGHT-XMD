@@ -105,15 +105,15 @@ cmd({
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
     // ✅ Using Sadiya API
-    const response = await axios.get(`https://sadiya-tech-apis.vercel.app/download/igdl?url=${encodeURIComponent(q)}&apikey=YOU_API_KEY`);
+    const response = await axios.get(`https://ominisave.vercel.app/api/insta?url=${encodeURIComponent(q)}`);
     const data = response.data;
 
-    if (!data || !data.status || !data.result || !data.result.dl_link) {
+    if (!data || !data.status || !data.result || !data.result?.downloads) {
       return reply("⚠️ Failed to retrieve Instagram media. Please check the link and try again.");
     }
 
-    const videoLink = data.result.dl_link;
-    const thumbnail = "https://files.catbox.moe/36ndl3.jpg";
+    const videoLink = data.result?.downloads?.video;
+    const thumbnail = "data.result?.downloads?.image";
     
     const caption = `
 📺 Instagram Downloader. 📥

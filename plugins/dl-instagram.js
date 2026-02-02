@@ -89,32 +89,32 @@ cmd({
   }
 });
 
-
 cmd({
   pattern: "igvid",
   alias: ["ig"],
-  desc: "Download Instagram videos and audio",
+  desc: "Download Instagram video",
   category: "download",
   filename: __filename
-}, async (conn, m, store, { from, quoted, q, reply }) => {
+}, async (conn, m, store, { from, q, reply }) => {
   try {
     if (!q || !q.startsWith("https://")) {
-      return conn.sendMessage(from, { text: "❌ Please provide a valid Instagram URL." }, { quoted: m });
+      return reply("❌ Please provide a valid Instagram URL.");
     }
 
-    await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
+    await conn.sendMessage(from, {
+      react: { text: "⏳", key: m.key }
+    });
 
-    // ✅ Using Sadiya API
-    const response = await axios.get(`https://ominisave.vercel.app/api/insta?url=${encodeURIComponent(q)}`);
-    const data = response.data;
+    const api = `https://sadiya-tech-apis.vercel.app/download/igdl?url=${encodeURIComponent(q)}&apikey=YOUR_API_KEY`;
+    const { data } = await axios.get(api);
 
-    if (!data || !data.status || !data.result || !data.result?.downloads.?video) {
-      return reply("⚠️ Failed to retrieve Instagram media. Please check the link and try again.");
+    if (!data.status || !data.result?.downloads?.video) {
+      return reply("⚠️ Failed to retrieve Instagram media.");
     }
 
-    const videoLink = data.result.downloads.video;
-    const thumbnail = data.result.downloads.image;
-    
+    const videoUrl = data.result.downloads.video;
+    const thumbUrl = data.result.downloads.image;
+
     const caption = `
 📺 Instagram Downloader. 📥
 
@@ -128,52 +128,48 @@ cmd({
 > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
     const sentMsg = await conn.sendMessage(from, {
-      image: { url: thumbnail },
+      image: { url: thumbUrl },
       caption
     }, { quoted: m });
 
-    const messageID = sentMsg.key.id;
+    const msgId = sentMsg.key.id;
 
-    // 🧠 Reply-based selector
-    conn.ev.on("messages.upsert", async (msgData) => {
-      const receivedMsg = msgData.messages[0];
-      if (!receivedMsg?.message) return;
+    // Reply selector
+    conn.ev.on("messages.upsert", async ({ messages }) => {
+      const msg = messages[0];
+      if (!msg?.message) return;
 
-      const receivedText = receivedMsg.message.conversation || receivedMsg.message.extendedTextMessage?.text;
-      const senderID = receivedMsg.key.remoteJid;
-      const isReplyToBot = receivedMsg.message.extendedTextMessage?.contextInfo?.stanzaId === messageID;
+      const text =
+        msg.message.conversation ||
+        msg.message.extendedTextMessage?.text;
 
-      if (isReplyToBot) {
-        await conn.sendMessage(senderID, { react: { text: '⏳', key: receivedMsg.key } });
+      const isReply =
+        msg.message.extendedTextMessage?.contextInfo?.stanzaId === msgId;
 
-        switch (receivedText.trim()) {
-          case "1":
-            await conn.sendMessage(senderID, {
-              video: { url: videoLink },
-              caption: "📥 *Video Downloaded Successfully!*"
-            }, { quoted: receivedMsg });
-            break;
+      if (!isReply) return;
 
-          case "2":
-            await conn.sendMessage(senderID, {
-              audio: { url: videoLink },
-              mimetype: "audio/mp4",
-              ptt: false
-            }, { quoted: receivedMsg });
-            break;
+      if (text === "1") {
+        await conn.sendMessage(from, {
+          video: { url: videoUrl },
+          caption: "✅ *Video Downloaded Successfully*"
+        }, { quoted: msg });
 
-          default:
-            reply("❌ Invalid option! Please reply with 1 or 2.");
-        }
+      } else if (text === "2") {
+        await conn.sendMessage(from, {
+          audio: { url: videoUrl },
+          mimetype: "audio/mp4"
+        }, { quoted: msg });
+
+      } else {
+        reply("❌ Reply only 1 or 2.");
       }
     });
 
-  } catch (error) {
-    console.error("Instagram Plugin Error:", error);
-    reply("❌ An error occurred while processing your request. Please try again later.");
+  } catch (err) {
+    console.error("IG Plugin Error:", err);
+    reply("❌ Error occurred. Try again later.");
   }
-});
-
+});   
 
 cmd({
   pattern: "igdl",

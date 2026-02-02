@@ -76,14 +76,14 @@ cmd({
 
         await reply(`🔍 Searching Images for *"${query}"*...`);
 
-        const apiUrl = `https://sadiya-tech-apis.vercel.app/search/wallpaperscraft?q=${encodeURIComponent(query)}&apikey=YOU_API_KEY`;
+        const apiUrl = `https://www.movanest.xyz/v2/googleimage?query=${encodeURIComponent(query)}`;
         const response = await axios.get(apiUrl);
 
-        if (!response.data?.status || !response.data?.result?.images?.length) {
+        if (!response.data?.status || !response.data?.results?.images?.length) {
             return reply("❌ No Images found. Try a different keyword.");
         }
 
-        const results = response.data.result.images;
+        const results = response.data.results.images;
         await reply(`✅ Found *${results.length}* Images for *"${query}"*. Sending top 5...`);
 
         // Randomly pick 5 images
@@ -96,14 +96,14 @@ cmd({
                 await conn.sendMessage(
                     from,
                     {
-                        image: { url: imageUrl },
+                        image: { url: Url },
                         caption: `🖼️ Image for: *${query}*\n\nRequested by: @${m.sender.split('@')[0]}\n> © Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`,
                         contextInfo: { mentionedJid: [m.sender] }
                     },
                     { quoted: mek }
                 );
             } catch (err) {
-                console.warn(`⚠️ Failed to send Image: ${imageUrl}`);
+                console.warn(`⚠️ Failed to send Image: ${Url}`);
             }
 
             await new Promise(resolve => setTimeout(resolve, 1000));

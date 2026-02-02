@@ -108,7 +108,7 @@ cmd({
     const response = await axios.get(`https://ominisave.vercel.app/api/insta?url=${encodeURIComponent(q)}`);
     const data = response.data;
 
-    if (!data || !data.status || !data.result || !data.result?.downloads) {
+    if (!data || !data.status || !data.result || !data.result?.downloads.?video) {
       return reply("⚠️ Failed to retrieve Instagram media. Please check the link and try again.");
     }
 

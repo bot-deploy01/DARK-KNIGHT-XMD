@@ -15,18 +15,18 @@ async (conn, mek, m, { from, reply, args }) => {
             return reply("Please provide a search query! Example: .ringtone Suna");
         }
 
-        const { data } = await axios.get(`https://www.dark-yasiya-api.site/download/ringtone?text=${encodeURIComponent(query)}`);
+        const { data } = await axios.get(`https://www.movanest.xyz/v2/ringtone?title=${encodeURIComponent(query)}`);
 
-        if (!data.status || !data.result || data.result.length === 0) {
+        if (!data.status || !data.results || data.results.length === 0) {
             return reply("No ringtones found for your query. Please try a different keyword.");
         }
 
-        const randomRingtone = data.result[Math.floor(Math.random() * data.result.length)];
+        const randomRingtone = data.results[Math.floor(Math.random() * data.results.length)];
 
         await conn.sendMessage(
             from,
             {
-                audio: { url: randomRingtone.dl_link },
+                audio: { url: randomRingtone.audio },
                 mimetype: "audio/mpeg",
                 fileName: `${randomRingtone.title}.mp3`,
             },

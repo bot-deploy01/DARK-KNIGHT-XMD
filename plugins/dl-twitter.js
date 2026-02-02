@@ -15,7 +15,7 @@ cmd({
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
     // ✅ Using the Sadiya API
-    const response = await axios.get(`https://sadiya-tech-apis.vercel.app/download/twitterdl?url=${q}&apikey=YOU_API_KEY`);
+    const response = await axios.get(`https://ty-opal-eta.vercel.app/download/twitter?url=${q}`);
     const data = response.data;
 
     if (!data || !data.status || !data.result) {

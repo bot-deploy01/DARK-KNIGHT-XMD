@@ -20,10 +20,10 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://sadiya-tech-apis.vercel.app/download/ytdl?url=${encodeURIComponent(ytUrl)}&format=mp3&apikey=YOU_API_KEY`;
+        const api = `https://www.movanest.xyz/v2/ytmp3?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
-        if (!apiRes?.status || !apiRes.result?.download) {
+        if (!apiRes?.status || !apiRes.result?.downloadUrl) {
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
@@ -47,7 +47,7 @@ cmd({
 > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
         const sentMsg = await conn.sendMessage(from, {
-            image: { url: result.thumbnail },
+            image: { url: data.thumbnail },
             caption
         }, { quoted: m });
 
@@ -67,7 +67,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: result.download },
+                        audio: { url: result.downloadUrl },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -75,7 +75,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: result.download },
+                        document: { url: result.downloadUrl },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });
@@ -83,7 +83,7 @@ cmd({
 
                 case "3":
                     await conn.sendMessage(senderID, {
-                        audio: { url: result.download },
+                        audio: { url: result.downloadUrl },
                         mimetype: "audio/mpeg",
                         ptt: true,
                     }, { quoted: receivedMsg });
@@ -122,10 +122,10 @@ cmd({
 
         // Define API links for multiple qualities
         const formats = {
-            "240p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=240p`,
-            "360p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=360p`,
-            "480p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=480p`,
-            "720p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=720p`
+            "240p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=240`,
+            "360p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=360`,
+            "480p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=480`,
+            "720p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=720`
         };
 
         // Prepare caption

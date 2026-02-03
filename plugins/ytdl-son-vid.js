@@ -122,10 +122,10 @@ cmd({
 
         // Define API links for multiple qualities
         const formats = {
-            "240p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "240p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=240p`,
+            "360p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=360p`,
+            "480p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=480p`,
+            "720p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=720p`
         };
 
         // Prepare caption

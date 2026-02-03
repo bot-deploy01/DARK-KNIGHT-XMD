@@ -122,10 +122,10 @@ cmd({
 
         // Define API links for multiple qualities
         const formats = {
-            "240p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://www.movanest.xyz/v2/ytdown?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "240p": `https://www.movanest.xyz/v2/ytdl2?input=${encodeURIComponent(ytUrl)}&format=video&quality=240p`,
+            "360p": `https://www.movanest.xyz/v2/ytdl2?input=${encodeURIComponent(ytUrl)}&format=video&quality=360p`,
+            "480p": `https://www.movanest.xyz/v2/ytdl2?input=${encodeURIComponent(ytUrl)}&format=video&quality=480p`,
+            "720p": `https://www.movanest.xyz/v2/ytdl2?input=${encodeURIComponent(ytUrl)}&format=video&quality=720p`
         };
 
         // Prepare caption
@@ -193,21 +193,21 @@ cmd({
 
                 const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
-                if (!apiRes?.status || !apiRes.download) {
+                if (!apiRes?.status || !apiRes.results) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
                 }
 
-                const download = apiRes.download;
+                const download = apiRes.results.recommended;
 
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: download.link },
+                        document: { url: download.dlurl },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: download.link },
+                        video: { url: download.dlurl },
                         mimetype: "video/mp4",
                         ptt:false,
                     }, { quoted: receivedMsg });

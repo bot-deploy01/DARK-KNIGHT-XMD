@@ -89,7 +89,7 @@ cmd({
 `;
 
         const sentMsg = await conn.sendMessage(from, {
-            image: { url: result.image },
+            image: { url: result.cover },
             caption
         }, { quoted: m });
 

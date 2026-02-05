@@ -105,15 +105,15 @@ cmd({
       react: { text: "⏳", key: m.key }
     });
 
-    const api = `https://ominisave.vercel.app/api/insta?url=${encodeURIComponent(q)}`;
+    const api = `https://www.movanest.xyz/v2/instagram?url=${encodeURIComponent(q)}`;
     const { data } = await axios.get(api);
 
-    if (!data.status || !data.result?.downloads?.video) {
+    if (!data.status || !data.results) {
       return reply("⚠️ Failed to retrieve Instagram media.");
     }
 
-    const videoUrl = data.result.downloads.video;
-    const thumbUrl = data.result.downloads.image;
+    const videoUrl = data.results.downloadUrl;
+    const thumbUrl = data.results.posterUrl;
 
     const caption = `
 📺 Instagram Downloader. 📥

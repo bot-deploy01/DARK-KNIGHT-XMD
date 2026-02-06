@@ -19,19 +19,21 @@ cmd({
     const response = await axios.get(`https://api-aswin-sparky.koyeb.app/api/downloader/tiktok?url=${q}`);
     const data = response.data;
 
-    if (!data || !data.status || !data.data) {
+    if (!data || !data.status) {
       return reply("⚠️ Failed to retrieve TikTok media. Please check the link and try again.");
     }
+    
+    const dat = data.data;
     
     const caption = `
 📺 Tiktok Downloader. 📥
 
-📑 *Title:* ${data.title || "No title"}
-⏱️ *Duration:* ${data.duration || "N/A"}
-👍 *Likes:* ${data.view || "0"}
-💬 *Comments:* ${data.comment || "0"}
-🔁 *Shares:* ${data.share || "0"}
-📥 *Downloads:* ${data.download || "0"}
+📑 *Title:* ${dat.title || "No title"}
+⏱️ *Duration:* ${dat.duration || "N/A"}
+👍 *Likes:* ${dat.view || "0"}
+💬 *Comments:* ${dat.comment || "0"}
+🔁 *Shares:* ${dat.share || "0"}
+📥 *Downloads:* ${dat.download || "0"}
 
 🔢 *Reply Below Number*
 
@@ -41,7 +43,7 @@ cmd({
 > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
     const sentMsg = await conn.sendMessage(from, {
-      image: { url: data.thumbnail },
+      image: { url: dat.thumbnail },
       caption
     }, { quoted: m });
 
@@ -62,14 +64,14 @@ cmd({
         switch (receivedText.trim()) {
           case "1":
             await conn.sendMessage(senderID, {
-              video: { url: data.video },
+              video: { url: dat.video },
               caption: "📥 *Downloaded Original Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "2":
             await conn.sendMessage(senderID, {
-              audio: { url: data.audio },
+              audio: { url: dat.audio },
               mimetype: "audio/mp3",
               ptt: false
             }, { quoted: receivedMsg });

@@ -23,18 +23,17 @@ cmd({
       return reply("⚠️ Failed to retrieve TikTok media. Please check the link and try again.");
     }
 
-    const data = data.data;
-    const { title, thumbnail, duration, comment, share, download, view, video, audio } = data;
-
+    const result = data.data;
+    
     const caption = `
 📺 Tiktok Downloader. 📥
 
-📑 *Title:* ${title || "No title"}
-⏱️ *Duration:* ${duration || "N/A"}s
-👍 *Likes:* ${view || "0"}
-💬 *Comments:* ${comment || "0"}
-🔁 *Shares:* ${share || "0"}
-📥 *Downloads:* ${download || "0"}
+📑 *Title:* ${data.title || "No title"}
+⏱️ *Duration:* ${data.duration || "N/A"}
+👍 *Likes:* ${data.view || "0"}
+💬 *Comments:* ${data.comment || "0"}
+🔁 *Shares:* ${data.share || "0"}
+📥 *Downloads:* ${data.download || "0"}
 
 🔢 *Reply Below Number*
 
@@ -44,7 +43,7 @@ cmd({
 > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
     const sentMsg = await conn.sendMessage(from, {
-      image: { url: thumbnail },
+      image: { url: data.thumbnail },
       caption
     }, { quoted: m });
 
@@ -65,14 +64,14 @@ cmd({
         switch (receivedText.trim()) {
           case "1":
             await conn.sendMessage(senderID, {
-              video: { video },
+              video: { url: data.video },
               caption: "📥 *Downloaded Original Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "2":
             await conn.sendMessage(senderID, {
-              audio: { audio },
+              audio: { url: data.audio },
               mimetype: "audio/mp3",
               ptt: false
             }, { quoted: receivedMsg });

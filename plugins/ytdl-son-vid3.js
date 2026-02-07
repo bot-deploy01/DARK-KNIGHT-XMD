@@ -4,7 +4,7 @@ const axios = require('axios');
 
 
 cmd({
-    pattern: "song3",
+    pattern: "song2",
     react: "🎵",
     desc: "Download YouTube MP3",
     category: "download",
@@ -103,7 +103,7 @@ cmd({
 
 
 cmd({
-    pattern: "video3",
+    pattern: "video2",
     react: "🎬",
     desc: "Download YouTube MP4",
     category: "download",
@@ -119,14 +119,14 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://gtech-api-xtp1.onrender.com/api/video/yt?apikey=APIKEY&url=${encodeURIComponent(ytUrl)}`;
+        const api = `https://ominisave.vercel.app/api/ytmp4?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
-        if (!apiRes?.status || !apiRes.result?.media?.video_url) {
+        if (!apiRes?.status || !apiRes.result?.url) {
             return reply("❌ Unable to download the video. Please try another one!");
         }
 
-        const result = apiRes.result.media;
+        const results = apiRes.result;
 
         const caption = `
 🎥 *Video Downloader.* 📥
@@ -145,7 +145,7 @@ cmd({
 > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
         const sentMsg = await conn.sendMessage(from, {
-            image: { url: result.thumbnail },
+            image: { url: data.thumbnail },
             caption
         }, { quoted: m });
 
@@ -165,7 +165,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        video: { url: result.video_url },
+                        video: { url: results.url },
                         mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -173,7 +173,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: result.video_url },
+                        document: { url: results.url },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });

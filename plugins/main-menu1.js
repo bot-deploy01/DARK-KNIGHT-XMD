@@ -118,17 +118,13 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • movie
 ┃★│ • xnxx
 ┃★│ • xvideo
-┃★│ • play
 ┃★│ • song
 ┃★│ • song1
 ┃★│ • song2
 ┃★│ • song3
-┃★│ • song4
 ┃★│ • video
 ┃★│ • video1
 ┃★│ • video2
-┃★│ • video3
-┃★│ • video4
 ┃★╰──────────────
 ╰━━━━━━━━━━━━━━┈⊷
 

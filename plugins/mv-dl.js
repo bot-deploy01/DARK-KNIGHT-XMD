@@ -396,7 +396,13 @@ cmd({
         const movieRes = await axios.get(movieUrl);
         const movie = movieRes.data.result;
 
-        if (!movie.downloadLinks?.length) {
+        const dlUrl = `https://sinhalasubdl.vercel.app/api/download?url=${encodeURIComponent(selected.link)}`;
+        const dlRes = await axios.get(dlUrl);
+        const dllink = dlRes.data.result;
+        dllink.downloads = dllink.downloads.filter(d => d.direct_link.includes("pixeldrain.com") || d.direct_link.includes("ddl.sinhalasub.net") );
+        
+       
+        if (!dllink.downloads?.length) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
         }
 
@@ -410,7 +416,7 @@ cmd({
           `📝 *Description:*\n${movie.description}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-        movie.downloadLinks.forEach((d, i) => {
+        dllink.downloads.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
         info += "\n🔢 *Reply with number to download.*";
@@ -420,7 +426,7 @@ cmd({
           caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { selected, downloads: movie.downloadLinks });
+        movieMap.set(downloadMsg.key.id, { selected, downloads: dllink.downloads });
       }
 
       else if (movieMap.has(repliedId)) {
@@ -433,7 +439,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-        let directLink = chosen.link;
+        let directLink = chosen.direct_link;
 
         if (directLink.includes("pixeldrain.com")) {
           const match = directLink.match(/\/([A-Za-z0-9]+)$/);

@@ -433,8 +433,6 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-        let directLink = chosen.url;
-
         const size = chosen.size.toLowerCase();
         const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
 
@@ -443,7 +441,7 @@ cmd({
         }
        
         await conn.sendMessage(from, {
-          document: { url: url },
+          document: { url: chosen.url },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
           caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`

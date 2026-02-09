@@ -398,7 +398,7 @@ cmd({
         
         const dlLinks = movie?.dl_links?.Server2;
         
-        if (!dllinks?.length) {
+        if (!movie?.dllinks?.Server2?.length) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
         }
 
@@ -807,7 +807,7 @@ cmd({
         const movieRes = await axios.get(movieUrl);
         const movie = movieRes.data.data;
 
-        movie.downloadUrl = movie.downloadUrl.filter(d => d.link.includes("pixeldrain.com") || d.link.includes("cdn.sinhalasub.net") || d.link.includes("ddl.sinhalasub.net") );
+        movie.downloadUrl = movie.downloadUrl.filter(d => d.link.includes("pixeldrain.com") || d.link.includes("ddl.sinhalasub.net") );
 
         if (!movie.downloadUrl?.length) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });

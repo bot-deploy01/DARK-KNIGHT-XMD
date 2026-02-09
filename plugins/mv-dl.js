@@ -396,7 +396,7 @@ cmd({
         const movieRes = await axios.get(movieUrl);
         const movie = movieRes.data.result;
         
-        const dlLinks = movie.dl_links.Server2;
+        const dlLinks = movie?.dl_links?.Server2;
         
         if (!dllinks?.length) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
@@ -412,7 +412,7 @@ cmd({
           `📝 *Description:*\n${movie.description}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-         dl_links.forEach((d, i) => {
+         dllinks.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
         info += "\n🔢 *Reply with number to download.*";
@@ -422,7 +422,7 @@ cmd({
           caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { selected, downloads: dl_links });
+        movieMap.set(downloadMsg.key.id, { selected, downloads: dllinks });
       }
 
       else if (movieMap.has(repliedId)) {

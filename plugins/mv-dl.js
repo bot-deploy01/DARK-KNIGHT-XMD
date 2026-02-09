@@ -407,7 +407,7 @@ cmd({
           `🕐 *Runtime:* ${movie.duration}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-         mobie.downloads.forEach((d, i) => {
+         movie.downloads.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
         info += "\n🔢 *Reply with number to download.*";

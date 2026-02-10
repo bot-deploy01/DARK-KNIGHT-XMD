@@ -9,7 +9,7 @@ const movieCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 cmd({
   pattern: "paka",
-  alias: ["ssubs"],
+  alias: ["sgs"],
   desc: "🎥 Search Sinhala Subbed Movies (Pixeldrain only)",
   category: "media",
   react: "🎬",
@@ -565,27 +565,35 @@ cmd({
 
         const movieUrl = `https://ssub-api.vercel.app/movie/sinhalasub/movie?url=$${encodeURIComponent(selected.link)}`;
         const movieRes = await axios.get(movieUrl);
-        const movie = movieRes.data.result;
+        const movie = movieRes.data.;
        
-        
+        const pixeldrain = movie.result.downloads.filter(d =>
+          d.provider === "Pixeldrain" && d.direct_link
+        );
+
+        if (!pixeldrain.length) {
+          return conn.sendMessage(from, {
+            text: "*❌ Pixeldrain links not available.*"
+          }, { quoted: msg });
+        }
 
         let info =
-          `🎬 *${movie.title}*\n\n` +
-          `📅 *Released:* ${movie.releaseDate}\n` +
-          `🕐 *Runtime:* ${movie.duration}\n\n` +
+          `🎬 *${movie.result.title}*\n\n` +
+          `📅 *Released:* ${movie.result.releaseDate}\n` +
+          `🕐 *Runtime:* ${movie.result.duration}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-         movie.dl_links.Server2.forEach((d, i) => {
+         pixeldrain.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
         info += "\n🔢 *Reply with number to download.*";
 
         const downloadMsg = await conn.sendMessage(from, {
-          image: { url: movie.poster },
+          image: { url: movie.result.poster },
           caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { selected, downloads: movie.dl_links.Server2 });
+        movieMap.set(downloadMsg.key.id, { selected, downloads: pixeldrain });
       }
 
       else if (movieMap.has(repliedId)) {
@@ -606,7 +614,7 @@ cmd({
         }
        
         await conn.sendMessage(from, {
-          document: { url: chosen.url },
+          document: { url: chosen.direct_link },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
           caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`

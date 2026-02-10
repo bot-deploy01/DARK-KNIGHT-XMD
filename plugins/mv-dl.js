@@ -563,9 +563,9 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const movieUrl = `https://ssub-api.vercel.app/movie/sinhalasub/movie?url=$${encodeURIComponent(selected.link)}`;
+        const movieUrl = `https://ssub-api.vercel.app/movie/sinhalasub/movie?url=${encodeURIComponent(selected.link)}`;
         const movieRes = await axios.get(movieUrl);
-        const movie = movieRes.data.;
+        const movie = movieRes.data;
        
         const pixeldrain = movie.result.downloads.filter(d =>
           d.provider === "Pixeldrain" && d.direct_link
@@ -579,7 +579,7 @@ cmd({
 
         let info =
           `🎬 *${movie.result.title}*\n\n` +
-          `📅 *Released:* ${movie.result.releaseDate}\n` +
+          `📅 *Released:* ${movie.result.year}\n` +
           `🕐 *Runtime:* ${movie.result.duration}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 

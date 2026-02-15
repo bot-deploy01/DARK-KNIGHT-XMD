@@ -36,6 +36,7 @@ cmd({
 ✏️ .𝑷𝑰𝑹𝑨𝑻𝑬  𝑆𝐸𝐴𝐑𝐶𝐻
 ✏️ .𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
 ✏️ .𝐌𝐎𝐕𝐈𝐄𝐏𝐑𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
+✏️ .123𝐌𝐊𝐕 𝑆𝐸𝐴𝐑𝐶𝐻
 
 📌 EX: .cmd & <query> 
 
@@ -119,6 +120,8 @@ cmd({
       const movieRes = await axios.get(movieUrl);
       const movie = movieRes.data;
 
+      const defaultImage = "https://files.catbox.moe/ajfxoo.jpg";
+      
       let downloads = [];
       if (Array.isArray(movie.dllink)) {
         downloads = movie.dllink;
@@ -149,8 +152,8 @@ cmd({
       info += "\n🔢 *Reply with number to download.*";
 
       const downloadMsg = await conn.sendMessage(from, {
-        text: info,
-        linkPreview: true
+        image: { url: defaultImage },
+          caption: info
       }, { quoted: msg });
 
       movieMap.set(downloadMsg.key.id, { selected, downloads });

@@ -119,7 +119,7 @@ cmd({
       const movieRes = await axios.get(movieUrl);
       const movie = movieRes.data;
 
-      const defaultImage = "https://files.catbox.moe/ajfxoo.jpg";
+      const movieUrl = selected.link;
 
       let downloads = [];
       if (Array.isArray(movie.dllink)) {
@@ -140,10 +140,10 @@ cmd({
         `🎬 *${movie.title}*\n\n` +
         `⭐ *Language:* ${movie.language}\n` +
         `📅 *Released:* ${movie.date}\n` +
-        `🌍 *Country:* ${movie.country}\n` +
-        `🎭 *Category:* ${movie.genres}\n` +
-        `👷‍♂️ *Cast:* ${movie.actors}\n\n` +
-        `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
+        `🌍 ${movie.country}\n` +
+        `🎭 ${movie.genres}\n` +
+        `👷‍♂️ ${movie.actors}\n\n` +
+        `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* ${movieUrl} 📥\n\n`;
 
       downloads.forEach((d, i) => {
         info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
@@ -151,8 +151,8 @@ cmd({
       info += "\n🔢 *Reply with number to download.*";
 
       const downloadMsg = await conn.sendMessage(from, {
-        image: { url: defaultImage },
-        caption: info
+        text: info,
+        linkPreview: true
       }, { quoted: msg });
 
       movieMap.set(downloadMsg.key.id, { selected, downloads });

@@ -119,8 +119,6 @@ cmd({
       const movieRes = await axios.get(movieUrl);
       const movie = movieRes.data;
 
-      const movieUrl = selected.link;
-
       let downloads = [];
       if (Array.isArray(movie.dllink)) {
         downloads = movie.dllink;
@@ -143,7 +141,7 @@ cmd({
         `🌍 ${movie.country}\n` +
         `🎭 ${movie.genres}\n` +
         `👷‍♂️ ${movie.actors}\n\n` +
-        `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* ${movieUrl} 📥\n\n`;
+        `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥 ${selected.link}\n\n`;
 
       downloads.forEach((d, i) => {
         info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;

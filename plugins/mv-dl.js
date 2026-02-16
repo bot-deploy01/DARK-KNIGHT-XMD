@@ -646,17 +646,17 @@ cmd({
     let data = movieCache.get(cacheKey);
 
     if (!data) {
-      const searchUrl = `https://sadaslk-apis.vercel.app/api/v1/movie/baiscopes/search?q=${encodeURIComponent(q)}&apiKey=vispermdv4`;
+      const searchUrl = `https://my-apis-site.vercel.app/movie/baiscope/search?q=${encodeURIComponent(q)}&apikey=charuka-key-666`;
       const res = await axios.get(searchUrl);
       data = res.data;
-      if (!data.status || !data.data?.length) throw new Error("No results found.");
+      if (!data.status || !data.result?.length) throw new Error("No results found.");
       movieCache.set(cacheKey, data);
     }
 
-    const movies = data.data.map((m, i) => ({
+    const movies = data.result.map((m, i) => ({
       number: i + 1,
       title: m.title,
-      link: m.link
+      link: m.url
     }));
 
     let textList = `*🔍 𝐁𝐀𝐈𝐒𝐂𝐎𝐏𝐄 𝐒𝐄𝐀𝐑𝐂𝐇 𝐑𝐄𝐒𝐔𝐋𝐓𝐒 🎬*\n\n🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━\n\n`;
@@ -690,7 +690,7 @@ cmd({
         const infoRes = await axios.get(infoUrl);
         const movieData = infoRes.data.data;
         const movie = movieData.movieInfo;
-        const downloads = (movieData.downloadLinks || []).filter(d => d.directLinkUrl && d.directLinkUrl.toLowerCase().includes("drive2.baiscopeslk.workers.dev") );
+        const downloads = (movieData.downloadLinks || []).filter(d => d.directLinkUrl && d.directLinkUrl.toLowerCase().includes("drive.baiscopeslk.workers")  || d.directLinkUrl.toLowerCase().includes("drive2.baiscopeslk.workers") );
 
         if (downloads.length === 0) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });

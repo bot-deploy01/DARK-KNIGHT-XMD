@@ -53,10 +53,11 @@ cmd({
  5️⃣ 𝑷𝑰𝑹𝑨𝑻𝑬 𝑆𝐸𝐴𝐑𝐶𝐻
  6️⃣ 𝑺𝑼𝑩𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻  
  7️⃣ 𝑺𝑼𝑩𝒁𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻  
- 8️⃣ 123𝐌𝐊𝐕 𝑆𝐸𝐴𝐑𝐶𝐻
- 9️⃣ 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
+ 8️⃣ 𝑴𝑶𝑽𝑰𝑬𝑳𝑶𝑽𝑬𝑹𝑺 𝑆𝐸𝐴𝐑𝐶𝐻
+ 9️⃣ 123𝐌𝐊𝐕 𝑆𝐸𝐴𝐑𝐶𝐻
+ 🔟 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
  
- >Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
+ > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
 
         // Image එකක් ලෙස යැවීමෙන් පින්තූරය නොපෙනී යාමේ ගැටලුව ස්ථිරවම විසඳේ.
         const listMsg = await conn.sendMessage(from, { 
@@ -81,8 +82,9 @@ cmd({
                     else if (selText === '5') targetPattern = "pirate";
                     else if (selText === '6') targetPattern = "sublk";
                     else if (selText === '7') targetPattern = "subzlk";
-                    else if (selText === '8') targetPattern = "123mkv";
-                    else if (selText === '9') targetPattern = "pupilvideo";
+                    else if (selText === '8') targetPattern = "movielovers";
+                    else if (selText === '9') targetPattern = "123mkv";
+                    else if (selText === '10') targetPattern = "pupilvideo";
                     
                     if (targetPattern) {
                         await conn.sendMessage(from, { react: { text: "🔍", key: selection.msg.key } });

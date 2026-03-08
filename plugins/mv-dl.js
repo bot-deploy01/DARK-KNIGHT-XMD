@@ -696,16 +696,18 @@ cmd({
           return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
         }
         
-        const apiUrl = `https://cinesubz-store.vercel.app/api/get/?url=${encodeURIComponent(chosen.link)}`;
+        const apiUrl = `https://cine-download-api.vercel.app/api/download?url=${encodeURIComponent(chosen.link)}`;
         const apiRes = await axios.get(apiUrl);
-        const direct = apiRes.data?.downloadUrls?.direct;
+        const downloadLinks = apiRes.data?.data?.downloadUrls;
 
-        if (!direct) {
+        const pixeldrainLink = downloadLinks?.find(link => link.url.includes("pixeldrain.com"))?.url;
+        
+        if (!pixeldrainLink) {
             return conn.sendMessage(from, { text: "*download link not found.*" }, { quoted: msg });
         }
         
         await conn.sendMessage(from, {
-          document: { url: direct },
+          document: { url: pixeldrainLink },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
           caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`

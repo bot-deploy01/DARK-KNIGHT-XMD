@@ -162,7 +162,7 @@ cmd({
 
   if (!q) {
     return await conn.sendMessage(from, {
-      text: "Use: .movirelovers <movie name>"
+      text: "Use: .notunmovie <movie name>"
     }, { quoted: mek });
   }
 
@@ -292,7 +292,7 @@ cmd({
 
   if (!q) {
     return await conn.sendMessage(from, {
-      text: "Use: .movirelovers <movie name>"
+      text: "Use: .movielovers <movie name>"
     }, { quoted: mek });
   }
 

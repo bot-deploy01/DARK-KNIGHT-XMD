@@ -959,14 +959,24 @@ cmd({
         const apiRes = await axios.get(apiUrl);
         const downloadLinks = apiRes.data?.data?.downloadUrls;
 
-        const pixeldrainLink = downloadLinks?.find(link => link.url.includes("pixeldrain.com"))?.url;
+        let finalDownloadLink = downloadLinks?.find(link => 
+            link.url.includes("pixeldrain.com") && !link.url.includes("t.me")
+        )?.url;
         
-        if (!pixeldrainLink) {
+        if (!finalDownloadLink) {
+            const backupLink = downloadLinks?.find(link => 
+                !link.url.includes("t.me") && 
+                (link.url.startsWith("http"))
+            );
+            finalDownloadLink = backupLink?.url;
+        }
+        
+        if (!finalDownloadLink) {
             return conn.sendMessage(from, { text: "*download link not found.*" }, { quoted: msg });
         }
         
         await conn.sendMessage(from, {
-          document: { url: pixeldrainLink },
+          document: { url: finalDownloadLink },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
           caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`

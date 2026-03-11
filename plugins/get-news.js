@@ -17,7 +17,7 @@ async (conn, mek, m, { from, reply }) => {
         if (!articles || !articles.length) return reply("❌ No news articles found.");
 
         // Fixed banner image
-        const headerImage = "https://files.catbox.moe/sj0l7z.jpg";
+        const headerImage = "https://files.catbox.moe/8xi7k1.jpg";
 
         // Build the message text
         let newsMessage = `📰 *Ada Derana – Latest Headlines*\n\n`;
@@ -72,7 +72,7 @@ async (conn, mek, m, { from, reply }) => {
             { name: "Gossip Lanka News", url: "https://vajira-api.vercel.app/news/gossiplankanews" }
         ];
 
-        const defaultImage = "https://files.catbox.moe/sj0l7z.jpg";
+        const defaultImage = "https://files.catbox.moe/8xi7k1.jpg";
         
         reply("📡 *Fetching latest news from all sources...*\n\n1. Lankadeepalk News\n2. Ada News\n3. Sirasa News\n4. Gagana News\n5. Lankadeepa News\n6. Lanka News\n7. Siyatha News\n8. Gossip Lanka News");
 

@@ -42,7 +42,7 @@ cmd({
             },
             message: {
                 contactMessage: {
-                    displayName: `𝗞𝗛𝗔𝗡-𝗠𝗗`,
+                    displayName: `dark-md`,
                     vcard: `BEGIN:VCARD\nVERSION:3.0\nN:;a,;;;\nFN:'GIFTED'\nitem1.TEL;waid=${m.sender.split("@")[0]}:${m.sender.split("@")[0]}\nitem1.X-ABLabel:Ponsel\nEND:VCARD`
                 }
             }

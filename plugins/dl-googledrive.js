@@ -2,7 +2,7 @@ const axios = require("axios");
 const { cmd } = require("../command");
 
 cmd({
-  pattern: "gdrive",
+  pattern: "gdrive2",
   react: '📥',
   desc: "Download files from Google Drive.",
   category: "download",
@@ -124,7 +124,7 @@ cmd({
 
 
 cmd({
-  pattern: "gdrive2",
+  pattern: "gdrive",
   desc: "Download Google Drive files.",
   react: "🌐",
   category: "download",

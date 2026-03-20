@@ -89,14 +89,14 @@ async (conn, mek, m, { from, q, isGroup, reply }) => {
         return reply("❌ I need to be an admin to add members.")
 
     if (!q || !/^\d+$/.test(q))
-        return reply("📱 Please provide a valid phone number.\nExample: `.add 254799963583`")
+        return reply("📱 Please provide a valid phone number.\nExample: `.add 947718xxxxx`")
 
     const userJid = `${q}@s.whatsapp.net`
 
     try {
         await conn.groupParticipantsUpdate(from, [userJid], "add")
 
-        reply(`✅ Successfully added @${q}\n~ TEDDY-XMD`, {
+        reply(`✅ Successfully added @${q}`, {
             mentions: [userJid]
         })
 

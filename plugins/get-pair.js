@@ -23,7 +23,7 @@ cmd({
         const waitMsg = await conn.sendMessage(from, { text: "⏳ *කේතය ජනනය කරමින් පවතී...*" }, { quoted: mek });
 
         // 3. Pairing Server එකට Request එක යැවීම
-        const apiUrl = `https://dark-knight-xmd-pair-production.up.railway.app/pair/code?number=${targetNumber}`;
+        const apiUrl = `https://dark-knight-xmd-pair-production.up.railway.app/code?number=${targetNumber}`;
         const response = await axios.get(apiUrl);
 
         // 4. Response එක පරීක්ෂා කිරීම

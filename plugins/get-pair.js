@@ -16,31 +16,29 @@ cmd({
 
         // 2. අංකය තහවුරු කිරීම (Validation)
         if (!targetNumber || targetNumber.length < 10) {
-            return await reply("❌ *වැරදි අංකයක්!* \n\nකරුණාකර රටේ කේතය (Country Code) සහිතව අංකය ඇතුළත් කරන්න.\nඋදා: `.pair 94771234567` ");
+            return await reply("❌ *වැරදි අංකයක්!* \n\nකරුණාකර රටේ කේතය සහිතව අංකය ඇතුළත් කරන්න.\nඋදා: `.pair 94771234567` ");
         }
+
+        // Loading message එකක් යවා එහි ID එක ලබා ගැනීම
+        const waitMsg = await conn.sendMessage(from, { text: "⏳ *කේතය ජනනය කරමින් පවතී...*" }, { quoted: mek });
 
         // 3. Pairing Server එකට Request එක යැවීම
         const apiUrl = `https://dark-knight-xmd-pair-production.up.railway.app/pair/code?number=${targetNumber}`;
-        
-        // පණිවිඩයක් යැවීම (Loading)
-        const loadingMsg = await reply("⏳ *කේතය ජනනය කරමින් පවතී...*");
-
         const response = await axios.get(apiUrl);
 
         // 4. Response එක පරීක්ෂා කිරීම
         if (response.data && response.data.code) {
             const pairingCode = response.data.code; 
 
-            // මෙතනදී අපි Backticks (`) භාවිතා කරලා තියෙනවා කේතය Copy කරගත හැකි වෙන්න.
             const successText = `🚀 *𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳 PAIRING SUCCESS*\n\n` +
                                 `💬 *අංකය:* ${targetNumber}\n` +
                                 `🔢 *Pairing Code:* \`${pairingCode}\` \n\n` +
                                 `> ඉහත කේතය මත එකවරක් ටැප් කර (Tap) කොපි කරගන්න. පසුව WhatsApp 'Link with phone number' වෙත ගොස් ඇතුළත් කරන්න.`;
 
-            // විස්තර සහිත මැසේජ් එක
-            await conn.sendMessage(from, { text: successText }, { quoted: mek });
+            // කලින් යවපු "Wait" මැසේජ් එක Edit කර සාර්ථක පණිවිඩය පෙන්වීම
+            await conn.sendMessage(from, { text: successText, edit: waitMsg.key });
 
-            // වඩාත් පහසුවෙන් Copy කරගැනීම සඳහා කේතය පමණක් තත්පර 1කට පසු යැවීම
+            // 5. තත්පර 1කට පසු කේතය පමණක් වෙනම මැසේජ් එකක් ලෙස යැවීම (පහසුවෙන් Copy කිරීමට)
             await new Promise(resolve => setTimeout(resolve, 1000));
             await reply(`\`${pairingCode}\``);
 
@@ -50,6 +48,6 @@ cmd({
 
     } catch (error) {
         console.error("Pairing Error:", error);
-        await reply("❌ *සමාවන්න! Pairing Code එක ලබාගත නොහැකි විය.* \nServer එක දැනට අක්‍රිය විය හැක.");
+        await reply("❌ *සමාවන්න! Pairing Code එක ලබාගත නොහැකි විය.*\nServer එක දැනට අක්‍රිය විය හැක හෝ අංකය වැරදි විය හැක.");
     }
 });

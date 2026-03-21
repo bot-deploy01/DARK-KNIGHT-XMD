@@ -53,7 +53,7 @@ async (conn, mek, m, { from, args, isCreator, reply }) => {
     }
 });
 
-/*
+
 cmd({
     pattern: "setprefix",
     alias: ["prefix"],
@@ -72,7 +72,7 @@ cmd({
 
     return reply(`✅ Prefix successfully changed to *${newPrefix}*`);
 });
-*/
+
 
 cmd({
     pattern: "mode",

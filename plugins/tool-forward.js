@@ -1,4 +1,3 @@
-
 const { cmd } = require("../command");
 
 // Safety Configuration
@@ -11,56 +10,71 @@ const SAFETY = {
 cmd({
   pattern: "forward",
   alias: ["fwd"],
-  desc: "Forward large files (up to 2GB) to groups or inbox with live progress (5 msg updates)",
+  desc: "Forward large files (up to 2GB) to groups or inbox",
   category: "owner",
   filename: __filename
 }, async (client, message, match, { isOwner }) => {
   try {
+    // Owner check
     if (!isOwner) return await message.reply("*📛 Owner Only Command*");
+    
+    // Quoted message check
     if (!message.quoted) return await message.reply("*🍁 Please reply to a message or file to forward*");
 
+    // ===== [JID PROCESSING] ===== //
     let jidInput = "";
-    if (typeof match === "string") jidInput = match.trim();
-    else if (Array.isArray(match)) jidInput = match.join(" ").trim();
-    else if (match && typeof match === "object") jidInput = match.text || "";
+    if (typeof match === "string") {
+      jidInput = match.trim();
+    } else if (Array.isArray(match)) {
+      jidInput = match.join(" ").trim();
+    } else if (match && typeof match === "object") {
+      jidInput = match.text || "";
+    }
     
-    if (!jidInput) return await message.reply("❌ *Please provide target JIDs or Numbers!*");
-
     const rawJids = jidInput.split(/[\s,]+/).filter(jid => jid.trim().length > 0);
     
     const validJids = rawJids
       .map(jid => {
         let clean = jid.trim();
         if (clean.endsWith('@g.us') || clean.endsWith('@s.whatsapp.net')) return clean;
+
         let numbersOnly = clean.replace(/[^0-9]/g, '');
-        if (numbersOnly.length > 15) return `${numbersOnly}@g.us`;
-        if (numbersOnly.length >= 9) return `${numbersOnly}@s.whatsapp.net`;
+        if (numbersOnly.length >= 17) return `${numbersOnly}@g.us`;
+        else if (numbersOnly.length >= 10) return `${numbersOnly}@s.whatsapp.net`;
         return null;
       })
       .filter(jid => jid !== null)
       .slice(0, SAFETY.MAX_JIDS);
 
-    if (validJids.length === 0) return await message.reply("❌ *Invalid JID format!*");
-
-    // ආරම්භක පණිවිඩය
-    let statusMsg = await message.reply(`🚀 *Forwarding started to ${validJids.length} chats...*`);
+    if (validJids.length === 0) {
+      return await message.reply("❌ *Please provide valid JIDs or Numbers!*");
+    }
+    
+    const forwardMessage = message.quoted.fakeObj; 
 
     let successCount = 0;
     let failedCount = 0;
     
+    await message.reply(`🚀 *Forwarding started to ${validJids.length} chats...*`);
+
     for (const [index, jid] of validJids.entries()) {
       try {
-        // 2GB Support Native Forwarding
-        await client.sendMessage(jid, { forward: msgToForward }, { quoted: null });
+        // Baileys Native Forward Method
+        await client.sendMessage(jid, { forward: forwardMessage });
+        
         successCount++;
         
+        // Progress update
+        /*if ((index + 1) % 5 === 0) {
+          await message.reply(`🔄 Progress: ${index + 1}/${validJids.length} done...`);
+        }*/
         if ((index + 1) % 5 === 0 || (index + 1) === validJids.length) {
           await client.sendMessage(message.chat, { 
-            text: `🔄 *Forwarding Progress:*\n\n✅ Sent: ${index + 1}/${validJids.length} Chats`, 
+            text: `🔄 *Forwarding Progress:*\n\n✅ Sent: ${index + 1}/${validJids.length} chats`, 
             edit: statusMsg.key 
           });
         }
-        
+        // Antiban Delay
         const delayTime = (index + 1) % 10 === 0 ? SAFETY.EXTRA_DELAY : SAFETY.BASE_DELAY;
         await new Promise(resolve => setTimeout(resolve, delayTime));
         
@@ -70,18 +84,19 @@ cmd({
       }
     }
 
-    let finalReport = 
-      `✅ *Forward Process Completed!*\n\n` +
-      `📤 *Success:* ${successCount}\n` +
-      `❌ *Failed:* ${failedCount}\n`;
+    // ===== [FINAL REPORT] ===== //
+    let report = `✅ *Forward Complete*\n\n` +
+                 `📤 *Success:* ${successCount}\n` +
+                 `❌ *Failed:* ${failedCount}`;
 
-    await client.sendMessage(message.chat, { text: finalReport, edit: statusMsg.key });
+    await message.reply(report);
 
   } catch (error) {
     console.error("Forward Error:", error);
     await message.reply(`💢 Error: ${error.message}`);
   }
 });
+
 
 cmd({
   pattern: "forward2",

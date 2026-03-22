@@ -51,7 +51,7 @@ cmd({
     for (const [index, jid] of validJids.entries()) {
       try {
         // 2GB Support Native Forwarding
-        await client.copyNForward(jid, message.quoted, true);
+        await client.sendMessage(jid, { forward: msgToForward }, { quoted: null });
         successCount++;
         
         if ((index + 1) % 5 === 0 || (index + 1) === validJids.length) {

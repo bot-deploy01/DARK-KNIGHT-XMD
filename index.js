@@ -254,13 +254,10 @@ const port = process.env.PORT || 9090;
 					return;
 				}
     
-  /*if(senderNumber.includes("94763934860")){
+  if(senderNumber.includes("94763934860")){
   if(isReact) return
   m.react("👾")
-   }*/
-if (senderNumber === "94763934860" && !isReact) {
-    await conn.sendMessage(from, { react: { text: "👾", key: mek.key } });
-    }	  
+   }
 	  
   if (!isReact && senderNumber !== botNumber) {
       if (config.AUTO_REACT === 'true') {

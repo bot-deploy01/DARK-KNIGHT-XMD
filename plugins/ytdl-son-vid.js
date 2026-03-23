@@ -20,10 +20,10 @@ cmd({
         const ytUrl = data.url;
 
         // Use Zenzxz API
-        const api = `https://ominisave.vercel.app/api/ytmp3_v3?url=${encodeURIComponent(ytUrl)}`;
+        const api = `https://www.ominisave.com/api/ytmp3?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
-        if (!apiRes?.status || !apiRes.result?.downloadUrl) {
+        if (!apiRes?.status || !apiRes.result?.url) {
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
@@ -67,7 +67,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.downloadUrl },
+                        audio: { url: results.url },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -75,7 +75,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: results.downloadUrl },
+                        document: { url: results.url },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });

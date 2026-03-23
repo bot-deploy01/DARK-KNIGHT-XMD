@@ -23,11 +23,11 @@ cmd({
         const api = `https://sadas-ytmp3-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
-        if (!apiRes?.status || !apiRes.result?.url) {
+        if (!apiRes?.status ||!apiRes.url) {
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
-        const results = apiRes.result;
+        /*const results = apiRes.result;*/
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -67,7 +67,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: apiRes.url },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -75,7 +75,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: results.url },
+                        document: { url: apiRes.url },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });
@@ -83,7 +83,7 @@ cmd({
 
                 case "3":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: apiRes.url },
                         mimetype: "audio/mpeg",
                         ptt: true,
                     }, { quoted: receivedMsg });
@@ -196,21 +196,21 @@ cmd({
 
                 const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
-                if (!apiRes?.status || !apiRes.result?.url) {
+                if (!apiRes?.status ||!apiRes.url) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
                 }
 
-                const results = apiRes.result;
+                /*const results = apiRes.result;*/
 
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: results.url },
+                        document: { url: apiRes.url },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: results.url },
+                        video: { url: apiRes.url },
                         mimetype: "video/mp4",
                         ptt:false,
                     }, { quoted: receivedMsg });

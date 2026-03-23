@@ -20,7 +20,7 @@ cmd({
         const ytUrl = data.url;
 
         // Use Zenzxz API
-        const api = `https://www.ominisave.com/api/ytmp3?url=${encodeURIComponent(ytUrl)}`;
+        const api = `https://sadas-ytmp3-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
         if (!apiRes?.status || !apiRes.result?.url) {
@@ -120,11 +120,11 @@ cmd({
 
         // Define API links for multiple qualities
         const formats = {
-            "144p": `https://ominisave.vercel.app/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=144p`,
-            "240p": `https://ominisave.vercel.app/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=360p`,
-            "360p": `https://ominisave.vercel.app/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=480p`,
-            "480p": `https://ominisave.vercel.app/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=720p`,
-            "720p": `https://ominisave.vercel.app/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=1080p`
+            "144p": `https://sadas-ytmp4-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}&format=mp4&audioBitrate=128&videoQuality=144&filenameStyle=pretty&vCodec=h264`,
+            "240p": `https://sadas-ytmp4-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}&format=mp4&audioBitrate=128&videoQuality=240&filenameStyle=pretty&vCodec=h264`,
+            "360p": `https://sadas-ytmp4-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}&format=mp4&audioBitrate=128&videoQuality=360&filenameStyle=pretty&vCodec=h264`,
+            "480p": `https://sadas-ytmp4-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}&format=mp4&audioBitrate=128&videoQuality=480&filenameStyle=pretty&vCodec=h264`,
+            "720p": `https://sadas-ytmp4-5.vercel.app/convert?link=${encodeURIComponent(ytUrl)}&format=mp4&audioBitrate=128&videoQuality=720&filenameStyle=pretty&vCodec=h264`
         };
 
         // Prepare caption
@@ -196,7 +196,7 @@ cmd({
 
                 const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
-                if (!apiRes?.status || !apiRes.result?.downloadUrl) {
+                if (!apiRes?.status || !apiRes.result?.url) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
                 }
 
@@ -204,13 +204,13 @@ cmd({
 
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: results.downloadUrl },
+                        document: { url: results.url },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: results.downloadUrl },
+                        video: { url: results.url },
                         mimetype: "video/mp4",
                         ptt:false,
                     }, { quoted: receivedMsg });

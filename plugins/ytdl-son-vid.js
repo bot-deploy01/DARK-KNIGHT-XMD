@@ -2,6 +2,7 @@ const { cmd } = require('../command');
 const yts = require('yt-search');
 const axios = require('axios');
 
+
 cmd({
     pattern: "song",
     react: "🎵",
@@ -224,6 +225,7 @@ cmd({
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
 });
+
 
 cmd({
     pattern: "song1",
@@ -670,6 +672,7 @@ cmd({
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
 });
+
 
 cmd({
     pattern: "song3",

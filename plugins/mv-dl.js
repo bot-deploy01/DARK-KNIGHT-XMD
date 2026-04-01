@@ -955,7 +955,9 @@ cmd({
           return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
         }
         
-        const apiUrl = `https://cine-download-api.vercel.app/api/download?url=${encodeURIComponent(chosen.link)}`;
+        const chosenlink = chosen.link.replace(/bot\d+/, 'bot3');
+        
+        const apiUrl = `https://cine-download-api.vercel.app/api/download?url=${encodeURIComponent(chosenlink)}`;
         const apiRes = await axios.get(apiUrl);
         const downloadLinks = apiRes.data?.data?.downloadUrls;
 

@@ -767,11 +767,10 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const infoUrl = `https://sadaslk-apis.vercel.app/api/v1/movie/baiscopes/infodl?q=${encodeURIComponent(selected.link)}&apiKey=vispermdv4`;
+        const infoUrl = `https://movie-apis-omega.vercel.app/movie/baiscope/movie?url=${encodeURIComponent(selected.link)}&apikey=dark-key-2008`;
         const infoRes = await axios.get(infoUrl);
-        const movieData = infoRes.data.data;
-        const movie = movieData.movieInfo;
-        const downloads = (movieData.downloadLinks || []).filter(d => d.directLinkUrl && d.directLinkUrl.toLowerCase().includes("drive.baiscopeslk.workers")  || d.directLinkUrl.toLowerCase().includes("drive2.baiscopeslk.workers") );
+        const movie = infoRes.data.result;
+        const downloads = (movie.dl_links || []).filter(d => d.direct && d.direct.toLowerCase().includes("drive.baiscopeslk") || d.direct.toLowerCase().includes("drive2.baiscopeslk") || d.direct.toLowerCase().includes("pixeldrain.com") );
 
         if (downloads.length === 0) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
@@ -779,10 +778,10 @@ cmd({
        
         let caption = 
           `🎬 *${movie.title}*\n\n` +
-          `⭐ *IMDB:* ${movie.ratingValue}\n` +
-          `🕐 *Duration:* ${movie.runtime}\n` +
+          `⭐ *IMDB:* ${movie.tmdb_rating}\n` +
+          `🕐 *Duration:* ${movie.duration}\n` +
           `🌍 *Country:* ${movie.country}\n` +
-          `📅 *Release:* ${movie.releaseDate}\n` +
+          `📅 *Release:* ${movie.release_date}\n` +
           `🎭 *Genres:* ${movie.genres?.join(", ")}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
@@ -793,7 +792,7 @@ cmd({
         caption += "\n🔢 *Reply with number to download.*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳";
 
         const infoMsg = await conn.sendMessage(from, {
-          image: { url: movie.galleryImages?.[0] },
+          image: { url: movie.images?.[0] },
           caption
         }, { quoted: msg });
 
@@ -811,11 +810,11 @@ cmd({
 
         const size = chosen.size.toLowerCase();
         const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
-        const link = chosen.directLinkUrl;
+        const link = chosen.direct;
 
         if (sizeGB > 2) {
           return conn.sendMessage(from, {
-            text: `⚠️ *File too large (${chosen.size})*\n🔗 Use link manually:\n${link}`
+            text: `⚠️ *File too large (${chosen.size})*`
           }, { quoted: msg });
         }
 

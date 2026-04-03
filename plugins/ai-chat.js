@@ -68,7 +68,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
     try {
         if (!q) return reply("Please provide a message for OpenAI.\nExample: `.openai Hello`");
 
-        const apiUrl = `https://malvin-api.vercel.app/ai/openai?text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.malvin.gleeze.com/ai/openai?text=${encodeURIComponent(q)}&apikey=mvn_c2faaeeccbfd38b5c21c08e5d60f4db8`;
         const { data } = await axios.get(apiUrl);
 
         if (!data || !data.result) {
@@ -99,7 +99,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         }
 
         // ✅ Malvin API - GPT-5 Endpoint
-        const apiUrl = `https://malvin-api.vercel.app/ai/venice?text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.malvin.gleeze.com/ai/venice?text=${encodeURIComponent(q)}&apikey=mvn_c2faaeeccbfd38b5c21c08e5d60f4db8`;
 
         const { data } = await axios.get(apiUrl);
 
@@ -137,7 +137,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         if (!q) return reply("🧠 Please provide a message for the AI.\n\nExample: `.copilot Hello`");
 
         // ✅ Updated API URL (Malvin API)
-        const apiUrl = `https://malvin-api.vercel.app/ai/copilot?text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.malvin.gleeze.com/ai/copilot?text=${encodeURIComponent(q)}&apikey=mvn_c2faaeeccbfd38b5c21c08e5d60f4db8`;
 
         const { data } = await axios.get(apiUrl);
 
@@ -176,7 +176,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         if (!q) return reply("🧠 Please provide a message for the AI.\nExample: `.copilot2 Hello`");
 
         // ✅ Malvin API (Deep Thinking mode)
-        const apiUrl = `https://malvin-api.vercel.app/ai/copilot-think?text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.malvin.gleeze.com/ai/copilot-think?text=${encodeURIComponent(q)}&apikey=mvn_c2faaeeccbfd38b5c21c08e5d60f4db8`;
 
         const { data } = await axios.get(apiUrl);
 
@@ -218,7 +218,7 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         }
 
         // ✅ Malvin API - GPT-5 Endpoint
-        const apiUrl = `https://malvin-api.vercel.app/ai/gpt-5?text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.malvin.gleeze.com/ai/gpt-5?text=${encodeURIComponent(q)}&apikey=mvn_c2faaeeccbfd38b5c21c08e5d60f4db8`;
 
         const { data } = await axios.get(apiUrl);
 

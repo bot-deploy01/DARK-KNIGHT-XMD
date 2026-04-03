@@ -17,20 +17,23 @@ async (conn, mek, m, { from, q, reply, react }) => {
             );
         }
 
-        const apiUrl = `https://apis.sandarux.sbs/api/search/lyrics?apikey=darknero&title=${encodeURIComponent(q)}`;
+        const apiUrl = `https://api.princetechn.com/api/search/lyrics?apikey=prince&query=${encodeURIComponent(q)}`;
         const { data } = await axios.get(apiUrl);
 
-        if (!data || !data.title || !data.lyrics) {
+        if (!data || !data.result) {
             await react("❌");
             return reply("Lyrics not found.");
         }
 
+        const res = data.result;
+        
         let text = `🔍 *Lyrics Track Found* 🎵\n\n`;
-        text += `*📝 Name / TrackName:* ${data.title}\n`;
-        text += `*🕵️ ArtistName:* ${data.artist}\n`;
-        text += `*💽 AlbumName:* ${data.album}\n`;
-        text += `*📃 PlainLyrics:*\n ${data.lyrics}\n\n`;
-        text += `*📊 SyncedLyrics:*\n ${data.syncedLyrics}\n\n`;
+        text += `*📝 Name / TrackName:* ${res.title}\n`;
+        text += `*🕵️ ArtistName:* ${res.artist}\n`;
+        text += `*💽 AlbumName:* ${res.album}\n`;
+        text += `*⏱️ Duration:* ${res.duration} seconds\n\n`;
+        text += `*📃 PlainLyrics:*\n ${res.lyrics}\n\n`;
+        text += `*📊 SyncedLyrics:*\n ${res.syncedLyrics}\n\n`;
         text += `> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
        
         await reply(text);

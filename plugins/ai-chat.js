@@ -1,7 +1,7 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 
-cmd({
+/*cmd({
     pattern: "ai",
     desc: "Chat with an AI model",
     category: "ai",
@@ -27,10 +27,11 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
         await react("❌");
         reply("An error occurred while communicating with the AI.");
     }
-});
+});*/
 
 cmd({
     pattern: "openai",
+    alias: ["ai"],
     desc: "Chat with OpenAI",
     category: "ai",
     react: "🧠",

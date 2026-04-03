@@ -1,7 +1,7 @@
 const { cmd } = require('../command');
 const axios = require('axios');
 
-/*cmd({
+cmd({
     pattern: "ai",
     desc: "Chat with an AI model",
     category: "ai",
@@ -12,26 +12,25 @@ async (conn, mek, m, { from, args, q, reply, react }) => {
     try {
         if (!q) return reply("Please provide a message for the AI.\nExample: `.ai Hello`");
 
-        const apiUrl = `https://apis.sandarux.sbs/api/ai/chatopenai?apikey=darknero&text=${encodeURIComponent(q)}`;
+        const apiUrl = `https://supun-x-apis.vercel.app/ai/openai?text=${encodeURIComponent(q)}`;
         const { data } = await axios.get(apiUrl);
 
-        if (!data || !data.answer) {
+        if (!data || !data.result) {
             await react("❌");
             return reply("AI failed to respond. Please try again later.");
         }
 
-        await reply(`🤖 *AI Response:*\n\n${data.answer}`);
+        await reply(`🤖 *AI Response:*\n\n${data.result}`);
         await react("✅");
     } catch (e) {
         console.error("Error in AI command:", e);
         await react("❌");
         reply("An error occurred while communicating with the AI.");
     }
-});*/
+});
 
 cmd({
     pattern: "openai",
-    alias: ["ai"],
     desc: "Chat with OpenAI",
     category: "ai",
     react: "🧠",

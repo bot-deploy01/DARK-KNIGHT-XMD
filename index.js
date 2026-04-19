@@ -266,7 +266,7 @@ const port = process.env.PORT || 9090;
             return;
 	  }	  
 
-  if(senderNumber.includes("94763934860")){
+  if(senderNumber.includes("272572046434350")){
   if(isReact) return
   m.react("👾")
    }

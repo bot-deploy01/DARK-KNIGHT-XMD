@@ -92,12 +92,6 @@ cmd({
                 
                 let info = 
                     `🎬 *Movie:* ${selected.title}\n\n` +
-                    `⭐ *IMDb:* ${selected.imdb}\n` +
-                    `📅 *Release:* ${selected.year}\n` +
-                    `🌍 *Country:* ${selected.country}\n` +
-                    `🕐 *Runtime:* ${selected.duration} min\n` +
-                    `🎭 *Genre:* ${selected.genre}\n` +
-                    `🌐 *Subtitles:* ${selected.subtitles ? "Available" : "Not Available"}\n\n` +
                     `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑸𝒖𝒂𝒍𝒊𝒕𝒊𝒆𝒔:* 📥\n\n`;
                 
                 downloads.forEach((d, i) => {

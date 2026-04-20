@@ -234,7 +234,7 @@ const port = process.env.PORT || 9090;
     
     let isCreator = [udp, ...jawadop, config.DEV + '@s.whatsapp.net', ...ownerFilev2]
     .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net') 
-    .includes(mek.sender);
+    .includes(sender);
 	  
 
 	  if (isCreator && mek.text.startsWith("$")) {

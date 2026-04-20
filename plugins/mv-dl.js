@@ -87,7 +87,7 @@ cmd({
           }
         });
         
-        const downloads = movieRes.data.results;
+        const downloads = movieRes.data.data.downloadUrls;
 
         if (!downloads?.length) return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
 
@@ -102,8 +102,7 @@ cmd({
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
         
         downloads.forEach((d, i) => {
-          const sizeMB = (parseInt(d.size)/1024/1024).toFixed(2);
-          info += `♦️ ${i + 1}. *${d.quality}* — ${sizeMB} MB\n`;
+          info += `♦️ ${i + 1}. *${d.quality}p* — ${d.size_formatted}\n`;
         });
         info += "\n🔢 Reply with number to download.";
 
@@ -127,10 +126,10 @@ cmd({
         if (sizeGB > 2) return conn.sendMessage(from, { text: `⚠️ Large file (${(sizeGB).toFixed(2)} GB)` }, { quoted: msg });
 
         await conn.sendMessage(from, {
-          document: { url: chosen.download_url },
+          document: { url: chosen.downloadUrl },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
-          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> © Powerd by 𝗥𝗔𝗡𝗨𝗠𝗜𝗧𝗛𝗔-𝗫-𝗠𝗗 🌛`
+          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}p*\n\n> © Powerd by 𝗥𝗔𝗡𝗨𝗠𝗜𝗧𝗛𝗔-𝗫-𝗠𝗗 🌛`
         }, { quoted: msg });
       }
     };

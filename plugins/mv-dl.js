@@ -125,7 +125,7 @@ cmd({
           document: { url: chosen.downloadUrl },
           mimetype: "video/mp4",
           fileName: `${selected.title} - ${chosen.quality}.mp4`,
-          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}p*\n\n> © Powerd by 𝗥𝗔𝗡𝗨𝗠𝗜𝗧𝗛𝗔-𝗫-𝗠𝗗 🌛`
+          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}p*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
         }, { quoted: msg });
       }
     };

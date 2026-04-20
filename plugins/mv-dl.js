@@ -51,7 +51,7 @@ cmd({
 
     let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
     movieList.forEach(m => {
-      textList += `🔸 *${m.number}. ${m.title}*\n`;
+      textList += `🔸 *${m.number}. ${m.title}* (${m.year.split('-')[0]})\n`;
     });
 
     const sentMsg = await conn.sendMessage(from, {
@@ -81,10 +81,10 @@ cmd({
 
         const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
         const movieRes = await axios.get(movieUrl);
-        const downloads = movieRes.data.data?.downloadUrls;
+        const downloads = movieRes.data?.data?.data?.downloadUrls || movieRes.data?.data?.downloadUrls;
 
-         if (!downloads || downloads.length === 0) {
-             return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+         if (!downloads || !Array.isArray(downloads) || downloads.length === 0) {
+           return conn.sendMessage(from, { text: "No download links available for this movie." }, { quoted: msg });
          }
         
         let info = 

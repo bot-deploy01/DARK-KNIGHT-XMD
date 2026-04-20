@@ -31,17 +31,17 @@ cmd({
       
       data = res.data;
 
-      if (!data.results?.items?.length) throw new Error("No results found.");
+      if (!data.data?.items?.length) throw new Error("No results found.");
 
       movieCache.set(cacheKey, data);
     }
 
-    const movieList = data.results.items.map((m, i) => ({
+    const movieList = data.data.items.map((m, i) => ({
       number: i + 1,
       id: m.subjectId,
       title: m.title,
       year: m.releaseDate,
-      time: m.duration,
+      time: m.duration || "N/A",
       genre: m.genre,
       thumbnail: m.cover?.url || m.thumbnail,
       country: m.countryName,

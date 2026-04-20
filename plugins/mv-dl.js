@@ -6,6 +6,143 @@ const NodeCache = require("node-cache");
 const movieCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 cmd({
+  pattern: "moviepro",
+  alias: ["mpro"],
+  desc: "🎥 Search movies from GiftedTech MovieAPI",
+  category: "media",
+  react: "🎬",
+  filename: __filename
+}, async (conn, mek, m, { from, q }) => {
+
+  if (!q) return await conn.sendMessage(from, { text: "Use: .moviepro <movie name>" }, { quoted: mek });
+
+  try {
+    const cacheKey = `moviepro_${q.toLowerCase()}`;
+    let data = movieCache.get(cacheKey);
+
+    if (!data) {
+      const url = `https://silent-movies-api.vercel.app/api/search?q=${encodeURIComponent(q)}&key=silent`;
+      const res = await axios.get(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+          'Accept': 'application/json, text/plain, */*'
+        }
+      });
+      
+      data = res.data;
+
+      if (!data.results?.items?.length) throw new Error("No results found.");
+
+      movieCache.set(cacheKey, data);
+    }
+
+    const movieList = data.results.items.map((m, i) => ({
+      number: i + 1,
+      id: m.subjectId,
+      title: m.title,
+      year: m.releaseDate,
+      time: m.duration,
+      genre: m.genre,
+      thumbnail: m.cover?.url || m.thumbnail,
+      country: m.countryName,
+      imdb: m.imdbRatingValue,
+      post: m.postTitle
+    }));
+
+    let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
+    movieList.forEach(m => {
+      textList += `🔸 *${m.number}. ${m.title}*\n`;
+    });
+
+    const sentMsg = await conn.sendMessage(from, {
+      text: `*🔍 𝐌𝐎𝐕𝐈𝐄𝐏𝐑𝐎 𝑪𝑰𝑵𝑬𝑴𝑨 𝑺𝑬𝑨𝑹𝑪𝑯 🎥*\n\n${textList}\n💬 Reply with movie number to view details.\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`,
+    }, { quoted: mek });
+
+    const movieMap = new Map();
+
+    const listener = async (update) => {
+      const msg = update.messages?.[0];
+      if (!msg?.message?.extendedTextMessage) return;
+
+      const replyText = msg.message.extendedTextMessage.text.trim();
+      const repliedId = msg.message.extendedTextMessage.contextInfo?.stanzaId;
+
+      if (replyText.toLowerCase() === "done") {
+        conn.ev.off("messages.upsert", listener);
+        return conn.sendMessage(from, { text: "✅ Cancelled." }, { quoted: msg });
+      }
+
+      if (repliedId === sentMsg.key.id) {
+        const num = parseInt(replyText);
+        const selected = movieList.find(m => m.number === num);
+        if (!selected) return conn.sendMessage(from, { text: "*Invalid movie number.*" }, { quoted: msg });
+
+        await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
+
+        const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
+        const movieRes = await axios.get(movieUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            'Accept': 'application/json, text/plain, */*'
+          }
+        });
+        
+        const downloads = movieRes.data.results;
+
+        if (!downloads?.length) return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+
+        let info = 
+          `🎬 *${selected.title}*\n\n` +
+          `⭐ *IMDb:* ${selected.imdb}\n` +
+          `📅 *Released:* ${selected.year}\n` +
+          `🌍 *Country:* ${selected.country}\n` +
+          `🕐 *Runtime:* ${selected.time}\n` +
+          `🎭 *Category:* ${selected.genre}\n` +
+          `📝 *Posttitle:*\n${selected.post}\n\n` +
+          `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
+        
+        downloads.forEach((d, i) => {
+          const sizeMB = (parseInt(d.size)/1024/1024).toFixed(2);
+          info += `♦️ ${i + 1}. *${d.quality}* — ${sizeMB} MB\n`;
+        });
+        info += "\n🔢 Reply with number to download.";
+
+        const downloadMsg = await conn.sendMessage(from, {
+          image: { url: selected.thumbnail },
+          caption: info
+        }, { quoted: msg });
+
+        movieMap.set(downloadMsg.key.id, { selected, downloads });
+      }
+
+      else if (movieMap.has(repliedId)) {
+        const { selected, downloads } = movieMap.get(repliedId);
+        const num = parseInt(replyText);
+        const chosen = downloads[num - 1];
+        if (!chosen) return conn.sendMessage(from, { text: "*Invalid number.*" }, { quoted: msg });
+
+        await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
+
+        const sizeGB = parseInt(chosen.size)/1024/1024/1024;
+        if (sizeGB > 2) return conn.sendMessage(from, { text: `⚠️ Large file (${(sizeGB).toFixed(2)} GB)` }, { quoted: msg });
+
+        await conn.sendMessage(from, {
+          document: { url: chosen.download_url },
+          mimetype: "video/mp4",
+          fileName: `${selected.title} - ${chosen.quality}.mp4`,
+          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> © Powerd by 𝗥𝗔𝗡𝗨𝗠𝗜𝗧𝗛𝗔-𝗫-𝗠𝗗 🌛`
+        }, { quoted: msg });
+      }
+    };
+
+    conn.ev.on("messages.upsert", listener);
+
+  } catch (err) {
+    await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek });
+  }
+});
+
+cmd({
   pattern: "123mkv",
   alias: ["mkv"],
   desc: "🎥 Search Sinhala subbed movies from Pirate.lk",

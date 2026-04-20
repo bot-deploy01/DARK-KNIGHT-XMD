@@ -80,17 +80,13 @@ cmd({
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
         const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
-        const movieRes = await axios.get(movieUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-            'Accept': 'application/json, text/plain, */*'
-          }
-        });
-        
+        const movieRes = await axios.get(movieUrl);
         const downloads = movieRes.data.data.downloadUrls;
 
-        if (!downloads?.length) return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
-
+         if (!downloads || downloads.length === 0) {
+             return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+         }
+        
         let info = 
           `🎬 *${selected.title}*\n\n` +
           `⭐ *IMDb:* ${selected.imdb}\n` +

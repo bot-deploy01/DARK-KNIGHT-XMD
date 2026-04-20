@@ -41,9 +41,9 @@ cmd({
       id: m.subjectId,
       title: m.title,
       year: m.releaseDate,
-      time: m.duration || "N/A",
+      time: m.duration,
       genre: m.genre,
-      thumbnail: m.cover?.url || m.thumbnail,
+      thumbnail: m.cover?.url,
       country: m.countryName,
       imdb: m.imdbRatingValue,
       post: m.postTitle

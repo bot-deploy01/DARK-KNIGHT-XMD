@@ -106,8 +106,7 @@ cmd({
                 info += "\n🔢 Reply with the quality number to download.";
 
                 const downloadMsg = await conn.sendMessage(from, {
-                    image: { url: selected.thumbnail },
-                    caption: info
+                    text: info
                 }, { quoted: msg });
 
                 movieMap.set(downloadMsg.key.id, { selected, downloads });

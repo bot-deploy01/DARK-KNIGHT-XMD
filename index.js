@@ -203,8 +203,11 @@ const port = process.env.PORT || 9090;
   const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
   const isAdmins = isGroup ? groupAdmins.includes(sender) : false
   const isReact = m.message.reactionMessage ? true : false*/
+  const botLid = conn.user?.lid ? conn.user?.lid.split(":")[0] + "@lid" : null
+  const botLid2 = botLid ? botLid.split("@")[0] : null
   const ownernum = [`272572046434350`]
-  const isbot = botNumber.includes(senderNumber)
+  /*const isbot = botNumber.includes(senderNumber)*/
+  const isbot = (senderNumber === botNumber || (botLid2 && senderNumber === botLid2))
   const isdev = ownernum.includes(senderNumber)
   const isMe = isbot ? isbot : isdev 
   const isOwner = ownerNumber.includes(senderNumber) || isMe

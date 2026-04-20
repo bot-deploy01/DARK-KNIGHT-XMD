@@ -81,7 +81,7 @@ cmd({
 
         const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
         const movieRes = await axios.get(movieUrl);
-        const downloads = movieRes.data.data.downloadUrls;
+        const downloads = movieRes.data.data?.downloadUrls;
 
          if (!downloads || downloads.length === 0) {
              return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });

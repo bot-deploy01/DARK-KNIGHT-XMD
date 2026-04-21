@@ -1,68 +1,164 @@
 const config = require('../config')
-const {cmd , commands} = require('../command')
+const { cmd, commands } = require('../command')
 const os = require("os")
 
 cmd({
     pattern: "settings",
     alias: ["setting"],
-    desc: "settings the bot",
+    desc: "Detailed settings panel for Dark-Knight-XMD",
     category: "owner",
-    react: "⚙",
+    react: "⚙️",
     filename: __filename
-
-
 },
 async (conn, mek, m, { from, isOwner, quoted, reply }) => {
     if (!isOwner) return reply("❌ You are not the owner!");
+
     try {
-        let desc = `* _𝑺𝑬𝑻𝑻𝑰𝑵𝑮𝑺_
+        let desc = `*「 🛡️ DARK-KNIGHT-XMD SETTINGS 🛡️ 」*
 
+*🔢 Reply with the number to change settings*
 
-╭══════════════════════○
-┣━ *𝗪𝗢𝗥𝗞 𝗠𝗢𝗗𝗘 😈*
-> *1️⃣.1️⃣  Public Work*
-> *1️⃣.2️⃣  Private Work*
-> *1️⃣.3️⃣  Group Only*
-> *1️⃣.4️⃣  Inbox Only*
-╭══════════════════════○
-┣━ *𝗔𝗨𝗧𝗢 𝗩𝗢𝗜𝗖𝗘 😈*
-> *2️⃣.1️⃣ Auto Voice On*
-> *2️⃣.2️⃣ Auto Voice Off*
-╭══════════════════════○
-┣━ *𝗔𝗨𝗧𝗢 𝗦𝗧𝗔𝗧𝗨𝗦 𝗦𝗘𝗘𝗡 😈*
-> *3️⃣.1️⃣ Auto Read Status On*
-> *3️⃣.2️⃣ Auto Read Status Off*
-╭══════════════════════○
-┣━ *𝗔𝗨𝗧𝗢 𝗦𝗧𝗜𝗖𝗞𝗘𝗥 😈*
-> *4️⃣.1️⃣ Auto sticker On*
-> *4️⃣.2️⃣ Auto sticker Off*
-╭══════════════════════○
-┣━ *𝗔𝗨𝗧𝗢 𝗥𝗘𝗣𝗟𝗬😈*
-> *5️⃣.1️⃣ Auto reply On*
-> *5️⃣.2️⃣ Auto reply Off*
-╭══════════════════════○
-┣━ *𝗕𝗢𝗧 𝗢𝗡𝗟𝗜𝗡𝗘 𝗢𝗙𝗙𝗟𝗜𝗡𝗘 😈*
-> *6️⃣.1️⃣ Online On*
-> *6️⃣.2️⃣ Online Off*
-╭══════════════════════○
-┣━ *𝗠𝗦𝗚 𝗥𝗘𝗔𝗗 😈*
-> *7️⃣.1️⃣ Read Msg On*
-> *7️⃣.2️⃣ Read Msg Off*
-╭══════════════════════○
-┣━ *𝗠𝗦𝗚 𝗥𝗘𝗔𝗖𝗧 😈*
-> *8️⃣.1️⃣ Auto React On*
-> *8️⃣.2️⃣ Auto React Off*
-╭══════════════════════○
-┣━ *𝗔𝗡𝗧𝗜 𝗟𝗜𝗡𝗞 😈*
-> *9️⃣.1️⃣ Anti Link On*
-> *9️⃣.2️⃣ Anti Link Off*
-> *9️⃣.3️⃣ Anti Link Remove*
-╰═══════════════════════○
+*╭───────────────────────○*
+*│* ` + "｢ 01 ｣ WORK MODE" + `
+*│* *🔸 1.1* ❯❯◦ PUBLIC 🧬
+*│* *🔸 1.2* ❯❯◦ PRIVATE 🧬
+*│* *🔸 1.3* ❯❯◦ INBOX ONLY 🧬
+*│* *🔸 1.4* ❯❯◦ GROUPS ONLY 🧬
+*╰───────────────────────○*
 
+*╭───────────────────────○*
+*│* ` + "｢ 02 ｣ AUTO STATUS SEEN" + `
+*│* *🔸 2.1* ❯❯◦ TRUE 🔑
+*│* *🔸 2.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
 
-* *🔢 Reply Below This Number Change To Bot Change Setting*
+*╭───────────────────────○*
+*│* ` + "｢ 03 ｣ AUTO STATUS REPLY" + `
+*│* *🔸 3.1* ❯❯◦ TRUE 🔑
+*│* *🔸 3.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
 
-> powerd by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
+*╭───────────────────────○*
+*│* ` + "｢ 04 ｣ AUTO STATUS REACT" + `
+*│* *🔸 4.1* ❯❯◦ TRUE 🔑
+*│* *🔸 4.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 05 ｣ WELCOME & GOODBYE" + `
+*│* *🔸 5.1* ❯❯◦ TRUE 🔑
+*│* *🔸 5.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 06 ｣ ADMIN EVENTS" + `
+*│* *🔸 6.1* ❯❯◦ TRUE 🔑
+*│* *🔸 6.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 07 ｣ ANTI LINK" + `
+*│* *🔸 7.1* ❯❯◦ TRUE 🔑
+*│* *🔸 7.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 08 ｣ ANTI LINK KICK" + `
+*│* *🔸 8.1* ❯❯◦ TRUE 🔑
+*│* *🔸 8.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 09 ｣ DELETE LINKS" + `
+*│* *🔸 9.1* ❯❯◦ TRUE 🔑
+*│* *🔸 9.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 10 ｣ MENTION REPLY" + `
+*│* *🔸 10.1* ❯❯◦ TRUE 🔑
+*│* *🔸 10.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 11 ｣ CUSTOM REACT" + `
+*│* *🔸 11.1* ❯❯◦ TRUE 🔑
+*│* *🔸 11.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 12 ｣ READ MESSAGE" + `
+*│* *🔸 12.1* ❯❯◦ TRUE 🔑
+*│* *🔸 12.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 13 ｣ AUTO REACT" + `
+*│* *🔸 13.1* ❯❯◦ TRUE 🔑
+*│* *🔸 13.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 14 ｣ HEART REACT" + `
+*│* *🔸 14.1* ❯❯◦ TRUE 🔑
+*│* *🔸 14.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 15 ｣ ANTI BAD" + `
+*│* *🔸 15.1* ❯❯◦ TRUE 🔑
+*│* *🔸 15.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 16 ｣ AUTO VOICE" + `
+*│* *🔸 16.1* ❯❯◦ TRUE 🔑
+*│* *🔸 16.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 17 ｣ AUTO STICKER" + `
+*│* *🔸 17.1* ❯❯◦ TRUE 🔑
+*│* *🔸 17.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 18 ｣ AUTO REPLY" + `
+*│* *🔸 18.1* ❯❯◦ TRUE 🔑
+*│* *🔸 18.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 19 ｣ ALWAYS ONLINE" + `
+*│* *🔸 19.1* ❯❯◦ TRUE 🔑
+*│* *🔸 19.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 20 ｣ AUTO TYPING" + `
+*│* *🔸 20.1* ❯❯◦ TRUE 🔑
+*│* *🔸 20.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 21 ｣ READ COMMAND" + `
+*│* *🔸 21.1* ❯❯◦ TRUE 🔑
+*│* *🔸 21.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 22 ｣ ANTI ONCE VIEW (VV)" + `
+*│* *🔸 22.1* ❯❯◦ TRUE 🔑
+*│* *🔸 22.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+*╭───────────────────────○*
+*│* ` + "｢ 23 ｣ AUTO RECORDING" + `
+*│* *🔸 23.1* ❯❯◦ TRUE 🔑
+*│* *🔸 23.2* ❯❯◦ FALSE 🔒
+*╰───────────────────────○*
+
+> *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳*`;
 
         const vv = await conn.sendMessage(from, { image: { url: config.MENU_IMAGE_URL }, caption: desc }, { quoted: mek });
 
@@ -71,86 +167,76 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
             if (!msg.message || !msg.message.extendedTextMessage) return;
 
             const selectedOption = msg.message.extendedTextMessage.text.trim();
+            const isReplyToBot = msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === vv.key.id;
 
-            if (msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === vv.key.id) {
+            const sender = msg.key.participant || msg.key.remoteJid;
+            const isOwnerReply = config.OWNER_NUMBER.includes(sender.split('@')[0]) || msg.key.fromMe;
+
+            if (isReplyToBot && isOwnerReply) {
+                let successMsg = "";
+
                 switch (selectedOption) {
-                    case '1.1':
-                        reply(".update MODE:public" );
-                        break;
-                    case '1.2':               
-                        reply(".update MODE:private");
-                        break;
-                    case '1.3':               
-                          reply(".update MODE:group");
-                      break;
-                    case '1.4':     
-                        reply(".update MODE:inbox");
-                      break;
-                    case '2.1':     
-                        reply(".update AUTO_VOICE:true");
-                        break;
-                    case '2.2':     
-                        reply(".update AUTO_VOICE:false");
-                    break;
-                    case '3.1':    
-                        reply(".update AUTO_READ_STATUS:true");
-                    break;
-                    case '3.2':    
-                        reply(".update AUTO_READ_STATUS:false");
-                    break;                    
-                    case '4.1':    
-                        reply(".update AUTO_STICKER:true");
-                    break;
-                    case '4.2':    
-                        reply(".update AUTO_STICKER:false");
-                    break;                                        
-                    case '5.1':    
-                        reply(".update AUTO_REPLY:true");
-                    break;
-                    case '5.2':    
-                        reply(".update AUTO_REPLY:false");
-                    break;                        
-                    case '6.1':    
-                        reply(".update ALLWAYS_OFFLINE:true");
-                    break; 
-                    case '6.2':    
-                        reply(".update ALLWAYS_OFFLINE:false");
-                    break;                       
-                    case '7.1':    
-                        reply(".update READ_MESSAGE:true");
-                    break;
-                    case '7.2':    
-                        reply(".update READ_MESSAGE:false");
-                    break;
-                    case '8.1':    
-                        reply(".update config.AUTO_REACT:true");
-                    break;
-                    case '8.2':    
-                        reply(".update config.AUTO_REACT:false");
-                    break;
-                    case '9.1':    
-                        reply(".update ANTI_LINK:true");
-                        reply(".update ANTI_LINKK:false");
-                    break;
-                    case '9.2':    
-                        reply(".update ANTI_LINKK:true");
-                        reply(".update ANTI_LINK:false");
-                    break;
-                    case '9.3':    
-                        reply(".update ANTI_LINK:false");
-                        reply(".update ANTI_LINKK:false");
-                    break;
-                    default:
-                        reply("Invalid option. Please select a valid option🔴");
+                    case '1.1': config.MODE = "public"; successMsg = "Mode: PUBLIC"; break;
+                    case '1.2': config.MODE = "private"; successMsg = "Mode: PRIVATE"; break;
+                    case '1.3': config.MODE = "inbox"; successMsg = "Mode: INBOX ONLY"; break;
+                    case '1.4': config.MODE = "group"; successMsg = "Mode: GROUPS ONLY"; break;
+                    case '2.1': config.AUTO_STATUS_SEEN = "true"; successMsg = "Auto Status Seen: ON"; break;
+                    case '2.2': config.AUTO_STATUS_SEEN = "false"; successMsg = "Auto Status Seen: OFF"; break;
+                    case '3.1': config.AUTO_STATUS_REPLY = "true"; successMsg = "Auto Status Reply: ON"; break;
+                    case '3.2': config.AUTO_STATUS_REPLY = "false"; successMsg = "Auto Status Reply: OFF"; break;
+                    case '4.1': config.AUTO_STATUS_REACT = "true"; successMsg = "Auto Status React: ON"; break;
+                    case '4.2': config.AUTO_STATUS_REACT = "false"; successMsg = "Auto Status React: OFF"; break;
+                    case '5.1': config.WELCOME = "true"; successMsg = "Welcome: ON"; break;
+                    case '5.2': config.WELCOME = "false"; successMsg = "Welcome: OFF"; break;
+                    case '6.1': config.ADMIN_EVENTS = "true"; successMsg = "Admin Events: ON"; break;
+                    case '6.2': config.ADMIN_EVENTS = "false"; successMsg = "Admin Events: OFF"; break;
+                    case '7.1': config.ANTI_LINK = "true"; successMsg = "Anti Link: ON"; break;
+                    case '7.2': config.ANTI_LINK = "false"; successMsg = "Anti Link: OFF"; break;
+                    case '8.1': config.ANTI_LINK_KICK = "true"; successMsg = "Anti Link Kick: ON"; break;
+                    case '8.2': config.ANTI_LINK_KICK = "false"; successMsg = "Anti Link Kick: OFF"; break;
+                    case '9.1': config.DELETE_LINKS = "true"; successMsg = "Delete Links: ON"; break;
+                    case '9.2': config.DELETE_LINKS = "false"; successMsg = "Delete Links: OFF"; break;
+                    case '10.1': config.MENTION_REPLY = "true"; successMsg = "Mention Reply: ON"; break;
+                    case '10.2': config.MENTION_REPLY = "false"; successMsg = "Mention Reply: OFF"; break;
+                    case '11.1': config.CUSTOM_REACT = "true"; successMsg = "Custom React: ON"; break;
+                    case '11.2': config.CUSTOM_REACT = "false"; successMsg = "Custom React: OFF"; break;
+                    case '12.1': config.READ_MESSAGE = "true"; successMsg = "Read Message: ON"; break;
+                    case '12.2': config.READ_MESSAGE = "false"; successMsg = "Read Message: OFF"; break;
+                    case '13.1': config.AUTO_REACT = "true"; successMsg = "Auto React: ON"; break;
+                    case '13.2': config.AUTO_REACT = "false"; successMsg = "Auto React: OFF"; break;
+                    case '14.1': config.HEART_REACT = "true"; successMsg = "Heart React: ON"; break;
+                    case '14.2': config.HEART_REACT = "false"; successMsg = "Heart React: OFF"; break;
+                    case '15.1': config.ANTI_BAD = "true"; successMsg = "Anti Bad: ON"; break;
+                    case '15.2': config.ANTI_BAD = "false"; successMsg = "Anti Bad: OFF"; break;
+                    case '16.1': config.AUTO_VOICE = "true"; successMsg = "Auto Voice: ON"; break;
+                    case '16.2': config.AUTO_VOICE = "false"; successMsg = "Auto Voice: OFF"; break;
+                    case '17.1': config.AUTO_STICKER = "true"; successMsg = "Auto Sticker: ON"; break;
+                    case '17.2': config.AUTO_STICKER = "false"; successMsg = "Auto Sticker: OFF"; break;
+                    case '18.1': config.AUTO_REPLY = "true"; successMsg = "Auto Reply: ON"; break;
+                    case '18.2': config.AUTO_REPLY = "false"; successMsg = "Auto Reply: OFF"; break;
+                    case '19.1': config.ALWAYS_ONLINE = "true"; successMsg = "Always Online: ON"; break;
+                    case '19.2': config.ALWAYS_ONLINE = "false"; successMsg = "Always Online: OFF"; break;
+                    case '20.1': config.AUTO_TYPING = "true"; successMsg = "Auto Typing: ON"; break;
+                    case '20.2': config.AUTO_TYPING = "false"; successMsg = "Auto Typing: OFF"; break;
+                    case '21.1': config.READ_CMD = "true"; successMsg = "Read Command: ON"; break;
+                    case '21.2': config.READ_CMD = "false"; successMsg = "Read Command: OFF"; break;
+                    case '22.1': config.ANTI_VV = "true"; successMsg = "Anti Once View: ON"; break;
+                    case '22.2': config.ANTI_VV = "false"; successMsg = "Anti Once View: OFF"; break;
+                    case '23.1': config.AUTO_RECORDING = "true"; successMsg = "Auto Recording: ON"; break;
+                    case '23.2': config.AUTO_RECORDING = "false"; successMsg = "Auto Recording: OFF"; break;
+                    default: return;
                 }
 
+                if (successMsg) {
+                    await conn.sendMessage(from, { react: { text: '✅', key: msg.key } });
+                    return reply(`✅ *UPDATE*\n\n${successMsg}`);
+                }
             }
         });
 
     } catch (e) {
         console.error(e);
-        await conn.sendMessage(from, { react: { text: '❌', key: mek.key } })
-        reply('An error occurred while processing your request.');
+        reply('An error occurred.');
     }
 });
 

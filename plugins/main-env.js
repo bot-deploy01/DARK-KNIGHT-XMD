@@ -18,145 +18,99 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
 
 *🔢 Reply with the number to change settings*
 
-*╭───────────────────────○*
-*│* ` + "｢ 01 ｣ WORK MODE" + `
-*│* *🔸 1.1* ❯❯◦ PUBLIC 🧬
-*│* *🔸 1.2* ❯❯◦ PRIVATE 🧬
-*│* *🔸 1.3* ❯❯◦ INBOX ONLY 🧬
-*│* *🔸 1.4* ❯❯◦ GROUPS ONLY 🧬
-*╰───────────────────────○*
+*` + "`[01] MODE`" + `*
+*🔸 1.1* ❯❯◦ *PUBLIC* 🧬
+*🔸 1.2* ❯❯◦ *PRIVATE* 🧬
+*🔸 1.3* ❯❯◦ *GROUPS* 🧬
+*🔸 1.4* ❯❯◦ *INBOX* 🧬
 
-*╭───────────────────────○*
-*│* ` + "｢ 02 ｣ AUTO STATUS SEEN" + `
-*│* *🔸 2.1* ❯❯◦ TRUE 🔑
-*│* *🔸 2.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[02] AUTO STATUS SEEN`" + `*
+*🔸 2.1* ❯❯◦ *TRUE* 🔑
+*🔸 2.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 03 ｣ AUTO STATUS REPLY" + `
-*│* *🔸 3.1* ❯❯◦ TRUE 🔑
-*│* *🔸 3.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[03] AUTO STATUS REPLY`" + `*
+*🔸 3.1* ❯❯◦ *TRUE* 🔑
+*🔸 3.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 04 ｣ AUTO STATUS REACT" + `
-*│* *🔸 4.1* ❯❯◦ TRUE 🔑
-*│* *🔸 4.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[04] AUTO STATUS REACT`" + `*
+*🔸 4.1* ❯❯◦ *TRUE* 🔑
+*🔸 4.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 05 ｣ WELCOME & GOODBYE" + `
-*│* *🔸 5.1* ❯❯◦ TRUE 🔑
-*│* *🔸 5.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[05] WELCOME & GOODBYE`" + `*
+*🔸 5.1* ❯❯◦ *TRUE* 🔑
+*🔸 5.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 06 ｣ ADMIN EVENTS" + `
-*│* *🔸 6.1* ❯❯◦ TRUE 🔑
-*│* *🔸 6.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[06] ADMIN EVENTS`" + `*
+*🔸 6.1* ❯❯◦ *TRUE* 🔑
+*🔸 6.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 07 ｣ ANTI LINK" + `
-*│* *🔸 7.1* ❯❯◦ TRUE 🔑
-*│* *🔸 7.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[07] ANTI LINK`" + `*
+*🔸 7.1* ❯❯◦ *TRUE* 🔑
+*🔸 7.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 08 ｣ ANTI LINK KICK" + `
-*│* *🔸 8.1* ❯❯◦ TRUE 🔑
-*│* *🔸 8.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[08] ANTI LINK KICK`" + `*
+*🔸 8.1* ❯❯◦ *TRUE* 🔑
+*🔸 8.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 09 ｣ DELETE LINKS" + `
-*│* *🔸 9.1* ❯❯◦ TRUE 🔑
-*│* *🔸 9.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[09] DELETE LINKS`" + `*
+*🔸 9.1* ❯❯◦ *TRUE* 🔑
+*🔸 9.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 10 ｣ MENTION REPLY" + `
-*│* *🔸 10.1* ❯❯◦ TRUE 🔑
-*│* *🔸 10.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[10] MENTION REPLY`" + `*
+*🔸 10.1* ❯❯◦ *TRUE* 🔑
+*🔸 10.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 11 ｣ CUSTOM REACT" + `
-*│* *🔸 11.1* ❯❯◦ TRUE 🔑
-*│* *🔸 11.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[11] CUSTOM REACT`" + `*
+*🔸 11.1* ❯❯◦ *TRUE* 🔑
+*🔸 11.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 12 ｣ READ MESSAGE" + `
-*│* *🔸 12.1* ❯❯◦ TRUE 🔑
-*│* *🔸 12.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[12] READ MESSAGE`" + `*
+*🔸 12.1* ❯❯◦ *TRUE* 🔑
+*🔸 12.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 13 ｣ AUTO REACT" + `
-*│* *🔸 13.1* ❯❯◦ TRUE 🔑
-*│* *🔸 13.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[13] AUTO REACT`" + `*
+*🔸 13.1* ❯❯◦ *TRUE* 🔑
+*🔸 13.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 14 ｣ HEART REACT" + `
-*│* *🔸 14.1* ❯❯◦ TRUE 🔑
-*│* *🔸 14.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[14] HEART REACT`" + `*
+*🔸 14.1* ❯❯◦ *TRUE* 🔑
+*🔸 14.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 15 ｣ ANTI BAD" + `
-*│* *🔸 15.1* ❯❯◦ TRUE 🔑
-*│* *🔸 15.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[15] ANTI BAD`" + `*
+*🔸 15.1* ❯❯◦ *TRUE* 🔑
+*🔸 15.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 16 ｣ AUTO VOICE" + `
-*│* *🔸 16.1* ❯❯◦ TRUE 🔑
-*│* *🔸 16.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[16] AUTO VOICE`" + `*
+*🔸 16.1* ❯❯◦ *TRUE* 🔑
+*🔸 16.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 17 ｣ AUTO STICKER" + `
-*│* *🔸 17.1* ❯❯◦ TRUE 🔑
-*│* *🔸 17.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[17] AUTO STICKER`" + `*
+*🔸 17.1* ❯❯◦ *TRUE* 🔑
+*🔸 17.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 18 ｣ AUTO REPLY" + `
-*│* *🔸 18.1* ❯❯◦ TRUE 🔑
-*│* *🔸 18.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[18] AUTO REPLY`" + `*
+*🔸 18.1* ❯❯◦ *TRUE* 🔑
+*🔸 18.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 19 ｣ ALWAYS ONLINE" + `
-*│* *🔸 19.1* ❯❯◦ TRUE 🔑
-*│* *🔸 19.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[19] ALWAYS ONLINE`" + `*
+*🔸 19.1* ❯❯◦ *TRUE* 🔑
+*🔸 19.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 20 ｣ AUTO TYPING" + `
-*│* *🔸 20.1* ❯❯◦ TRUE 🔑
-*│* *🔸 20.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[20] AUTO TYPING`" + `*
+*🔸 20.1* ❯❯◦ *TRUE* 🔑
+*🔸 20.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 21 ｣ READ COMMAND" + `
-*│* *🔸 21.1* ❯❯◦ TRUE 🔑
-*│* *🔸 21.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[21] READ COMMAND`" + `*
+*🔸 21.1* ❯❯◦ *TRUE* 🔑
+*🔸 21.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 22 ｣ ANTI ONCE VIEW (VV)" + `
-*│* *🔸 22.1* ❯❯◦ TRUE 🔑
-*│* *🔸 22.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[22] ANTI ONCE VIEW`" + `*
+*🔸 22.1* ❯❯◦ *TRUE* 🔑
+*🔸 22.2* ❯❯◦ *FALSE* 🔒
 
-*╭───────────────────────○*
-*│* ` + "｢ 23 ｣ AUTO RECORDING" + `
-*│* *🔸 23.1* ❯❯◦ TRUE 🔑
-*│* *🔸 23.2* ❯❯◦ FALSE 🔒
-*╰───────────────────────○*
+*` + "`[23] AUTO RECORDING`" + `*
+*🔸 23.1* ❯❯◦ *TRUE* 🔑
+*🔸 23.2* ❯❯◦ *FALSE* 🔒
 
 > *© ᴘᴏᴡᴇʀᴇᴅ ʙʏ 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳*`;
 
@@ -169,17 +123,16 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
             const selectedOption = msg.message.extendedTextMessage.text.trim();
             const isReplyToBot = msg.message.extendedTextMessage.contextInfo && msg.message.extendedTextMessage.contextInfo.stanzaId === vv.key.id;
 
-            const sender = msg.key.participant || msg.key.remoteJid;
-            const isOwnerReply = config.OWNER_NUMBER.includes(sender.split('@')[0]) || msg.key.fromMe;
+            if (isReplyToBot) {
+                // මෙතනදීත් ඔයාගේ isOwner logic එක check කරනවා
+                if (!isOwner) return reply("❌ You are not the owner!");
 
-            if (isReplyToBot && isOwnerReply) {
                 let successMsg = "";
-
                 switch (selectedOption) {
                     case '1.1': config.MODE = "public"; successMsg = "Mode: PUBLIC"; break;
                     case '1.2': config.MODE = "private"; successMsg = "Mode: PRIVATE"; break;
-                    case '1.3': config.MODE = "inbox"; successMsg = "Mode: INBOX ONLY"; break;
-                    case '1.4': config.MODE = "group"; successMsg = "Mode: GROUPS ONLY"; break;
+                    case '1.3': config.MODE = "group"; successMsg = "Mode: GROUPS"; break;
+                    case '1.4': config.MODE = "inbox"; successMsg = "Mode: INBOX"; break;
                     case '2.1': config.AUTO_STATUS_SEEN = "true"; successMsg = "Auto Status Seen: ON"; break;
                     case '2.2': config.AUTO_STATUS_SEEN = "false"; successMsg = "Auto Status Seen: OFF"; break;
                     case '3.1': config.AUTO_STATUS_REPLY = "true"; successMsg = "Auto Status Reply: ON"; break;
@@ -229,7 +182,7 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
 
                 if (successMsg) {
                     await conn.sendMessage(from, { react: { text: '✅', key: msg.key } });
-                    return reply(`✅ *UPDATE*\n\n${successMsg}`);
+                    return reply(`✅ *DARK-KNIGHT-XMD UPDATE*\n\n${successMsg}`);
                 }
             }
         });
@@ -239,6 +192,7 @@ async (conn, mek, m, { from, isOwner, quoted, reply }) => {
         reply('An error occurred.');
     }
 });
+
 
 /*const config = require('../config');
 const { cmd, commands } = require('../command');

@@ -842,10 +842,6 @@ cmd({
   filename: __filename
 }, async (conn, mek, m, { from, q }) => {
 
-  const axios = require("axios");
-  const NodeCache = require("node-cache");
-  const movieCache = new NodeCache({ stdTTL: 1800 }); // cache 30 min
-
   if (!q) {
     return conn.sendMessage(from, {
       text: "*Usage:* .baiscope <movie name>"
@@ -900,7 +896,10 @@ cmd({
         const infoUrl = `https://movie-apis-omega.vercel.app/movie/baiscope/movie?url=${encodeURIComponent(selected.link)}&apikey=dark-key-2008`;
         const infoRes = await axios.get(infoUrl);
         const movie = infoRes.data.result;
-        const downloads = (movie.dl_links || []).filter(d => d.direct && d.direct.toLowerCase().includes("drive.baiscopeslk") || d.direct.toLowerCase().includes("drive2.baiscopeslk") || d.direct.toLowerCase().includes("pixeldrain.com") );
+        
+        const downloads = (movie.dl_links || []).filter(d => 
+          d.direct && (d.direct.includes("drive.baiscopeslk.workers.dev") || d.direct.includes("drive2.baiscopeslk.workers.dev"))
+        );
 
         if (downloads.length === 0) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });

@@ -21,7 +21,7 @@ cmd({
 
         let listMsg = `✨ *LOGO MAKER LIST* ✨\n\n`;
         listMsg += `📝 *Name:* ${q}\n\n`;
-        listMsg += `*Patterns:*\n`;
+        listMsg += `🎨 *Patterns:*\n\n`;
 
         types.forEach((item, index) => {
             listMsg += `*${index + 1}.* ${item}\n`;
@@ -116,7 +116,7 @@ cmd({
                     await conn.sendMessage(m.chat, {
                         document: buffer,
                         mimetype: 'image/png',
-                        fileName: `DARK-KNIGHT_${type}_logo.png`,
+                        fileName: `DARK-KNIGHT-${type}-logo.png`,
                         caption: `✨ *Logo Document*\n\n📌 *Type:* ${type}\n📝 *Name:* ${name}`
                     }, { quoted: mek });
                 } 

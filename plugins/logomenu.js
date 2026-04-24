@@ -143,7 +143,7 @@ cmd({
 
 
 cmd({
-    pattern: "logo",
+    pattern: "logo2",
     alias: ["logomenu"],
     desc: "menu the bot",
     category: "menu",

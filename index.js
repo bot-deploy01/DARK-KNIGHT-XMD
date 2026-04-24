@@ -23,7 +23,7 @@ const {
   
   
   const l = console.log
-  const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
+  const { getBuffer, getGroupAdmins, isParticipantAdmin, getParticipantIds, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson } = require('./lib/functions')
   const { AntiDelDB, initializeAntiDeleteSettings, setAnti, getAnti, getAllAntiDeleteSettings, saveContact, loadMessage, getName, getChatSummary, saveGroupMetadata, getGroupMetadata, saveMessageCount, getInactiveGroupMembers, getGroupMembersMessageCount, saveMessage } = require('./data')
   const fs = require('fs')
   const ff = require('fluent-ffmpeg')
@@ -211,12 +211,20 @@ const port = process.env.PORT || 9090;
   const isMe = isbot ? isbot : isdev 
   const isOwner = ownerNumber.includes(senderNumber) || isMe
   const botNumber2 = await jidNormalizedUser(conn.user.id);
-  const groupMetadata = isGroup ? await conn.groupMetadata(from).catch(e => null) : null;
-  const groupName = isGroup && groupMetadata ? groupMetadata.subject : '';
-  const participants = isGroup && groupMetadata ? groupMetadata.participants : [];
+
+  let groupMetadata = { subject: '', participants: [] }
+   if (isGroup) {
+    try {
+     groupMetadata = await conn.groupMetadata(from);
+    } catch (e) {
+    // console.error('Failed to get group metadata:', e);
+     }
+  }
+  const groupName = groupMetadata.subject;
+  const participants = groupMetadata.participants || [];
   const groupAdmins = isGroup ? getGroupAdmins(participants) : [];
-  const isBotAdmins = isGroup ? groupAdmins.includes(botNumber2) : false
-  const isAdmins = isGroup ? groupAdmins.includes(sender) : false
+  const isBotAdmins = isGroup ? isParticipantAdmin(participants, [botNumber2, botLid, botNumber + '@s.whatsapp.net']) : false;
+  const isAdmins = isGroup ? isParticipantAdmin(participants, [sender, senderNumber + '@s.whatsapp.net', senderNumber + '@lid']) : false;
   const isReact = m.message.reactionMessage ? true : false
 	  
   const reply = (teks) => {

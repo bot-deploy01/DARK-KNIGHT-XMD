@@ -427,6 +427,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • jid2
 ┃★│ • gjid
 ┃★│ • forward
+┃★│ • fwd2
 ┃★│ • send
 ┃★│ • persion
 ┃★╰──────────────

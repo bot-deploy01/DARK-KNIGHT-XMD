@@ -39,7 +39,7 @@ cmd({
         await conn.sendMessage(from, {
             document: fs.readFileSync(nmfilect), 
             mimetype: 'text/vcard', 
-            fileName: 'DARK-KNIGHT-XMD.vcf', 
+            fileName: 'DARK-KNIGHT.vcf', 
             caption: `\nDone saving.\nGroup Name: *${cmiggc.subject}*\nContacts: *${cmiggc.participants.length}*\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`}, { quoted: mek });
 
         fs.unlinkSync(nmfilect); // Cleanup the file after sending

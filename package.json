@@ -49,6 +49,8 @@
     "sqlite3": "^5.1.7",
     "dotenv": "^16.5.0",
     "api-dylux":"latest",
-    "@bochilteam/scraper": "latest"
+    "@bochilteam/scraper": "latest",
+    "mime-types": "^2.1.35",
+    "@google/genai": "latest"
   }
 }

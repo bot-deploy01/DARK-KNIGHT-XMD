@@ -3,7 +3,7 @@ const { cmd } = require("../command");
 const { fetchJson, getBuffer } = require('../lib/functions');
 const { Sticker, StickerTypes } = require('wa-sticker-formatter'); 
 
-// --- 1. LOGO LIST---
+// --- 1. LOGO LIST ---
 cmd({
     pattern: "logo",
     react: "✨",
@@ -42,26 +42,20 @@ cmd({
     on: "body"
 }, async (conn, mek, m, { body, reply }) => {
     try {
-     
         if (!m.quoted) return;
         
         const quotedText = m.quoted.text || m.quoted.conversation || "";
         if (!quotedText) return;
 
-        
         const selection = body.trim();
         if (isNaN(selection)) return;
         const num = parseInt(selection);
 
-
-        
+        // --- Logo Type Selection ---
         if (quotedText.includes("LOGO MAKER LIST")) {
-            
-            
             if (!quotedText.includes("Name:* ")) return;
             const name = quotedText.split("Name:* ")[1].split("\n")[0].trim();
 
-            
             const lines = quotedText.split("\n");
             const targetLine = lines.find(l => l.includes(`*${num}.*`));
             if (!targetLine) return;
@@ -69,7 +63,9 @@ cmd({
             const type = targetLine.split(".* ")[1].trim();
 
             if (type) {
-                
+                // React with Checkmark
+                await conn.sendMessage(m.chat, { react: { text: "🎨", key: m.key } });
+
                 let formatMsg = `⚙️ *FORMAT SELECTION* ⚙️\n\n`;
                 formatMsg += `📝 *Name:* ${name}\n`;
                 formatMsg += `🎨 *Pattern:* ${type}\n\n`;
@@ -82,36 +78,29 @@ cmd({
             }
         }
 
-
-        
+        // --- Format Selection (Image/Doc/Sticker) ---
         if (quotedText.includes("FORMAT SELECTION")) {
-            
-            
-            if (![1, 2, 3].includes(num)) return reply("❌ *Number Reply Error.*");
+            if (![1, 2, 3].includes(num)) return;
 
-            
             if (!quotedText.includes("Name:* ")) return;
             const name = quotedText.split("Name:* ")[1].split("\n")[0].trim();
 
-            
             if (!quotedText.includes("Pattern:* ")) return;
             const type = quotedText.split("Pattern:* ")[1].split("\n")[0].trim();
 
             if (name && type) {
-                reply(`🔄 *Generating ${type} logo...*`);
+                // මෙතන තිබුණු reply එක අයින් කරලා ⏳ reaction එක දැම්මා
+                await conn.sendMessage(m.chat, { react: { text: "⏳", key: m.key } });
 
-                
                 const logoUrl = `https://www.ominisave.com/api/logo?name=${encodeURIComponent(name)}&type=${type}`;
                 const buffer = await getBuffer(logoUrl);
 
-                
                 if (num === 1) {
                     await conn.sendMessage(m.chat, {
                         image: buffer,
                         caption: `✨ *Logo Generated*\n\n📌 *Type:* ${type}\n📝 *Name:* ${name}`
                     }, { quoted: mek });
                 } 
-               
                 else if (num === 2) {
                     await conn.sendMessage(m.chat, {
                         document: buffer,
@@ -120,7 +109,6 @@ cmd({
                         caption: `✨ *Logo Document*\n\n📌 *Type:* ${type}\n📝 *Name:* ${name}`
                     }, { quoted: mek });
                 } 
-                
                 else if (num === 3) {
                     let sticker = new Sticker(buffer, {
                         pack: `Logo-${type.toUpperCase()}`,
@@ -133,6 +121,9 @@ cmd({
                     const stickerBuffer = await sticker.build();
                     await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: mek });
                 }
+
+                // වැඩේ ඉවර වුනාම Success Reaction එකක්
+                await conn.sendMessage(m.chat, { react: { text: "🎨", key: m.key } });
             }
         }
 
@@ -141,7 +132,7 @@ cmd({
     }
 });
 
-
+// --- 3. LOGO MENU ---
 cmd({
     pattern: "logo2",
     alias: ["logomenu"],
@@ -150,7 +141,7 @@ cmd({
     react: "🎀",
     filename: __filename
 }, 
-async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sender, senderNumber, botNumber2, botNumber, pushname, isMe, isOwner, groupMetadata, groupName, participants, groupAdmins, isBotAdmins, isAdmins, reply }) => {
+async (conn, mek, m, { from }) => {
     try {
         let dec = `
 ╭━━〔 🎨 *Logo Menu* 〕━━┈⊷
@@ -193,20 +184,15 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★╰──────────────
 ╰━━━━━━━━━━━━━━┈⊷‎`;
 
-       // Fake VCard
         const FakeVCard = {
-      key: {
-        fromMe: false,
-        participant: "0@s.whatsapp.net",
-        remoteJid: "status@broadcast"
-      },
-      message: {
-        contactMessage: {
-          displayName: "© 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃",
-          vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:Meta\nORG:META AI;\nTEL;type=CELL;type=VOICE;waid=13135550002:+13135550002\nEND:VCARD`
-        }
-      }
-    };       
+            key: { fromMe: false, participant: "0@s.whatsapp.net", remoteJid: "status@broadcast" },
+            message: {
+                contactMessage: {
+                    displayName: "© 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃",
+                    vcard: `BEGIN:VCARD\nVERSION:3.0\nFN:Meta\nORG:META AI;\nTEL;type=CELL;type=VOICE;waid=13135550002:+13135550002\nEND:VCARD`
+                }
+            }
+        };       
         
         await conn.sendMessage(
             from,
@@ -229,6 +215,5 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 
     } catch (e) {
         console.log(e);
-        reply(`${e}`);
     }
 });

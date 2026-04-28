@@ -2,27 +2,17 @@ const axios = require('axios');
 const config = require('../config');
 const { cmd } = require('../command');
 
-// --- Ovnix AI System Prompt (භාෂා පාලනය සහ උපදෙස්) ---
-const SYSTEM_PROMPT = `
-Role: You are "Ovnix AI", the official virtual assistant for Ovnix (Web Development Company in Sri Lanka).
-STRICT RULE: Always respond in 100% SINHALA language ONLY.
-Instruction: Even if the user talks to you in English, Singlish, or any other language, your reply MUST be in professional and friendly SINHALA.
-
-Company Details:
-- Services: Web Design, Full-stack Development, WhatsApp Bot Development.
-- Pricing: Starting from Rs. 25,000 upwards.
-- Tone: Professional, Helpful, and Courteous.
-`;
-
 /**
  * AI API එකෙන් පිළිතුරු ලබා ගැනීම සඳහා පොදු Function එක
  */
-async function getOvnixAIResponse(userInput, pushname) {
+async function getAIResponse(userInput) {
     try {
-        const query = `${SYSTEM_PROMPT}\n\nUser: ${pushname}\nMessage: ${userInput}\n(Important: Respond ONLY in Sinhala)`;
-        const apiUrl = `https://d-ai-beige.vercel.app/api/gemini?q=${encodeURIComponent(query)}`;
+        // AI එකට සිංහලෙන් පමණක් පිළිතුරු දීමට බල කිරීම සඳහා උපදෙස් එකතු කිරීම
+        const prompt = `Strictly respond in 100% Sinhala language only. User message: ${userInput}`;
+        const apiUrl = `https://d-ai-beige.vercel.app/api/gemini?q=${encodeURIComponent(prompt)}`;
         
         const response = await axios.get(apiUrl);
+
         if (response.data && response.data.success) {
             return response.data.result;
         }
@@ -34,30 +24,25 @@ async function getOvnixAIResponse(userInput, pushname) {
 }
 
 // -------------------------------------------------------------------
-// 1. .gemini COMMAND (ප්‍රශ්න ඇසීමට භාවිතා කළ හැක)
+// 1. .gemini COMMAND (ප්‍රශ්න ඇසීමට)
 // -------------------------------------------------------------------
 cmd({
     pattern: "gemini",
     react: "🤖",
-    desc: "Talk to Ovnix AI using command",
+    desc: "Talk to AI in Sinhala",
     category: "ai",
     filename: __filename
 },
-async (conn, mek, m, { from, args, reply, pushname }) => {
+async (conn, mek, m, { from, args, reply }) => {
     try {
         const text = args.join(" ");
-        if (!text) return reply("කරුණාකර ප්‍රශ්නයක් අසන්න. (උදා: .gemini වෙබ් අඩවියක් හදන්න කීයක් යනවද?) ");
+        if (!text) return reply("කරුණාකර ප්‍රශ්නයක් අසන්න.");
 
         // AI පිළිතුර ලබා ගැනීම
-        const result = await getOvnixAIResponse(text, pushname || "User");
+        const result = await getAIResponse(text);
 
         if (result) {
-            // පිළිතුර පින්තූරයක්ද නැද්ද යන්න අනුව යැවීම
-            if (result.startsWith("http") && (result.includes("googleusercontent") || result.includes("image"))) {
-                await conn.sendMessage(from, { image: { url: result }, caption: "✨ Ovnix AI" }, { quoted: mek });
-            } else {
-                await reply(result);
-            }
+            await reply(result);
         } else {
             await reply("❌ සමාවන්න, පිළිතුරක් ලබා ගැනීමට නොහැකි විය.");
         }
@@ -68,7 +53,7 @@ async (conn, mek, m, { from, args, reply, pushname }) => {
 });
 
 // -------------------------------------------------------------------
-// 2. AUTO CHATBOT (සාමාන්‍ය පණිවිඩ වලට ස්වයංක්‍රීයව පිළිතුරු දීම)
+// 2. AUTO CHATBOT (සාමාන්‍ය මැසේජ් වලට 100% සිංහලෙන් පිළිතුරු දීම)
 // -------------------------------------------------------------------
 cmd({
   'on': "body"
@@ -76,41 +61,24 @@ cmd({
   from,
   body,
   isCmd,
-  reply,
-  sender,
-  pushname
+  reply
 }) => {
   try {
-    // නීති: තමන්ගෙම මැසේජ් වලට, මැසේජ් එකක් නැතිනම්, හෝ Command එකක් නම් ක්‍රියාත්මක නොවේ
+    // තමන්ගේ මැසේජ් වලට හෝ Command වලට හෝ හිස් මැසේජ් වලට ක්‍රියා නොකරයි
     if (m.fromMe || !body || isCmd) return;
 
-    // Chatbot ON ද කියා පරීක්ෂා කිරීම
+    // Chatbot එක ON කර ඇත්නම් පමණක් ක්‍රියා කරයි
     if (config.CHAT_BOT === "true") {
       
-      // 1. පණිවිඩයට React කිරීම (🤖)
-      await conn.sendMessage(from, { 
-        react: { 
-          text: "🤖", 
-          key: m.key 
-        } 
-      });
-
-      // 2. AI පිළිතුර ලබා ගැනීම
-      const aiResult = await getOvnixAIResponse(body, pushname || "User");
+      // AI පිළිතුර ලබා ගැනීම
+      const aiResult = await getAIResponse(body);
 
       if (aiResult) {
-        // 3. පිළිතුර පින්තූරයක්ද නැද්ද යන්න අනුව යැවීම
-        if (aiResult.startsWith("http") && (aiResult.includes("googleusercontent") || aiResult.includes("image"))) {
-            await conn.sendMessage(from, { 
-                image: { url: aiResult }, 
-                caption: "✨ Ovnix AI" 
-            }, { quoted: m });
-        } else {
-            await conn.sendMessage(from, { text: aiResult }, { quoted: m });
-        }
+        // AI එකෙන් පිළිතුරක් ලැබුනොත් පමණක් React කර Text එක යවයි
+        await conn.sendMessage(from, { react: { text: "🤖", key: m.key } });
+        await conn.sendMessage(from, { text: aiResult }, { quoted: m });
       }
     }
-
   } catch (error) {
     console.error("Chatbot Error:", error);
   }

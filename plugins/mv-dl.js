@@ -49,7 +49,7 @@ cmd({
     textList += "\n💬 *Reply with movie number to view details.*";
 
     const sentMsg = await conn.sendMessage(from, {
-      text: `*🔍 𝐎𝐊𝐉𝐀𝐓𝐓 𝐌𝐎𝐕𝐈𝐄 𝐒𝐄𝐀𝐑𝐂𝐇 🎥*\n\n${textList}\n\n> > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+      text: `*🔍 𝐎𝐊𝐉𝐀𝐓𝐓 𝐌𝐎𝐕𝐈𝐄 𝐒𝐄𝐀𝐑𝐂𝐇 🎥*\n\n${textList}\n\n> > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝑇-𝚇𝙼𝙳`
     }, { quoted: mek });
 
     const movieMap = new Map();
@@ -75,7 +75,8 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const movieUrl = `https://thenkiri-api.vercel.app/api/info?url=${encodeURIComponent(selected.link)}`;
+    
+        const movieUrl = `https://okjact-mv.vercel.app/api/info?url=${encodeURIComponent(selected.link)}`;
         const movieRes = await axios.get(movieUrl);
         const movie = movieRes.data;
 
@@ -85,12 +86,11 @@ cmd({
 
         let info = 
             `🎬 *${movie.title}*\n\n` +
-            `⭐ *IMDb:* N/A\n` +
             `📅 *Released:* ${movie.releaseDate}\n` +
             `🌍 *Country:* ${movie.languages}\n` +
             `🕐 *Runtime:* ${movie.duration}\n` +
-            `🎭 *Category:* ${movie.genres}\n` +
-            `📝 *Posttitle:*\n${movie.description ? movie.description.slice(0, 300) + "..." : "N/A"}\n\n` +
+            `📝 *Language:* ${movie.languages}\n` +
+            `🎭 *Category:* ${movie.genres}\n\n` +
             `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
         
         movie.downloadLink.forEach((d, i) => {
@@ -103,11 +103,11 @@ cmd({
             caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { selected, downloads: movie.downloadLink });
+        movieMap.set(downloadMsg.key.id, { title: movie.title, downloads: movie.downloadLink });
       }
 
       else if (movieMap.has(repliedId)) {
-        const { selected, downloads } = movieMap.get(repliedId);
+        const { title, downloads } = movieMap.get(repliedId);
         const num = parseInt(replyText);
         const chosen = downloads[num - 1];
         if (!chosen) {
@@ -116,11 +116,11 @@ cmd({
           
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-        const size = chosen.size_formatted.toLowerCase();
+        const size = chosen.size.toLowerCase();
         const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
 
         if (sizeGB > 2) {
-          return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size_formatted})*` }, { quoted: msg });
+          return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
         }
         
         const apiUrl = `https://okjact-mv.vercel.app/api/download?url=${encodeURIComponent(chosen.link)}`;
@@ -145,7 +145,7 @@ cmd({
   } catch (err) {
     await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek }); 
   }
-});
+});       
 
 cmd({
   pattern: "thenkiri",

@@ -57,12 +57,10 @@ cmd({
 ┃◈│ ➍ 😄 *Fun Menu*
 ┃◈│ ➎ 👥 *Group Menu*
 ┃◈│ ➏ 🖼️ *Imagine Menu*
-┃◈│ ➐ 🎨 *Logo Menu*
-┃◈│ ➑ 🏠 *Main Menu*
-┃◈│ ➒ 📌 *Other Menu*
-┃◈│ ➓ 👑 *Owner Menu*
-┃◈│ ⓫ 🔍 *Search Menu*
-┃◈│ ⓬ ⚙️ *Setting Menu*
+┃◈│ ➐ 🏠 *Main Menu*
+┃◈│ ➑ 📌 *Other Menu*
+┃◈│ ➒ 👑 *Owner Menu*
+┃◈│ ➓ 🔍 *Search Menu*
 ┃◈╰───────────┈⊷
 ╰──────────────┈⊷
 > ${config.DESCRIPTION}`;
@@ -141,6 +139,7 @@ cmd({
 ┃★╭──────────────
 ┃★│ • ai
 ┃★│ • gpt
+┃★│ • gemini
 ┃★│ • venice
 ┃★│ • copilot
 ┃★│ • copilot2
@@ -409,50 +408,6 @@ cmd({
                 image: true
             },
             '7': {
-                title: "🎨 *Logo Menu* 🎨",
-                content: `╭━━━〔 🎨 *Logo Menu* 〕━━━┈⊷
-┃★╭──────────────
-┃★│ • 3dcomic
-┃★│ • 3dpaper
-┃★│ • america
-┃★│ • angelwings
-┃★│ • bear
-┃★│ • bulb
-┃★│ • boom
-┃★│ • birthday
-┃★│ • blackpink
-┃★│ • cat
-┃★│ • clouds
-┃★│ • castle
-┃★│ • deadpool
-┃★│ • dragonball
-┃★│ • devilwings
-┃★│ • eraser
-┃★│ • frozen
-┃★│ • futuristic
-┃★│ • galaxy
-┃★│ • hacker
-┃★│ • leaf
-┃★│ • luxury
-┃★│ • naruto
-┃★│ • nigeria
-┃★│ • neonlight
-┃★│ • paint
-┃★│ • pornhub
-┃★│ • sans
-┃★│ • sunset
-┃★│ • sadgirl
-┃★│ • thor
-┃★│ • tatoo
-┃★│ • typography
-┃★│ • valorant
-┃★│ • zodiac
-┃★╰──────────────
-╰━━━━━━━━━━━━━━┈⊷
-> ${config.DESCRIPTION}`,
-                image: true
-            },
-            '8': {
                 title: "🏠 *Main Menu* 🏠",
                 content: `╭━━━〔 🏠 *Main Menu* 〕━━━┈⊷
 ┃★╭──────────────
@@ -473,12 +428,13 @@ cmd({
 ┃★│ • bible
 ┃★│ • biblelist
 ┃★│ • logomenu
+┃★│ • logo
 ┃★╰──────────────
 ╰━━━━━━━━━━━━━━┈⊷
 > ${config.DESCRIPTION}`,
                 image: true
             },
-            '9': {
+            '8': {
                 title: "📌 *Other Menu* 📌",
                 content: `╭━━━〔 📌 *Other Menu* 〕━━━┈⊷
 ┃★╭──────────────
@@ -503,10 +459,11 @@ cmd({
 > ${config.DESCRIPTION}`,
                 image: true
             },
-            '10': {
+            '9': {
                 title: "👑 *Owner Menu* 👑",
                 content: `╭━━━〔 👑 *Owner Menu* 〕━━━┈⊷
 ┃★╭──────────────
+┃★│ • prefix
 ┃★│ • anticall
 ┃★│ • antilink
 ┃★│ • antidelete
@@ -558,7 +515,7 @@ cmd({
 > ${config.DESCRIPTION}`,
                 image: true
             },
-            '11': {
+            '10': {
                 title: "🔍 *Search Menu* 🔍",
                 content: `╭━━━〔 🔍 *Search Menu* 〕━━━┈⊷
 ┃★╭──────────────      
@@ -589,41 +546,6 @@ cmd({
 ┃★│ • ytpost
 ┃★│ • ytstalk
 ┃★│ • weather
-┃★╰──────────────
-╰━━━━━━━━━━━━━━┈⊷
-> ${config.DESCRIPTION}`,
-                image: true
-            },
-            '12': {
-                title: "⚙️ *Setting Menu* ⚙️",
-                content: `╭━━━〔 ⚙️ *Setting Menu* 〕━━━┈⊷
-┃★╭──────────────      
-┃★│ • mode pravite/inbox/public
-┃★│ • setprefix !,@,#,$,/ 
-┃★│ • admin-events on/off
-┃★│ • welcome on/off
-┃★│ • auto-typing on/off
-┃★│ • mention-reply on/off
-┃★│ • always-online on/off
-┃★│ • auto-recoding on/off
-┃★│ • auto-seen on/off
-┃★│ • status-react on/off
-┃★│ • read-messages on/off 
-┃★│ • auto-voice on/off
-┃★│ • auto-reply on/off
-┃★│ • auto-sticker on/off
-┃★│ • auto-react on/off
-┃★│ • status-reply on/off
-┃★│ • anti-bad on/off
-┃★│ • antilink on/off
-┃★│ • antikick on/off
-┃★│ • kicklink on/off
-┃★│ • deletelink on/off
-┃★│ • antibad on/off
-┃★│ • antidelete on/off
-┃★│ • anticall on/off
-┃★│ • heartreact on/off
-┃★│ • .use on/off
 ┃★╰──────────────
 ╰━━━━━━━━━━━━━━┈⊷
 > ${config.DESCRIPTION}`,

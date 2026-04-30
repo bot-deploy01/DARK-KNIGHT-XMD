@@ -17,7 +17,7 @@ cmd({
 
         await reply(`🔍 Searching images for *"${query}"*...`);
 
-        const api = `https://malvin-api.vercel.app/search/gimage?q=${encodeURIComponent(query)}`;
+        const api = `https://apiskeith.top/search/images?query=${encodeURIComponent(query)}`;
         const { data } = await axios.get(api);
 
         // Check response validity

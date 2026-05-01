@@ -424,8 +424,8 @@ cmd({
 });
 
 cmd({
-    pattern: "moviepro",
-    alias: ["mpro"],
+    pattern: "moviepro2",
+    alias: ["mpro2"],
     desc: "🎥 Search and download movies from Silent Tech API",
     category: "media",
     react: "🎬",
@@ -435,7 +435,7 @@ cmd({
     if (!q) return await conn.sendMessage(from, { text: "Use: .moviepro <movie name>" }, { quoted: mek });
 
     try {
-        const cacheKey = `moviepro_${q.toLowerCase()}`;
+        const cacheKey = `moviepr_${q.toLowerCase()}`;
         let data = movieCache.get(cacheKey);
 
         if (!data) {

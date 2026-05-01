@@ -1,4 +1,4 @@
-const { cmd } = require("../command");
+uconst { cmd } = require("../command");
 const axios = require("axios");
 const config = require('../config');
 const NodeCache = require("node-cache");
@@ -424,8 +424,8 @@ cmd({
 });
 
 cmd({
-    pattern: "moviepro2",
-    alias: ["mpro2"],
+    pattern: "moviepro",
+    alias: ["mpro"],
     desc: "🎥 Search and download movies from Silent Tech API",
     category: "media",
     react: "🎬",
@@ -435,13 +435,12 @@ cmd({
     if (!q) return await conn.sendMessage(from, { text: "Use: .moviepro <movie name>" }, { quoted: mek });
 
     try {
-        const cacheKey = `moviepr_${q.toLowerCase()}`;
+        const cacheKey = `moviep_${q.toLowerCase()}`;
         let data = movieCache.get(cacheKey);
 
         if (!data) {
             const url = `https://silent-movies-api.vercel.app/api/search?q=${encodeURIComponent(q)}&key=silent`;
             const res = await axios.get(url);
-            
             data = res.data;
   
             if (!data.data?.items?.length) throw new Error("No results found.");
@@ -494,9 +493,10 @@ cmd({
                 const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
                 const movieRes = await axios.get(movieUrl);
                 
-                const downloads = movieRes.data?.data?.data?.downloadUrls;
+                const resultData = movieRes.data?.data?.data;
+                const downloads = resultData?.downloadUrls;
 
-                if (!downloads || !Array.isArray(downloads) || downloads.length === 0) {
+                if (!downloads || downloads.length === 0) {
                     return conn.sendMessage(from, { text: "No download links available for this movie." }, { quoted: msg });
                 }
                 

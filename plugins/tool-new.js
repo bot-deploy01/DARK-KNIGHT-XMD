@@ -257,11 +257,11 @@ async (conn, mek, m, { reply }) => {
             minute: "2-digit", 
             second: "2-digit", 
             hour12: true,
-            timeZone: "Asia/Karachi" // Setting Pakistan's time zone explicitly
+            timeZone: "Asia/Colombo" // Setting Pakistan's time zone explicitly
         });
         
         // Send the local time as reply
-        reply(`🕒 Current Local Time in Pakistan: ${localTime}`);
+        reply(`🕒 Current Local Time in Sri Lanka: ${localTime}`);
     } catch (e) {
         console.error("Error in .timenow command:", e);
         reply("❌ An error occurred. Please try again later.");

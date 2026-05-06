@@ -1,5 +1,5 @@
 const { cmd } = require('../command');
-const { downloadMediaMessage } = require('./lib');
+/*const { downloadMediaMessage } = require('./lib');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const path = require('path');
@@ -126,7 +126,7 @@ async (conn, mek, m, { from, isGroup, isOwner, q, reply }) => {
       return reply(`❌ Error: ${error.message}`)
     }
   }
-})
+})*/
 
 
 cmd({

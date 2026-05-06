@@ -67,7 +67,7 @@ async (conn, mek, m, { from, quoted, reply }) => {
             from,
             {
                 image: { url: apiData.data.result },
-                caption: "> ✨ Image Enhanced Successfully by TEDDY-XMD"
+                caption: "> ✨ Image Enhanced Successfully by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳 "
             },
             { quoted: m }
         );

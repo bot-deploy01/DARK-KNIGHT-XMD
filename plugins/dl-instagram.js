@@ -189,7 +189,7 @@ cmd({
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
     // ✅ Fetching data from API
-    const response = await axios.get(`https://apis.davidcyriltech.my.id/instagram?url=${q}`);
+    const response = await axios.get(`https://apis.davidcyril.name.ng/instagram?url=${q}`);
     const data = response.data;
 
     if (!data || !data.success || !data.downloadUrl) {

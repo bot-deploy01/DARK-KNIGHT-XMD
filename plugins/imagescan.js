@@ -64,7 +64,7 @@ cmd({
     }
 
     // Scan the image using the API
-    const scanUrl = `https://apis.davidcyriltech.my.id/imgscan?url=${encodeURIComponent(imageUrl)}`;
+    const scanUrl = `https://apis.davidcyril.name.ng/imgscan?url=${encodeURIComponent(imageUrl)}`;
     const scanResponse = await axios.get(scanUrl);
 
     if (!scanResponse.data.success) {

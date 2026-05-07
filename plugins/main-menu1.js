@@ -203,7 +203,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • demote
 ┃★│ • ginfo
 ┃★│ • gstates
-┃★│ • groupstatus
+┃★│ • gcstatus
 ┃★│ • hidetag
 ┃★│ • tagall
 ┃★│ • join
@@ -226,6 +226,7 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • closetime
 ┃★│ • resetglink
 ┃★│ • tagadmins 
+┃★│ • upgdp
 ┃★│ • upgdesc
 ┃★│ • upgname
 ┃★╰──────────────

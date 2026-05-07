@@ -120,9 +120,10 @@ cmd({
         const { title, downloads } = movieMap.get(repliedId);
         const num = parseInt(replyText);
         const chosen = downloads[num - 1];
-        
-        if (!chosen) return;
-          
+        if (!chosen) {
+          return conn.sendMessage(from, { text: "*Invalid quality number.*" }, { quoted: msg });
+        }
+
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
         const apiUrl = `https://okjact-mv.vercel.app/api/download?url=${encodeURIComponent(chosen.link)}`;

@@ -1,214 +1,146 @@
 const { cmd } = require('../command');
-const fs = require('fs');
 
-// FakevCard
-const fkontak = {
-    "key": {
-        "participant": '0@s.whatsapp.net',
-        "remoteJid": '0@s.whatsapp.net',
-        "fromMe": false,
-        "id": "Helo"
-    },
-    "message": {
-        "conversation": "𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃"
-    }
-};
-
-const getContextInfo = (m) => {
-    return {
-        mentionedJid: [m.sender],
-        forwardingScore: 999,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363400240662312@newsletter',
-            newsletterName: '𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃',
-            serverMessageId: 143,
-        },
-    };
-};
-
-// ============ GSTATUS COMMAND (Fixed version) ============
 cmd({
-    pattern: "gstatus",
-    alias: ["groupstatus", "statusgc", "gcstatus"],
-    react: "📢",
-    desc: "Post status to group profile (appears in status/story)",
+    pattern: "groupstatus",
+    alias: ["statusgc", "gcstatus", "swgc"],
+    desc: "Post group status with media or text (mentions all members)",
     category: "group",
+    react: "📢",
     filename: __filename
-},
-async(conn, mek, m, {from, l, prefix, quoted, isGroup, sender, isAdmins, isBotAdmins, reply, args}) => {
-try{
-    if (!isGroup) return await conn.sendMessage(from, {
-        text: `❌ This command can only be used in group chats`,
-        contextInfo: getContextInfo({ sender: sender })
-    }, { quoted: fkontak });
+}, async (conn, mek, m, { from, text, reply, isCreator, isGroup }) => {
+    // Check if user is owner
+    if (!isCreator) return reply("❌ This command is only for owners!");
     
-    if (!isAdmins) return await conn.sendMessage(from, {
-        text: `❌ You need to be an admin to post group status`,
-        contextInfo: getContextInfo({ sender: sender })
-    }, { quoted: fkontak });
-    
-    // Get group metadata
-    const groupMetadata = await conn.groupMetadata(from);
-    const groupName = groupMetadata.subject;
-    
-    const quotedMsg = m.quoted ? m.quoted : m;
-    const mime = (quotedMsg.msg || quotedMsg).mimetype || '';
-    const caption = args.join(' ').trim();
-    
-    const defaultCaption = 
-`📢 *GROUP STATUS*
-━━━━━━━━━━━━━
-👥 *Group:* ${groupName}
-⏰ *Time:* ${new Date().toLocaleTimeString()}
-━━━━━━━━━━━━━`;
-
-    if (!/image|video|audio/.test(mime) && !caption) {
-        return await conn.sendMessage(from, {
-            text: `Post status that appears on group
-*Examples:*
-▸ Reply to image/video/audio/text
-▸ Reply to .gcstatus hi`,
-            contextInfo: getContextInfo({ sender: sender })
-        }, { quoted: fkontak });
-    }
-    
-    // Send processing message
-    await conn.sendMessage(from, {
-        text: `⏳ Posting to group status/story...`,
-        contextInfo: getContextInfo({ sender: sender })
-    }, { quoted: fkontak });
-    
-    // Prepare status text
-    const statusText = caption || defaultCaption;
+    // Check if in group
+    if (!isGroup) return reply("❌ This command can only be used in groups!");
     
     try {
-        // Method 1: Using sendPresenceUpdate
-        await conn.sendPresenceUpdate('composing', from);
+        // Get the quoted message
+        const quotedMsg = m.quoted;
         
-        // Handle different media types for status
-        if (/image/.test(mime)) {
-            const buffer = await conn.downloadMediaMessage(quotedMsg);
-            
-            // Post as image status using group update
-            await conn.sendMessage(from, {
-                image: buffer,
-                caption: statusText,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    forwardingScore: 999,
-                    isForwarded: true,
-                    externalAdReply: {
-                        title: "📢 GROUP STATUS",
-                        body: groupName,
-                        mediaType: 1,
-                        thumbnail: buffer.slice(0, 100),
-                        sourceUrl: "https://chat.whatsapp.com",
-                        renderLargerThumbnail: true
-                    }
-                }
-            }, { quoted: fkontak });
-            
-        } else if (/video/.test(mime)) {
-            const buffer = await conn.downloadMediaMessage(quotedMsg);
-            
-            // Post as video status
-            await conn.sendMessage(from, {
-                video: buffer,
-                caption: statusText,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    forwardingScore: 999,
-                    isForwarded: true,
-                    externalAdReply: {
-                        title: "📢 GROUP STATUS",
-                        body: groupName,
-                        mediaType: 1,
-                        sourceUrl: "https://chat.whatsapp.com",
-                        renderLargerThumbnail: true
-                    }
-                }
-            }, { quoted: fkontak });
-            
-        } else if (/audio/.test(mime)) {
-            const buffer = await conn.downloadMediaMessage(quotedMsg);
-            
-            // Post as audio status
-            await conn.sendMessage(from, {
-                audio: buffer,
-                mimetype: 'audio/mp4',
-                ptt: false,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    forwardingScore: 999,
-                    isForwarded: true,
-                    externalAdReply: {
-                        title: "📢 GROUP STATUS",
-                        body: groupName,
-                        mediaType: 1
-                    }
-                }
-            }, { quoted: fkontak });
-            
-        } else if (caption) {
-            // Post text only status
-            await conn.sendMessage(from, {
-                text: statusText,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    forwardingScore: 999,
-                    isForwarded: true,
-                    externalAdReply: {
-                        title: "📢 GROUP STATUS",
-                        body: groupName,
-                        mediaType: 1
-                    }
-                }
-            }, { quoted: fkontak });
+        // Get mime type properly
+        const mimeType = quotedMsg ? (quotedMsg.msg || quotedMsg).mimetype || '' : '';
+        
+        // Get caption/text
+        const caption = text?.trim() || "";
+        
+        // Check if there's content to send
+        if (!quotedMsg && !caption) {
+            return reply(
+                `⚠️ Reply to media or provide text!\n\n` +
+                `Examples:\n` +
+                `• .gcstatus Hello everyone\n` +
+                `• Reply to an media with: .gcstatus`
+            );
         }
         
-        // Send confirmation to group chat
-        await conn.sendMessage(from, {
-            text: `┏━❑ GSTATUS COMPLETE ━━━━━━━━━
-┃ ✅ Status posted successfully
-┃ 📌 Check group profile to view
-┗━━━━━━━━━━━━━━━━━━━`,
-            contextInfo: getContextInfo({ sender: sender })
-        }, { quoted: fkontak });
+        // Send loading reaction
+        await conn.sendMessage(from, { react: { text: "⏳", key: mek.key } });
         
-    } catch (statusError) {
-        console.log('Status error:', statusError);
+        // Get all group members for mention
+        const groupMetadata = await conn.groupMetadata(from);
+        const participants = groupMetadata.participants;
+        const mentionedJid = participants.map(p => p.id);
         
-        // Method 2: Alternative using broadcast
-        try {
-            // Create a broadcast message
-            await conn.sendMessage("status@broadcast", {
-                text: `📢 *${groupName}*\n\n${statusText}`,
-                contextInfo: {
-                    mentionedJid: [sender],
-                    forwardingScore: 999,
-                    isForwarded: true
+        let messageContent = {};
+        
+        // If there's quoted media
+        if (quotedMsg) {
+            // Download media
+            const mediaBuffer = await quotedMsg.download();
+            if (!mediaBuffer) throw new Error("Failed to download media");
+            
+            // Add status context with mentions
+            const contextInfo = {
+                isGroupStatus: true,
+                mentionedJid: mentionedJid
+            };
+            
+            // Handle different media types based on mimeType
+            if (mimeType.startsWith('image/')) {
+                // Image message
+                messageContent = {
+                    image: mediaBuffer,
+                    caption: caption || "",
+                    mimetype: mimeType,
+                    contextInfo: contextInfo
+                };
+            } 
+            else if (mimeType.startsWith('video/')) {
+                // Video message
+                messageContent = {
+                    video: mediaBuffer,
+                    caption: caption || "",
+                    mimetype: mimeType,
+                    contextInfo: contextInfo
+                };
+            } 
+            else if (mimeType.startsWith('audio/')) {
+                // Check if it's a voice note
+                const isPTT = quotedMsg.message?.audioMessage?.ptt || false;
+                
+                messageContent = {
+                    audio: mediaBuffer,
+                    mimetype: isPTT ? 'audio/ogg; codecs=opus' : 'audio/mp4',
+                    ptt: isPTT,
+                    contextInfo: contextInfo
+                };
+            }
+            else {
+                // Try to detect by message type as fallback
+                const msgType = Object.keys(quotedMsg.message || {})[0];
+                
+                if (msgType === 'imageMessage') {
+                    messageContent = {
+                        image: mediaBuffer,
+                        caption: caption || "",
+                        mimetype: 'image/jpeg',
+                        contextInfo: contextInfo
+                    };
                 }
-            });
-            
-            await conn.sendMessage(from, {
-                text: `✅ Status posted as broadcast`,
-                contextInfo: getContextInfo({ sender: sender })
-            }, { quoted: fkontak });
-            
-        } catch (broadcastError) {
-            throw statusError;
+                else if (msgType === 'videoMessage') {
+                    messageContent = {
+                        video: mediaBuffer,
+                        caption: caption || "",
+                        mimetype: 'video/mp4',
+                        contextInfo: contextInfo
+                    };
+                }
+                else if (msgType === 'audioMessage' || msgType === 'pttMessage') {
+                    messageContent = {
+                        audio: mediaBuffer,
+                        mimetype: msgType === 'pttMessage' ? 'audio/ogg; codecs=opus' : 'audio/mp4',
+                        ptt: msgType === 'pttMessage',
+                        contextInfo: contextInfo
+                    };
+                }
+                else {
+                    return reply("❌ Unsupported media type! Please reply to an image, video, or audio file.");
+                }
+            }
+        } 
+        // If only text
+        else if (caption) {
+            messageContent = {
+                text: caption,
+                contextInfo: {
+                    isGroupStatus: true,
+                    mentionedJid: mentionedJid
+                }
+            };
         }
+        
+        // Send the status with mentions
+        await conn.sendMessage(from, messageContent, { quoted: mek });
+        
+        // Success reaction only - no mention count message
+        await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+        
+    } catch (error) {
+        console.error("Group Status Error:", error);
+        reply(`❌ Error: ${error.message}`);
+        await conn.sendMessage(from, { react: { text: "❌", key: mek.key } });
     }
-
-} catch (e) {
-    console.log('GSTATUS ERROR:', e);
-    await conn.sendMessage(from, {
-        text: `❌ Failed to post group status: ${e.message}`,
-        contextInfo: getContextInfo({ sender: sender })
-    }, { quoted: fkontak });
-    l(e);
-}
 });
 
 

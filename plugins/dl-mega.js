@@ -1,7 +1,7 @@
 const { cmd } = require('../command');
 const { File } = require('megajs');
 const axios = require('axios');
-const path = require('path');
+const config = require('../config');
 const mime = require('mime-types');
 
 
@@ -57,40 +57,49 @@ cmd({
 });
 
 
+
 cmd({
-    pattern: "mega2",
-    alias: ["meganz2"],
-    react: "📦",
-    desc: "Download Mega files directly using MegaJS",
-    category: "downloader",
-    filename: __filename
-}, async (conn, mek, m, { from, q, reply }) => {
-    try {
-        if (!q) return reply("📦 Please provide a Mega.nz link.");
+    pattern: "megadl",
+    alias: ["mega2", "meganz2"],
+    desc: "Download files from mega.nz",
+    category: "download",
+    react: "🍟",
+    use: "megadl <mega.nz link>",
+    filename: __filename
+}, async (conn, mek, m, { q, reply,from }) => {
+    try {
+            
+        if (!q || !q.includes("mega.nz")) return await reply(megaMg);
+        await conn.sendMessage(from, { react: { text: "📥", key: mek.key } });
 
-        await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
+        const file = File.fromURL(q, { maxWorkers: 16 }); // 8 parallel chunks
+        const fileName = (await file.loadAttributes()).name;
+        const mimeType = mime.lookup(fileName) || 'application/octet-stream';
 
-        // MegaJS හරහා File Attributes ලබා ගැනීම
-        const file = File.fromURL(q);
-        await file.loadAttributes();
+        const chunks = [];
+        const stream = file.download();
 
-        const downloadUrl = await file.link();
-      
-        const determinedMime = mime.lookup(file.name) || "application/octet-stream";
+        stream.on('data', (chunk) => chunks.push(chunk));
+        stream.on('end', async () => {
+            const buffer = Buffer.concat(chunks);
 
-        await conn.sendMessage(from, { react: { text: '⬆️', key: m.key } });
+            await conn.sendMessage(from, {
+                contextInfo: getContextInfo(config.BOT_NAME !== 'default' ? config.BOT_NAME : null), document: buffer,
+                fileName,
+                caption: config.DESCRIPTION,
+                mimetype: mimeType
+            }, { quoted: mek });
 
-        await conn.sendMessage(from, {
-            document: { url: downloadUrl },
-            fileName: file.name,
-            mimetype: determinedMime,
-            caption: `📦 *File:* ${file.name}\n⚖️ *Size:* ${(file.size / 1024 / 1024).toFixed(2)} MB\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
-        }, { quoted: m });
+            await conn.sendMessage(from, { react: { text: "✅", key: mek.key } });
+        });
 
-        await conn.sendMessage(from, { react: { text: '✅', key: m.key } });
+        stream.on('error', async (err) => {
+            console.error(err);
+            await reply(errorMgMega);
+        });
 
-    } catch (error) {
-        console.error("Mega2 Error:", error);
-        reply("❌ MegaJS link generation failed. Make sure the link is valid.");
-    }
+    } catch (e) {
+        console.error(e);
+        await reply(errorMgMega);
+    }
 });

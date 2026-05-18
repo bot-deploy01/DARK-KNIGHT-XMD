@@ -21,7 +21,7 @@ cmd({
     let data = movieCache.get(cacheKey);
 
     if (!data) {
-      const url = `https://silent-movies-api.vercel.app/api/search?q=${encodeURIComponent(q)}&key=silent`;
+      const url = `https://gzmovieboxapi.septorch.tech/api/search?apikey=Godszeal&query=${encodeURIComponent(q)}`;
       const res = await axios.get(url);
       
       data = res.data;
@@ -34,6 +34,7 @@ cmd({
     const movieList = data.data.items.map((m, i) => ({
       number: i + 1,
       id: m.subjectId,
+      detailPath: m.detailPath,
       title: m.title,
       year: m.releaseDate,
       time: m.duration,
@@ -74,10 +75,10 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const movieUrl = `https://silent-movies-api.vercel.app/api/media?id=${selected.id}&key=silent`;
+        const movieUrl = `https://gzmovieboxapi.septorch.tech/api/media?apikey=Godszeal&detailPath=${selected.detailPath}&subjectId=${selected.id}`;
         const movieRes = await axios.get(movieUrl);
-        
-        const downloads = movieRes.data?.data?.data?.downloadUrls;
+    
+        const downloads = movieRes.data?.data?.downloads?.data?.downloads;
 
         if (!downloads?.length) return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
 
@@ -92,7 +93,12 @@ cmd({
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
         
         downloads.forEach((d, i) => {
-          info += `♦️ ${i + 1}. *${d.quality}p* — ${d.size_formatted}\n`;
+  
+          const sizeInBytes = parseInt(d.size);
+          const sizeMB = (sizeInBytes / (1024 * 1024)).toFixed(1);
+          const formattedSize = sizeMB >= 1024 ? `${(sizeMB / 1024).toFixed(2)} GB` : `${sizeMB} MB`;
+          
+          info += `♦️ ${i + 1}. *${d.resolution}p* — ${formattedSize}\n`;
         });
         info += "\n🔢 Reply with number to download.";
 
@@ -115,13 +121,16 @@ cmd({
         const sizeInBytes = parseInt(chosen.size);
         const sizeGB = sizeInBytes / (1024 * 1024 * 1024);
         
-        if (sizeGB > 2) return conn.sendMessage(from, { text: `⚠️ Large file (${chosen.size_formatted})` }, { quoted: msg });
+        const sizeMB = (sizeInBytes / (1024 * 1024)).toFixed(1);
+        const formattedSize = sizeMB >= 1024 ? `${(sizeMB / 1024).toFixed(2)} GB` : `${sizeMB} MB`;
+        
+        if (sizeGB > 2) return conn.sendMessage(from, { text: `⚠️ Large file (${formattedSize})` }, { quoted: msg });
 
         await conn.sendMessage(from, {
           document: { url: chosen.downloadUrl },
           mimetype: "video/mp4",
-          fileName: `${selected.title} - ${chosen.quality}p.mp4`,
-          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}p*\n\n> © Powerd by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+          fileName: `${selected.title} - ${chosen.resolution}p.mp4`,
+          caption: `🎬 *${selected.title}*\n🎥 *${chosen.resolution}p*\n\n> © Powerd by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
         }, { quoted: msg });
       }
     };

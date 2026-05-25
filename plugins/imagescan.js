@@ -52,9 +52,20 @@ cmd({
     form.append('fileToUpload', fs.createReadStream(tempFilePath), `image${extension}`);
     form.append('reqtype', 'fileupload');
 
-    const uploadResponse = await axios.post("https://catbox.moe/user/api.php", form, {
+    /*const uploadResponse = await axios.post("https://catbox.moe/user/api.php", form, {
       headers: form.getHeaders()
-    });
+    });*/
+
+    const uploadResponse = await axios.post("https://catbox.moe/user/api.php", form, {
+  headers: {
+    ...form.getHeaders(),
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
+    'Accept': '*/*',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Origin': 'https://catbox.moe',
+    'Referer': 'https://catbox.moe/'
+  }
+});
 
     const imageUrl = uploadResponse.data;
     fs.unlinkSync(tempFilePath); // Clean up temp file

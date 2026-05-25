@@ -42,9 +42,12 @@ cmd({
     form.append('fileToUpload', fs.createReadStream(tempFilePath), fileName);
     form.append('reqtype', 'fileupload');
 
-    // Upload to Catbox
+    // Upload to Catbox with custom User-Agent to prevent 412 error
     const response = await axios.post("https://catbox.moe/user/api.php", form, {
-      headers: form.getHeaders()
+      headers: {
+        ...form.getHeaders(),
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
     });
 
     if (!response.data) {
@@ -82,7 +85,6 @@ function formatBytes(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
-
 
 
 cmd({

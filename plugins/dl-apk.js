@@ -10,7 +10,7 @@ cmd({
   alias: ["apk"],
   desc: "📥 Search apps from Aptoide with full info",
   category: "media",
-  react: "📥",
+  react: "📲",
   filename: __filename
 }, async (conn, mek, m, { from, q }) => {
 

@@ -44,7 +44,7 @@ async (conn, mek, m, { from }) => {
         
         // Send the owner contact message with image and audio
         await conn.sendMessage(from, {
-            image: { url: 'https://files.catbox.moe/brlkte.jpg' }, // Image URL from your request
+            image: { url: config.ALIVE_IMG }, // Image URL from your request
             caption: `
 ╭━〔 *𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳* 〕━··๏
 ┃◈╭───────────┈⊷

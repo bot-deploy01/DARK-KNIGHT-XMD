@@ -109,17 +109,21 @@ cmd({
 
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-    // ✅ Fetching data from Aswin API
-    const apiUrl = `https://gtech-api-xtp1.onrender.com/api/video/fb?apikey=APIKEY&url=${encodeURIComponent(q)}`;
+    // ✅ Fetching data from API
+    const apiUrl = `https://api.vreden.my.id/api/v1/download/facebook?url=${encodeURIComponent(q)}`;
     const response = await axios.get(apiUrl);
     const data = response.data;
 
-    if (!data?.status || !data?.result || !data?.result?.media) {
+    // Check if data structure matches the provided JSON
+    if (!data?.status || !data?.video || !data?.video?.downloads) {
       return reply("⚠️ Failed to retrieve Facebook media. Please check the link and try again.");
     }
 
-    // Adjusted to match the new API response structure
-    const { title, thumbnail, video_url_sd, video_url_hd } = data.result.media;  
+    const { title, thumbnail, downloads } = data.video;
+    
+    // Extract SD and HD URLs from the downloads array
+    const sd = downloads.find(d => d.quality === "SD")?.downloadUrl;
+    const hd = downloads.find(d => d.quality === "HD")?.downloadUrl;
     
     const caption = `
 📺 *Facebook Downloader.* 📥
@@ -156,26 +160,30 @@ cmd({
 
         switch (receivedText.trim()) {
           case "1":
+            if (!sd) return reply("❌ SD quality not available.");
             await conn.sendMessage(senderID, {
-              video: { url: video_url_sd },
+              video: { url: sd },
               caption: "📥 *Downloaded in SD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "2":
+            if (!hd) return reply("❌ HD quality not available.");
             await conn.sendMessage(senderID, {
-              video: { url: video_url_hd },
+              video: { url: hd },
               caption: "📥 *Downloaded in HD Quality*"
             }, { quoted: receivedMsg });
             break;
 
           case "3": 
+            const audioUrl = sd || hd;
+            if (!audioUrl) return reply("❌ Audio source not available.");
             await conn.sendMessage(senderID, { 
-              audio: { url: video_url_sd || video_url_hd }, 
+              audio: { url: audioUrl }, 
               mimetype: "audio/mp4", 
               ptt: false 
-          }, { quoted: receivedMsg }); 
-          break;
+            }, { quoted: receivedMsg }); 
+            break;
             
            default:
             reply("❌ Invalid option! Please reply with 1, 2, or 3.");

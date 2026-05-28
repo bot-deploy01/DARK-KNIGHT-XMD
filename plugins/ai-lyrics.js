@@ -27,14 +27,15 @@ cmd({
             const res = await axios.get(url);
             
             data = res.data;
-            if (!data.status || !data.result?.length) throw new Error("No lyrics found.");
+            // API Response එකේ 'success' පරීක්ෂා කිරීම
+            if (!data.success || !data.result?.length) throw new Error("No lyrics found.");
             lyricsCache.set(cacheKey, data);
         }
 
         const lyricsList = data.result.map((item, i) => ({
             number: i + 1,
             id: item.id,
-            title: item.name,
+            title: item.name, // API එකේ 'name' ලෙස ඇත
             track: item.trackName,
             artist: item.artistName,
             album: item.albumName,

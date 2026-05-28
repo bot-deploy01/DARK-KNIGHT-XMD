@@ -26,28 +26,23 @@ async (conn, mek, m, { from, q, reply }) => {
 
         const apps = response.data.result.slice(0, 5); // Limit to top 5 apps
 
-        for (const app of apps) {
-            const caption = `
-📲 *PLAY STORE SEARCH RESULT*
-╭──────────────◆
-│• 📌 *Name:* ${app.nama}
-│• 👨‍💻 *Developer:* ${app.developer}
-│• ⭐ *Rating:* ${app.rate2 || 'N/A'}
-│• 🔗 *App Link:* ${app.link}
-│• 🧑‍💻 *Developer Link:* ${app.link_dev}
-╰─────────────────
-*Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳*
-`.trim();
+        let finalMessage = `📲 *PLAY STORE SEARCH RESULTS*\n\n`;
 
-            await conn.sendMessage(
-                from,
-                {
-                    image: { url: app.img },
-                    caption: caption
-                },
-                { quoted: mek }
-            );
-        }
+        apps.forEach((app, index) => {
+            finalMessage += `*${index + 1}. ${app.nama}*\n`;
+            finalMessage += `│• 👨‍💻 *Dev:* ${app.developer}\n`;
+            finalMessage += `│• ⭐ *Rating:* ${app.rate2 || 'N/A'}\n`;
+            finalMessage += `│• 🔗 *Link:* ${app.link}\n`;
+            finalMessage += `╰─────────────────\n\n`;
+        });
+
+        finalMessage += `*Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳*`;
+
+        await conn.sendMessage(
+            from,
+            { text: finalMessage },
+            { quoted: mek }
+        );
 
         // React: Done ✅
         await conn.sendMessage(from, { react: { text: '✅', key: m.key } });

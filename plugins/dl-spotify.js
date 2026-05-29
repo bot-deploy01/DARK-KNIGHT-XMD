@@ -7,6 +7,7 @@ const movieCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 
 cmd({
     pattern: "spotify",
+    alias: ["spot"],
     desc: "🎧 Search and download songs from Spotify",
     category: "media",
     react: "🎵",
@@ -20,21 +21,25 @@ cmd({
         let data = movieCache.get(cacheKey);
 
         if (!data) {
-            const url = `https://jerrycoder.oggyapi.workers.dev/spotify?search=${encodeURIComponent(q)}`;
+            // New Search API
+            const url = `https://api.nexray.eu.cc/search/spotify?q=${encodeURIComponent(q)}`;
             const res = await axios.get(url);
             
             data = res.data;
-            if (data.status !== "success" || !data.tracks?.length) throw new Error("No results found.");
+            if (data.status !== true || !data.result?.length) throw new Error("No results found.");
             movieCache.set(cacheKey, data);
         }
 
-        const songList = data.tracks.map((s, i) => ({
+        const songList = data.result.map((s, i) => ({
             number: i + 1,
-            title: s.trackName,
+            title: s.title,
             artist: s.artist,
-            duration: s.durationMs,
-            image: s.image,
-            url: s.spotifyUrl
+            duration: s.duration,
+            image: s.thumbnail,
+            url: s.url,
+            popularity: s.popularity,
+            album: s.album,
+            release_date: s.release_date
         }));
 
         let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
@@ -72,6 +77,9 @@ cmd({
                     `🎵 *Track:* ${selected.title}\n` +
                     `👤 *Artist:* ${selected.artist}\n` +
                     `⏱️ *Duration:* ${selected.duration}\n` +
+                    `🌟 *Popularity:* ${selected.popularity}\n` +
+                    `💿 *Album:* ${selected.album}\n` +
+                    `📅 *Release Date:* ${selected.release_date}\n` +
                     `🔗 *URL:* ${selected.url}\n\n` +
                     `🎥 *𝑺𝒆𝒍𝒆𝒄𝒕 𝑭𝒐𝒓𝒎𝒂𝒕:* 📥\n\n` +
                     `♦️ 1. *Audio* — MP3 Format\n` +
@@ -93,9 +101,10 @@ cmd({
                 
                 await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-                const dlUrl = `https://jerrycoder.oggyapi.workers.dev/dspotify?url=${encodeURIComponent(selected.url)}`;
+                // New Downloader API
+                const dlUrl = `https://api.nexray.eu.cc/downloader/spotify?url=${encodeURIComponent(selected.url)}`;
                 const dlRes = await axios.get(dlUrl);
-                const downloadLink = dlRes.data.download_link;
+                const downloadLink = dlRes.data.result.url;
 
                 if (!downloadLink) return;
 
@@ -130,6 +139,7 @@ cmd({
         await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek });
     }
 });
+
 
 cmd({
     pattern: "spotify2",

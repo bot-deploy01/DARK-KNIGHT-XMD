@@ -109,21 +109,22 @@ cmd({
 
     await conn.sendMessage(from, { react: { text: '⏳', key: m.key } });
 
-    // ✅ Fetching data from API
+    // ✅ Fetching data from Aswin API
     const apiUrl = `https://apis.davidcyril.name.ng/facebook2?url=${encodeURIComponent(q)}`;
     const response = await axios.get(apiUrl);
     const data = response.data;
 
-    // Check if data structure matches the provided JSON
-    if (!data?.status || !data?.video || !data?.video?.downloads) {
+    // Modified condition to match the new API structure
+    if (!data?.status || !data?.video) {
       return reply("⚠️ Failed to retrieve Facebook media. Please check the link and try again.");
     }
 
+    // Extracting data based on the new JSON response
     const { title, thumbnail, downloads } = data.video;
     
-    // Extract SD and HD URLs from the downloads array
+    // Finding SD and HD URLs dynamically from the downloads array
     const sd = downloads.find(d => d.quality === "SD")?.downloadUrl;
-    const hd = downloads.find(d => d.quality === "HD")?.downloadUrl;
+    const hd = downloads.find(d => d.quality === "HD")?.downloadUrl;  
     
     const caption = `
 📺 *Facebook Downloader.* 📥
@@ -160,7 +161,6 @@ cmd({
 
         switch (receivedText.trim()) {
           case "1":
-            if (!sd) return reply("❌ SD quality not available.");
             await conn.sendMessage(senderID, {
               video: { url: sd },
               caption: "📥 *Downloaded in SD Quality*"
@@ -168,7 +168,6 @@ cmd({
             break;
 
           case "2":
-            if (!hd) return reply("❌ HD quality not available.");
             await conn.sendMessage(senderID, {
               video: { url: hd },
               caption: "📥 *Downloaded in HD Quality*"
@@ -176,14 +175,12 @@ cmd({
             break;
 
           case "3": 
-            const audioUrl = sd || hd;
-            if (!audioUrl) return reply("❌ Audio source not available.");
             await conn.sendMessage(senderID, { 
-              audio: { url: audioUrl }, 
+              audio: { url: sd || hd}, 
               mimetype: "audio/mp4", 
               ptt: false 
-            }, { quoted: receivedMsg }); 
-            break;
+          }, { quoted: receivedMsg }); 
+          break;
             
            default:
             reply("❌ Invalid option! Please reply with 1, 2, or 3.");

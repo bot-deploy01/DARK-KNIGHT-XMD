@@ -2,6 +2,7 @@ const { cmd } = require('../command');
 const yts = require('yt-search');
 const axios = require('axios');
 
+
 cmd({
     pattern: "song",
     react: "🎵",
@@ -104,119 +105,6 @@ cmd({
     console.error("Song Command Error:", error);
     reply("❌ An error occurred while processing your request. Please try again later.");
   }
-});
-
-cmd({
-    pattern: "song",
-    react: "🎵",
-    desc: "Download YouTube MP3",
-    category: "download",
-    use: ".song <query>",
-    filename: __filename
-}, async (conn, mek, m, { from, reply, q }) => {
-    try {
-        if (!q) return reply("❓ What song do you want to download?");
-
-        const search = await yts(q);
-        if (!search.videos.length) return reply("❌ No results found for your query.");
-
-        const data = search.videos[0];
-        const ytUrl = data.url;
-        let downloadUrl = null;
-
-        try {
-            const res1 = await axios.get(`https://eliteprotech-apis.zone.id/ytmp3?url=${encodeURIComponent(ytUrl)}`);
-            if (res1.data && res1.data.status && res1.data.result?.download) {
-                downloadUrl = res1.data.result.download;
-            }
-        } catch (e) {
-            
-        }
-
-        if (!downloadUrl) {
-            try {
-                const res2 = await axios.get(`https://ominisave.com/api/ytmp3_v3?url=${encodeURIComponent(ytUrl)}`);
-                if (res2.data && res2.data.status && res2.data.result?.downloadUrl) {
-                    downloadUrl = res2.data.result.downloadUrl;
-                }
-            } catch (e) {
-                
-            }
-        }
-
-        if (!downloadUrl) {
-            return reply("❌ Unable to download the song. Please try again later!");
-        }
-
-        const caption = `
-🎵 *Song Downloader.* 📥
-
-📑 *Title:* ${data.title}
-⏱️ *Duration:* ${data.timestamp}
-📆 *Uploaded:* ${data.ago}
-📊 *Views:* ${data.views}
-🔗 *Link:* ${data.url}
-
-🔢 *Reply Below Number*
-
-1️⃣ *Audio Type*
-2️⃣ *Document Type*
-3️⃣ *Voice Note*
- 
-> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`;
-
-        const sentMsg = await conn.sendMessage(from, {
-            image: { url: data.thumbnail },
-            caption
-        }, { quoted: m });
-
-        const messageID = sentMsg.key.id;
-
-        conn.ev.on("messages.upsert", async (msgData) => {
-            const receivedMsg = msgData.messages[0];
-            if (!receivedMsg?.message) return;
-
-            const receivedText = receivedMsg.message.conversation || receivedMsg.message.extendedTextMessage?.text;
-            const senderID = receivedMsg.key.remoteJid;
-            const isReplyToBot = receivedMsg.message.extendedTextMessage?.contextInfo?.stanzaId === messageID;
-
-            if (isReplyToBot) {
-                await conn.sendMessage(senderID, { react: { text: '⏳', key: receivedMsg.key } });
-
-                switch (receivedText.trim()) {
-                    case "1":
-                        await conn.sendMessage(senderID, {
-                            audio: { url: downloadUrl },
-                            mimetype: "audio/mpeg",
-                            ptt: false,
-                        }, { quoted: receivedMsg });
-                        break;
-
-                    case "2":
-                        await conn.sendMessage(senderID, {
-                            document: { url: downloadUrl },
-                            mimetype: "audio/mpeg",
-                            fileName: `${data.title}.mp3`
-                        }, { quoted: receivedMsg });
-                        break;
-
-                    case "3":
-                        await conn.sendMessage(senderID, {
-                            audio: { url: downloadUrl },
-                            mimetype: "audio/mpeg",
-                            ptt: true,
-                        }, { quoted: receivedMsg });
-                        break;
-
-                    default:
-                        reply("❌ Invalid option! Please reply with 1, 2, or 3.");
-                }
-            }
-        });
-
-    } catch (error) {
-        reply("❌ An error occurred while processing your request.");
-    }
 });
 
 
@@ -585,14 +473,31 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://www.movanest.xyz/v2/ytmp3?url=${encodeURIComponent(ytUrl)}`;
-        const { data: apiRes } = await axios.get(api);
+        let downloadUrl = null;
 
-        if (!apiRes?.status || !apiRes.result?.downloadUrl) {
-            return reply("❌ Unable to download the song. Please try another one!");
+        try {
+            const response = await axios.get(`https://eliteprotech-apis.zone.id/ytmp3?url=${encodeURIComponent(ytUrl)}`);
+            if (response.data && response.data.status && response.data.result.download) {
+                downloadUrl = response.data.result.download;
+            }
+        } catch (e) {
+            
         }
 
-        const result = apiRes.result;
+        if (!downloadUrl) {
+            try {
+                const response = await axios.get(`https://ominisave.com/api/ytmp3_v3?url=${encodeURIComponent(ytUrl)}`);
+                if (response.data && response.data.status && response.data.result.downloadUrl) {
+                    downloadUrl = response.data.result.downloadUrl;
+                }
+            } catch (e) {
+                
+            }
+        }
+
+        if (!downloadUrl) {
+            return reply("❌ Unable to download the song. Please try another one!");
+        }
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -601,7 +506,7 @@ cmd({
 ⏱️ *Duration:* ${data.timestamp}
 📆 *Uploaded:* ${data.ago}
 📊 *Views:* ${data.views}
-🔗 *Link:* ${data.url}
+🔗 *Link:* ${ytUrl}
 
 🔢 *Reply Below Number*
 
@@ -618,52 +523,51 @@ cmd({
 
         const messageID = sentMsg.key.id;
 
-    conn.ev.on("messages.upsert", async (msgData) => {
-      const receivedMsg = msgData.messages[0];
-      if (!receivedMsg?.message) return;
+        conn.ev.on("messages.upsert", async (msgData) => {
+            const receivedMsg = msgData.messages[0];
+            if (!receivedMsg?.message) return;
 
-      const receivedText = receivedMsg.message.conversation || receivedMsg.message.extendedTextMessage?.text;
-      const senderID = receivedMsg.key.remoteJid;
-      const isReplyToBot = receivedMsg.message.extendedTextMessage?.contextInfo?.stanzaId === messageID;
+            const receivedText = receivedMsg.message.conversation || receivedMsg.message.extendedTextMessage?.text;
+            const senderID = receivedMsg.key.remoteJid;
+            const isReplyToBot = receivedMsg.message.extendedTextMessage?.contextInfo?.stanzaId === messageID;
 
-      if (isReplyToBot) {
-        await conn.sendMessage(senderID, { react: { text: '⏳', key: receivedMsg.key } });
+            if (isReplyToBot) {
+                await conn.sendMessage(senderID, { react: { text: '⏳', key: receivedMsg.key } });
 
-        switch (receivedText.trim()) {
-                case "1":
-                    await conn.sendMessage(senderID, {
-                        audio: { url: result.downloadUrl },
-                        mimetype: "audio/mpeg",
-                        ptt: false,
-                    }, { quoted: receivedMsg });
-                    break;
+                switch (receivedText.trim()) {
+                    case "1":
+                        await conn.sendMessage(senderID, {
+                            audio: { url: downloadUrl },
+                            mimetype: "audio/mpeg",
+                            ptt: false,
+                        }, { quoted: receivedMsg });
+                        break;
 
-                case "2":
-                    await conn.sendMessage(senderID, {
-                        document: { url: result.downloadUrl },
-                        mimetype: "audio/mpeg",
-                        fileName: `${data.title}.mp3`
-                    }, { quoted: receivedMsg });
-                    break;
+                    case "2":
+                        await conn.sendMessage(senderID, {
+                            document: { url: downloadUrl },
+                            mimetype: "audio/mpeg",
+                            fileName: `${data.title}.mp3`
+                        }, { quoted: receivedMsg });
+                        break;
 
-                case "3":
-                    await conn.sendMessage(senderID, {
-                        audio: { url: result.downloadUrl },
-                        mimetype: "audio/mpeg",
-                        ptt: true,
-                    }, { quoted: receivedMsg });
-                    break;
+                    case "3":
+                        await conn.sendMessage(senderID, {
+                            audio: { url: downloadUrl },
+                            mimetype: "audio/mpeg",
+                            ptt: true,
+                        }, { quoted: receivedMsg });
+                        break;
 
-          default:
-            reply("❌ Invalid option! Please reply with 1, 2, or 3.");
-        }
-      }
-    });
+                    default:
+                        reply("❌ Invalid option! Please reply with 1, 2, or 3.");
+                }
+            }
+        });
 
-  } catch (error) {
-    console.error("Song Command Error:", error);
-    reply("❌ An error occurred while processing your request. Please try again later.");
-  }
+    } catch (error) {
+        reply("❌ An error occurred while processing your request. Please try again later.");
+    }
 });
 
 

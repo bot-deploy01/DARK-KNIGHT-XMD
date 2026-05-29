@@ -44,7 +44,7 @@ cmd({
 
         let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
         songList.forEach(s => {
-            textList += `🔸 *${s.number}. ${s.title}* - ${s.artist}\n`;
+            textList += `🔸 *${s.number}. ${s.title}*\n`;
         });
 
         const sentMsg = await conn.sendMessage(from, {

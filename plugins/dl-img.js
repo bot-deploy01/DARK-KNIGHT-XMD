@@ -93,7 +93,7 @@ cmd({
         // Extract URLs using 'img.image' instead of 'img.url'
         const images = data.data.map(img => img.image);
 
-        await reply(`✅ Found *${images.length}* results for *"${query}"*📤 Sending top 5...`);
+        await reply(`✅ Found *${images.length}* results for *"${query}"*\n📤 Sending top 5...`);
 
         // Shuffle & pick 5
         const selectedImages = images

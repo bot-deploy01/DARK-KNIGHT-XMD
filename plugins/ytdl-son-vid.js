@@ -519,13 +519,13 @@ cmd({
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
                         document: { url: result.url },
-                        mimetype: "video/mkv",
-                        fileName: `${data.title}.mkv`
+                        mimetype: "video/mp4",
+                        fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
                         video: { url: result.url },
-                        mimetype: "video/mkv",
+                        mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
                 }

@@ -1,16 +1,21 @@
-FROM node:lts-buster
+FROM node:lts-bullseye
 
-# Set working directory
-WORKDIR /app
+RUN apt-get update && \
+    apt-get install -y \
+    ffmpeg \
+    imagemagick \
+    webp && \
+    apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copy all local files to container
+WORKDIR /usr/src/app
+
+COPY package.json .
+
+RUN npm install && npm install -g qrcode-terminal pm2
+
 COPY . .
 
-# Install dependencies
-RUN npm install && npm install -g pm2
+EXPOSE 8080
 
-# Expose the port your app listens on
-EXPOSE 9090
-
-# Start the app
 CMD ["npm", "start"]

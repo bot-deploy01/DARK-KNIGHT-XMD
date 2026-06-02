@@ -75,7 +75,7 @@ console.log("Session Downloaded ✅")
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 9090;
+const port = process.env.PORT || 8080;
   
   async function connectToWA() {
   console.log("Connecting To WhatsApp ⏳️...");

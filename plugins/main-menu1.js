@@ -141,7 +141,6 @@ async (conn, mek, m, { from, quoted, body, isCmd, command, args, q, isGroup, sen
 ┃★│ • song
 ┃★│ • song1
 ┃★│ • song2
-┃★│ • song3
 ┃★│ • video
 ┃★│ • video1
 ┃★│ • video2

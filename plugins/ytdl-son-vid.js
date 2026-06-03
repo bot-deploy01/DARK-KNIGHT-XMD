@@ -1,54 +1,7 @@
 const { cmd } = require('../command');
 const yts = require('yt-search');
 const axios = require('axios');
-const { join } = require('path');
-const { promises } = require('fs');
-const { spawn } = require('child_process');
 
-function ffmpeg(buffer, args = [], ext = '', ext2 = '') {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let tmp = join(__dirname, 'tmp', +new Date() + '.' + ext);
-      let out = tmp + '.' + ext2;
-      await promises.writeFile(tmp, buffer);
-      spawn('ffmpeg', [
-        '-y',
-        '-i', tmp,
-        ...args,
-        out
-      ])
-        .on('error', reject)
-        .on('close', async (code) => {
-          try {
-            await promises.unlink(tmp);
-            if (code !== 0) return reject(code);
-            resolve({
-              data: await promises.readFile(out),
-              filename: out,
-              delete() {
-                return promises.unlink(out);
-              }
-            });
-          } catch (e) {
-            reject(e);
-          }
-        });
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
-
-function toVideo(buffer, ext) {
-  return ffmpeg(buffer, [
-    '-c:v', 'libx264',
-    '-c:a', 'aac',
-    '-ab', '128k',
-    '-ar', '44100',
-    '-crf', '32',
-    '-preset', 'veryfast' 
-  ], ext, 'mp4');
-}
 
 cmd({
     pattern: "song",
@@ -556,7 +509,7 @@ cmd({
                         return reply("❌ Invalid option! Please reply with 1.1-1.5 or 2.1-2.5.");
                 }
 
-                const { data: apiRes } = await axios.get(formats[selectedFormat]);
+                 const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
                 if (!apiRes?.status || !apiRes.download?.url) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
@@ -564,26 +517,19 @@ cmd({
 
                 const result = apiRes.download;
 
-                const videoBufferRes = await axios.get(result.url, { responseType: 'arraybuffer' });
-                const videoBuffer = Buffer.from(videoBufferRes.data, 'binary');
-
-                const processedVideo = await toVideo(videoBuffer, 'mp4');
-
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: processedVideo.data, 
+                        document: { url: result.url },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: processedVideo.data, 
+                        video: { url: result.url },
                         mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
                 }
-
-                await processedVideo.delete();
             }
         });
 
@@ -591,7 +537,7 @@ cmd({
         console.error("Video Command Error:", error);
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
-});
+});               
 
 cmd({
     pattern: "video2",
@@ -691,26 +637,19 @@ cmd({
 
                 const result = apiRes.download;
 
-                const videoBufferRes = await axios.get(result.url, { responseType: 'arraybuffer' });
-                const videoBuffer = Buffer.from(videoBufferRes.data, 'binary');
-
-                const processedVideo = await toVideo(videoBuffer, 'mp4');
-
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: processedVideo.data, 
+                        document: { url: result.url },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: processedVideo.data, 
+                        video: { url: result.url },
                         mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
                 }
-
-                await processedVideo.delete();
             }
         });
 
@@ -718,4 +657,4 @@ cmd({
         console.error("Video Command Error:", error);
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
-});
+});                            

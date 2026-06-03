@@ -539,7 +539,7 @@ cmd({
 });
 
 cmd({
-    pattern: "video",
+    pattern: "video2",
     react: "🎬",
     desc: "Download YouTube MP4",
     category: "download",

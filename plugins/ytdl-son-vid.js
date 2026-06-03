@@ -117,14 +117,14 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://api-aswin-sparky.koyeb.app/api/downloader/song?search=${encodeURIComponent(ytUrl)}`;
+        const api = `https://sai-green.vercel.app/manump3?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
-        if (!apiRes?.status || !apiRes.data?.url) {
+        if (!apiRes?.status || !apiRes.download?.url) {
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
-        const result = apiRes.data;
+        const result = apiRes.download;
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -197,7 +197,7 @@ cmd({
     reply("❌ An error occurred while processing your request. Please try again later.");
   }
 });
-
+                              
 cmd({
     pattern: "song2",
     react: "🎵",

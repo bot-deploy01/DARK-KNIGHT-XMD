@@ -19,7 +19,7 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp3?url=${encodeURIComponent(ytUrl)}`;
+        const api = `https://dark-knight-yt-dl-api.vercel.app/download/ytmp3?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
         if (!apiRes?.status || !apiRes.download?.url) {
@@ -215,14 +215,14 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-        const api = `https://sai-green.vercel.app/manump3?url=${encodeURIComponent(ytUrl)}`;
+        const api = `https://dark-knight-yt-dl-api.vercel.app/download/ytmp3-v2?url=${encodeURIComponent(ytUrl)}`;
         const { data: apiRes } = await axios.get(api);
 
         if (!apiRes?.status || !apiRes.download?.url) {
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
-        const result = apiRes.download;
+        const results = apiRes.download;
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -262,7 +262,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: result.url },
+                        audio: { url: results.url },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -270,7 +270,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: result.url },
+                        document: { url: results.url },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });
@@ -278,7 +278,7 @@ cmd({
 
                 case "3":
                     await conn.sendMessage(senderID, {
-                        audio: { url: result.url },
+                        audio: { url: results.url },
                         mimetype: "audio/mpeg",
                         ptt: true,
                     }, { quoted: receivedMsg });
@@ -294,8 +294,8 @@ cmd({
     console.error("Song Command Error:", error);
     reply("❌ An error occurred while processing your request. Please try again later.");
   }
-});
-              
+});       
+
 
 cmd({
     pattern: "video",
@@ -436,11 +436,11 @@ cmd({
         const ytUrl = data.url;
 
         const formats = {
-            "144p": `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=144`,
-            "240p": `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://dark-knight-xmd-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=144`,
+            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=240`,
+            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=360`,
+            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=480`,
+            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=720`
         };
 
         const caption = `
@@ -539,7 +539,7 @@ cmd({
 });
 
 cmd({
-    pattern: "video2",
+    pattern: "video",
     react: "🎬",
     desc: "Download YouTube MP4",
     category: "download",
@@ -556,11 +556,11 @@ cmd({
         const ytUrl = data.url;
 
         const formats = {
-            "144p": `https://sai-green.vercel.app/manump4?url=${encodeURIComponent(ytUrl)}&quality=144`,
-            "240p": `https://sai-green.vercel.app/manump4?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://sai-green.vercel.app/manump4?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://sai-green.vercel.app/manump4?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://sai-green.vercel.app/manump4?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=144`,
+            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=240`,
+            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=360`,
+            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=480`,
+            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=720`
         };
 
         const caption = `
@@ -646,7 +646,7 @@ cmd({
                     await conn.sendMessage(senderID, {
                         video: { url: result.url },
                         mimetype: "video/mp4",
-                        ptt:false,
+                        ptt: false,
                     }, { quoted: receivedMsg });
                 }
             }
@@ -656,4 +656,4 @@ cmd({
         console.error("Video Command Error:", error);
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
-});
+});        

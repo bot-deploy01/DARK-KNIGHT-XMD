@@ -515,20 +515,25 @@ cmd({
                 }
 
                 const result = apiRes.download;
-
+                const response = await axios.get(result.url, { responseType: 'arraybuffer' });
+                let mediaBuffer = Buffer.from(response.data);
+               
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: result.url },
+                        document: mediaBuffer,
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: result.url },
+                        video: mediaBuffer,
                         mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
                 }
+                
+                mediaBuffer = null;
+                await conn.sendMessage(senderID, { react: { text: '✅', key: receivedMsg.key } });
             }
         });
 
@@ -537,7 +542,7 @@ cmd({
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
 });
-
+            
 cmd({
     pattern: "video2",
     react: "🎬",
@@ -635,20 +640,25 @@ cmd({
                 }
 
                 const result = apiRes.download;
-
+                const response = await axios.get(result.url, { responseType: 'arraybuffer' });
+                let mediaBuffer = Buffer.from(response.data);
+                
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: result.url },
+                        document: mediaBuffer,
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: result.url },
+                        video: mediaBuffer,
                         mimetype: "video/mp4",
                         ptt: false,
                     }, { quoted: receivedMsg });
                 }
+               
+                mediaBuffer = null;
+                await conn.sendMessage(senderID, { react: { text: '✅', key: receivedMsg.key } });
             }
         });
 
@@ -656,4 +666,4 @@ cmd({
         console.error("Video Command Error:", error);
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
-});        
+});

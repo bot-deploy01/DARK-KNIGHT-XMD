@@ -27,7 +27,7 @@ cmd({
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
-        const results = apiRes.download;
+        const result = apiRes.download;
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -67,7 +67,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: result.url },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -75,7 +75,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: results.url },
+                        document: { url: result.url },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });
@@ -83,7 +83,7 @@ cmd({
 
                 case "3":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: result.url },
                         mimetype: "audio/mpeg",
                         ptt: true,
                     }, { quoted: receivedMsg });
@@ -223,7 +223,7 @@ cmd({
             return reply("❌ Unable to download the song. Please try another one!");
         }
 
-        const results = apiRes.download;
+        const result = apiRes.download;
 
         const caption = `
 🎵 *Song Downloader.* 📥
@@ -263,7 +263,7 @@ cmd({
         switch (receivedText.trim()) {
                 case "1":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: result.url },
                         mimetype: "audio/mpeg",
                         ptt: false,
                     }, { quoted: receivedMsg });
@@ -271,7 +271,7 @@ cmd({
 
                 case "2":
                     await conn.sendMessage(senderID, {
-                        document: { url: results.url },
+                        document: { url: result.url },
                         mimetype: "audio/mpeg",
                         fileName: `${data.title}.mp3`
                     }, { quoted: receivedMsg });
@@ -279,7 +279,7 @@ cmd({
 
                 case "3":
                     await conn.sendMessage(senderID, {
-                        audio: { url: results.url },
+                        audio: { url: result.url },
                         mimetype: "audio/mpeg",
                         ptt: true,
                     }, { quoted: receivedMsg });
@@ -315,13 +315,12 @@ cmd({
         const data = search.videos[0];
         const ytUrl = data.url;
 
-
         const formats = {
-            "144p": `https://ominisave.com/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=144p`,
-            "240p": `https://ominisave.com/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=144p`,
-            "360p": `https://ominisave.com/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=360p`,
-            "480p": `https://ominisave.com/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=480p`,
-            "720p": `https://ominisave.com/api/ytmp4_v2?url=${encodeURIComponent(ytUrl)}&quality=720p`
+            "144p": `https://back.asitha.top/api/ytapi?url=${encodeURIComponent(ytUrl)}&fo=1&qu=144&apiKey=8aa84b98c64dd692096dfe25574fada554187236bcfad3c9ea8f1af6f5d1b25b`,
+            "240p": `https://back.asitha.top/api/ytapi?url=${encodeURIComponent(ytUrl)}&fo=1&qu=240&apiKey=8aa84b98c64dd692096dfe25574fada554187236bcfad3c9ea8f1af6f5d1b25b`,
+            "360p": `https://back.asitha.top/api/ytapi?url=${encodeURIComponent(ytUrl)}&fo=1&qu=360&apiKey=8aa84b98c64dd692096dfe25574fada554187236bcfad3c9ea8f1af6f5d1b25b`,
+            "480p": `https://back.asitha.top/api/ytapi?url=${encodeURIComponent(ytUrl)}&fo=1&qu=480&apiKey=8aa84b98c64dd692096dfe25574fada554187236bcfad3c9ea8f1af6f5d1b25b`,
+            "720p": `https://back.asitha.top/api/ytapi?url=${encodeURIComponent(ytUrl)}&fo=1&qu=720&apiKey=8aa84b98c64dd692096dfe25574fada554187236bcfad3c9ea8f1af6f5d1b25b`
         };
 
         const caption = `
@@ -391,23 +390,23 @@ cmd({
 
                 const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
-                if (!apiRes?.status || !apiRes.result?.downloadUrl) {
+                if (!apiRes?.downloadData?.url) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
                 }
 
-                const results = apiRes.result;
+                const downloadUrl = apiRes.downloadData.url;
 
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
-                        document: { url: results.downloadUrl },
+                        document: { url: downloadUrl },
                         mimetype: "video/mp4",
                         fileName: `${data.title}.mp4`
                     }, { quoted: receivedMsg });
                 } else {
                     await conn.sendMessage(senderID, {
-                        video: { url: results.downloadUrl },
+                        video: { url: downloadUrl },
                         mimetype: "video/mp4",
-                        ptt:false,
+                        ptt: false,
                     }, { quoted: receivedMsg });
                 }
             }
@@ -418,7 +417,7 @@ cmd({
         reply("❌ An error occurred while processing your request. Please try again later.");
     }
 });
-                        
+                               
 cmd({
     pattern: "video1",
     react: "🎬",

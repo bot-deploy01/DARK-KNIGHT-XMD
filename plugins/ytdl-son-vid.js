@@ -436,11 +436,11 @@ cmd({
         const ytUrl = data.url;
 
         const formats = {
-            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=144`,
-            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v3?url=${encodeURIComponent(ytUrl)}&quality=144`,
+            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v3?url=${encodeURIComponent(ytUrl)}&quality=240`,
+            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v3?url=${encodeURIComponent(ytUrl)}&quality=360`,
+            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v3?url=${encodeURIComponent(ytUrl)}&quality=480`,
+            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v3?url=${encodeURIComponent(ytUrl)}&quality=720`
         };
 
         const caption = `
@@ -510,11 +510,11 @@ cmd({
 
                  const { data: apiRes } = await axios.get(formats[selectedFormat]);
 
-                if (!apiRes?.status || !apiRes.download?.url) {
+                if (!apiRes?.status || !apiRes.video?.url) {
                     return reply(`❌ Unable to download the ${selectedFormat} version. Try another one!`);
                 }
 
-                const result = apiRes.download;
+                const result = apiRes.video;
 
                 if (isDocument) {
                     await conn.sendMessage(senderID, {
@@ -556,11 +556,11 @@ cmd({
         const ytUrl = data.url;
 
         const formats = {
-            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=144`,
-            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=240`,
-            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=360`,
-            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=480`,
-            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v2?url=${encodeURIComponent(ytUrl)}&quality=720`
+            "144p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v4?url=${encodeURIComponent(ytUrl)}&quality=144p`,
+            "240p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v4?url=${encodeURIComponent(ytUrl)}&quality=144p`,
+            "360p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v4?url=${encodeURIComponent(ytUrl)}&quality=360p`,
+            "480p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v4?url=${encodeURIComponent(ytUrl)}&quality=480p`,
+            "720p": `https://dark-knight-yt-dl-api.vercel.app/download/ytmp4-v4?url=${encodeURIComponent(ytUrl)}&quality=720p`
         };
 
         const caption = `

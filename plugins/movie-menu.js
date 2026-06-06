@@ -55,15 +55,8 @@ cmd({
  7️⃣ 𝑴𝑶𝑽𝑰𝑬𝑺𝑼𝑩𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻
  8️⃣ 𝐓𝐇𝐄𝐍𝐊𝐈𝐑𝐈 𝑆𝐸𝐴𝐑𝐶𝐻
  9️⃣ 𝐎𝐊𝐉𝐀𝐓𝐓 𝑆𝐸𝐴𝐑𝐶𝐻
- 🔟 𝐌𝐋𝐅𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣1️⃣ 𝐌𝐎𝐕𝐈𝐄𝐃𝐑𝐈𝐕𝐄𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣2️⃣ 𝐌𝐎𝐕𝐈𝐄𝐋𝐎𝐕𝐄𝐑𝐒 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣3️⃣ 𝑵𝑶𝑻𝑼𝑵𝑴𝑶𝑽𝑰𝑬 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣4️⃣ 𝐌𝐎𝐕𝐈𝐄𝐂𝐓 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣5️⃣ 𝐌𝐎𝐕𝐈𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣6️⃣ 123𝐌𝐊𝐕 𝑆𝐸𝐴𝐑𝐶𝐻
-1️⃣7️⃣ 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
- 
+ 🔟 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
+
  © Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳
  `;
 
@@ -91,14 +84,7 @@ cmd({
                     else if (selText === '7') targetPattern = "moviesublk";
                     else if (selText === '8') targetPattern = "thenkiri";
                     else if (selText === '9') targetPattern = "okjatt"; 
-                    else if (selText === '10') targetPattern = "mlfbd";
-                    else if (selText === '11') targetPattern = "moviedrivebd";
-                    else if (selText === '12') targetPattern = "movielovers";
-                    else if (selText === '13') targetPattern = "notunmovie";
-                    else if (selText === '14') targetPattern = "moviect";   
-                    else if (selText === '15') targetPattern = "movibd";
-                    else if (selText === '16') targetPattern = "123mkv";
-                    else if (selText === '17') targetPattern = "pupilvideo";
+                    else if (selText === '10') targetPattern = "pupilvideo";
                     
                     if (targetPattern) {
                         await conn.sendMessage(from, { react: { text: "🔍", key: selection.msg.key } });

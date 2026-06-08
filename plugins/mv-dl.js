@@ -7,6 +7,155 @@ const movieCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 const KEY = "vajira-VajiraOfficial2003";
 
 cmd({
+  pattern: "cineflura",
+  alias: ["cflura"],
+  desc: "🎥 Search Sinhala subded movies from CineFlura",
+  category: "media",
+  react: "🎬",
+  filename: __filename
+}, async (conn, mek, m, { from, q }) => {
+
+  if (!q) {
+    return await conn.sendMessage(from, {
+      text: "Use: .cineflura <movie name>"
+    }, { quoted: mek });
+  }
+
+  try {
+    const cacheKey = `cineflura_${q.toLowerCase()}`;
+    let data = movieCache.get(cacheKey);
+
+    if (!data) {
+      const url = `https://apis.cineflura.site/api/search?query=${encodeURIComponent(q)}&apikey=cineflura_v1`;
+      const res = await axios.get(url);
+      data = res.data;
+
+      if (!data.status || !data.result?.length) {
+        throw new Error("No results found for your query.");
+      }
+
+      movieCache.set(cacheKey, data);
+    }
+
+    const movieList = data.result.map((m, i) => ({
+      number: i + 1,
+      title: m.title,
+      link: m.url
+    }));
+
+    let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━\n\n";
+    movieList.forEach((m) => {
+      textList += `🔸 *${m.number}. ${m.title}*\n`;
+    });
+    textList += "\n💬 *Reply with movie number to view details.*";
+
+    const sentMsg = await conn.sendMessage(from, {
+      text: `*🔍 𝑪𝑰𝑵𝑬𝑭𝑳𝑼𝑹𝑨 𝑴𝑶𝑽𝑰𝑬 𝑺𝑬𝑨𝑹𝑪𝑯 🎥*\n\n${textList}\n\n> > Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝑇-𝚇𝙼𝙳`
+    }, { quoted: mek });
+
+    const movieMap = new Map();
+
+    const listener = async (update) => {
+      const msg = update.messages?.[0];
+      if (!msg?.message?.extendedTextMessage) return;
+
+      const replyText = msg.message.extendedTextMessage.text.trim();
+      const repliedId = msg.message.extendedTextMessage.contextInfo?.stanzaId;
+
+      if (replyText.toLowerCase() === "done") {
+        conn.ev.off("messages.upsert", listener);
+        return conn.sendMessage(from, { text: "✅ *Cancelled*" }, { quoted: msg });
+      }
+
+      if (repliedId === sentMsg.key.id) {
+        const num = parseInt(replyText);
+        const selected = movieList.find(m => m.number === num);
+        if (!selected) {
+          return conn.sendMessage(from, { text: "*Invalid movie number.*" }, { quoted: msg });
+        }
+
+        await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
+
+        const movieUrl = `https://apis.cineflura.site/api/movie?url=${encodeURIComponent(selected.link)}&apikey=cineflura_v1`;
+        const movieRes = await axios.get(movieUrl);
+        const movie = movieRes.data.result;
+
+        if (!movie.downloadUrls?.length) {
+          return conn.sendMessage(from, { text: "*No download links available.*"}, { quoted: msg });
+        }
+
+        let info =
+          `🎬 *Title:* ${movie.title}\n` +
+          `🎭 *Type:* ${movie.type || "N/A"}\n` +
+          `📅 *Release Date:* ${movie.release_date || "N/A"}\n` +
+          `⭐ *Rating:* ${movie.rating || "N/A"}\n` +
+          `🎞️ *Genre:* ${movie.genre || "N/A"}\n` +
+          `🎬 *Director:* ${movie.director || "N/A"}\n` +
+          `✍️ *Writers:* ${movie.writers || "N/A"}\n` +
+          `💼 *Producer:* ${movie.producer || "N/A"}\n` +
+          `🌍 *Country:* ${movie.country || "N/A"}\n` +
+          `🗣️ *Language:* ${movie.language || "N/A"}\n\n` +
+          `📖 *Plot:* ${movie.plot || "No plot available."}\n\n` +
+          `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑸𝒖𝒂𝒍𝒊𝒕𝒊𝒆𝒔:* 📥\n\n`;
+
+        movie.downloadUrls.forEach((d, i) => {
+          info += `♦️ ${i + 1}. *${d.quality} (${d.label})* — ${d.size}\n`;
+        });
+        info += "\n🔢 *Reply with number to get the download file.*";
+
+        const downloadMsg = await conn.sendMessage(from, {
+          image: { url: movie.poster_hd || movie.poster },
+          caption: info
+        }, { quoted: msg });
+
+        movieMap.set(downloadMsg.key.id, { selected, downloads: movie.downloadUrls });
+      }
+
+      else if (movieMap.has(repliedId)) {
+        const { selected, downloads } = movieMap.get(repliedId);
+        const num = parseInt(replyText);
+        const chosen = downloads[num - 1];
+        if (!chosen) {
+          return conn.sendMessage(from, { text: "*Invalid quality number.*" }, { quoted: msg });
+        }
+
+        await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
+
+        const size = chosen.size.toLowerCase();
+        const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
+
+        if (sizeGB > 2) {
+          return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
+        }
+        
+        const downloadApiUrl = `https://apis.cineflura.site/api/download?url=${encodeURIComponent(chosen.url)}&apikey=cineflura_v1`;
+        const downloadRes = await axios.get(downloadApiUrl);
+        const dlResult = downloadRes.data.result;
+
+        const directLinkObj = dlResult.find(item => item.server === "Direct") || dlResult[0];
+        const direct = directLinkObj ? directLinkObj.url : null;
+
+        if (!direct) {
+          return conn.sendMessage(from, { text: "*Download link not found.*" }, { quoted: msg });
+        }
+        
+        await conn.sendMessage(from, {
+          document: { url: direct },
+          mimetype: "video/mp4",
+          fileName: `${selected.title} - ${chosen.quality}.mp4`,
+          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+        }, { quoted: msg });
+      }
+    };
+
+    conn.ev.on("messages.upsert", listener);
+
+  } catch (err) {
+    await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek }); 
+  }
+});
+
+cmd({
   pattern: "moviepro",
   alias: ["mpro"],
   desc: "🎥 Search movies from GiftedTech MovieAPI",

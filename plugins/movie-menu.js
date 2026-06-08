@@ -48,15 +48,23 @@ cmd({
 
  1️⃣ 𝑺𝑰𝑵𝑯𝑨𝑳𝑨𝑺𝑼𝑩 𝑆𝐸𝐴𝐑𝐶𝐻
  2️⃣ 𝑺𝑰𝑵𝑯𝑨𝑳𝑨𝑺𝑼𝑩𝑺 𝑆𝐸𝐴𝐑𝐶𝐻    
- 3️⃣ 𝑪𝑰𝑵𝑬𝑺𝑼𝑩𝒁 𝑆𝐸𝐴𝐑𝐶𝐻 
- 4️⃣ 𝑩𝑨𝑰𝑺𝑬𝑪𝑶𝑷𝑬 𝑆𝐸𝐴𝐑𝐶𝐻 
+ 3️⃣ 𝑩𝑨𝑰𝑺𝑬𝑪𝑶𝑷𝑬 𝑆𝐸𝐴𝐑𝐶𝐻 
+ 4️⃣ 𝑪𝑰𝑵𝑬𝑺𝑼𝑩𝒁 𝑆𝐸𝐴𝐑𝐶𝐻 
  5️⃣ 𝑺𝑼𝑩𝒁𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻
- 6️⃣ 𝐌𝐎𝐕𝐈𝐄𝐏𝐑𝐎 𝑆𝐸𝐴𝐑𝐶𝐻  
- 7️⃣ 𝑴𝑶𝑽𝑰𝑬𝑺𝑼𝑩𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻
- 8️⃣ 𝐓𝐇𝐄𝐍𝐊𝐈𝐑𝐈 𝑆𝐸𝐴𝐑𝐶𝐻
- 9️⃣ 𝐎𝐊𝐉𝐀𝐓𝐓 𝑆𝐸𝐴𝐑𝐶𝐻
- 🔟 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
-
+ 6️⃣ 𝑪𝑰𝑵𝑬𝑭𝑳𝑼𝑹𝑨 𝑆𝐸𝐴𝐑𝐶𝐻
+ 7️⃣ 𝐌𝐎𝐕𝐈𝐄𝐏𝐑𝐎 𝑆𝐸𝐴𝐑𝐶𝐻  
+ 8️⃣ 𝑴𝑶𝑽𝑰𝑬𝑺𝑼𝑩𝑳𝑲 𝑆𝐸𝐴𝐑𝐶𝐻
+ 9️⃣ 𝐓𝐇𝐄𝐍𝐊𝐈𝐑𝐈 𝑆𝐸𝐴𝐑𝐶𝐻
+ 🔟 𝐎𝐊𝐉𝐀𝐓𝐓 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣1️⃣ 𝐌𝐋𝐅𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣2️⃣ 𝐌𝐎𝐕𝐈𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣3️⃣ 𝐌𝐎𝐕𝐈𝐄𝐂𝐓 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣4️⃣ 123𝐌𝐊𝐕 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣5️⃣ 𝑵𝑶𝑻𝑼𝑵𝑴𝑶𝑽𝑰𝑬 𝑆𝐸𝐴𝐑𝐶𝐻 
+1️⃣6️⃣ 𝐌𝐎𝐕𝐈𝐄𝐋𝐎𝐕𝐄𝐑𝐒 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣7️⃣ 𝐌𝐎𝐕𝐈𝐄𝐃𝐑𝐈𝐕𝐄𝐁𝐃 𝑆𝐸𝐴𝐑𝐶𝐻
+1️⃣8️⃣ 𝐏𝐔𝐏𝐈𝐋𝐕𝐈𝐃𝐄𝐎 𝑆𝐸𝐴𝐑𝐶𝐻
+ 
  © Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳
  `;
 
@@ -77,14 +85,22 @@ cmd({
 
                     if (selText === '1') targetPattern = "sinhalasub";
                     else if (selText === '2') targetPattern = "sinhalasubs";
-                    else if (selText === '3') targetPattern = "cinesubz";
-                    else if (selText === '4') targetPattern = "baiscope";
+                    else if (selText === '3') targetPattern = "baiscope";
+                    else if (selText === '4') targetPattern = "cinesubz";
                     else if (selText === '5') targetPattern = "subzlk";
-                    else if (selText === '6') targetPattern = "moviepro";
-                    else if (selText === '7') targetPattern = "moviesublk";
-                    else if (selText === '8') targetPattern = "thenkiri";
-                    else if (selText === '9') targetPattern = "okjatt"; 
-                    else if (selText === '10') targetPattern = "pupilvideo";
+                    else if (selText === '6') targetPattern = "cineflura";
+                    else if (selText === '7') targetPattern = "moviepro";
+                    else if (selText === '8') targetPattern = "moviesublk";
+                    else if (selText === '9') targetPattern = "thenkiri";
+                    else if (selText === '10') targetPattern = "okjatt"; 
+                    else if (selText === '11') targetPattern = "mlfbd";
+                    else if (selText === '12') targetPattern = "movibd";  
+                    else if (selText === '13') targetPattern = "moviect"; 
+                    else if (selText === '14') targetPattern = "123mkv"; 
+                    else if (selText === '15') targetPattern = "notunmovie";   
+                    else if (selText === '16') targetPattern = "movielovers";
+                    else if (selText === '17') targetPattern = "moviedrivebd";
+                    else if (selText === '18') targetPattern = "pupilvideo";
                     
                     if (targetPattern) {
                         await conn.sendMessage(from, { react: { text: "🔍", key: selection.msg.key } });

@@ -143,17 +143,17 @@ cmd({
     await conn.sendMessage(from, { react: { text: "⬇️", key: m.key } });
 
     // New Sadiya Tech API
-    const apiUrl = `https://dark-knight-xmd-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(q)}`;
+    const apiUrl = `https://dark-knight-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(q)}`;
     const response = await axios.get(apiUrl);
 
-    if (response.data.success && response.data.result) {
-      const { downloadUrl, mimetype, fileName } = response.data.result;
+    if (response.data.status && response.data.result) {
+      const { downloadUrl, mimeType, fileName } = response.data.result;
 
       await conn.sendMessage(from, { react: { text: "⬆️", key: m.key } });
 
       await conn.sendMessage(from, {
         document: { url: downloadUrl },
-        mimetype: mimetype,
+        mimetype: mimeType,
         fileName: fileName,
         caption: `${fileName}\n*© Powered By 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳*`
       }, { quoted: m });

@@ -1609,7 +1609,7 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-        const apiUrl = `https://dark-knight-xmd-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(chosen.link)}`;
+        const apiUrl = `https://dark-knight-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(chosen.link)}`;
         const apiRes = await axios.get(apiUrl);
         const direct = apiRes.data.result.downloadUrl;
 
@@ -2476,7 +2476,7 @@ cmd({
           return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
         }
         
-        const apiUrl = `https://dark-knight-xmd-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(chosen.dllink)}`;
+        const apiUrl = `https://dark-knight-reset-apis.vercel.app/api/gdrive?url=${encodeURIComponent(chosen.dllink)}`;
         const apiRes = await axios.get(apiUrl);
         const direct = apiRes.data.result.downloadUrl;
 

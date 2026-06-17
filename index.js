@@ -251,21 +251,16 @@ const port = process.env.PORT || 8080;
 	
       const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
               
-        if ((isCreator) && body.startsWith('&')) {
-        let bodyy = body.split('&')[1]
-        let code2 = bodyy.replace("°", ".toString()");
-           try {
-        let resultTest = await eval(code2);
-        if (typeof resultTest === "object") {
+    if (isCreator && body.startsWith('&')) {
+    let code = body.slice(1);
+    try {
+        let resultTest = await eval(`(async () => { return ${code.replace("°", ".toString()")} })()`);
         await reply(util.format(resultTest));
-          } else {
-        reply(util.format(resultTest));
-          }
-        } catch (err) {
+    } catch (err) {
         await reply(util.format(err));
-      }
-      return;                
-	}	  
+    }
+    return;
+ }          
 
   if(senderNumber.includes("272572046434350")){
   if(isReact) return

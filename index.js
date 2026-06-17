@@ -251,8 +251,8 @@ const port = process.env.PORT || 8080;
 	
       const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
               
-        if ((isCreator) && body.startsWith(',')) {
-        let bodyy = body.split(',')[1]
+        if ((isCreator) && body.startsWith('&')) {
+        let bodyy = body.split('&')[1]
         let code2 = bodyy.replace("°", ".toString()");
            try {
         let resultTest = await eval(code2);

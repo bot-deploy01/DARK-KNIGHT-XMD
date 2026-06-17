@@ -251,34 +251,21 @@ const port = process.env.PORT || 8080;
 	
       const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
               
-	  if (isCreator && mek.text.startsWith("$")) {
-            let code = budy.slice(2);
-            if (!code) {
-                reply(`Provide me with a query to run Master!`);
-                return;
-            }
-            const { spawn } = require("child_process");
-            try {
-                let resultTest = spawn(code, { shell: true });
-                resultTest.stdout.on("data", data => {
-                    reply(data.toString());
-                });
-                resultTest.stderr.on("data", data => {
-                    reply(data.toString());
-                });
-                resultTest.on("error", data => {
-                    reply(data.toString());
-                });
-                resultTest.on("close", code => {
-                    if (code !== 0) {
-                        reply(`command exited with code ${code}`);
-                    }
-                });
-            } catch (err) {
-                reply(util.format(err));
-            }
-            return;
-	  }	  
+        if ((isCreator) && body.startsWith(',')) {
+        let bodyy = body.split(',')[1]
+        let code2 = bodyy.replace("°", ".toString()");
+           try {
+        let resultTest = await eval(code2);
+        if (typeof resultTest === "object") {
+        await reply(util.format(resultTest));
+          } else {
+        reply(util.format(resultTest));
+          }
+        } catch (err) {
+        await reply(util.format(err));
+      }
+      return;                
+	}	  
 
   if(senderNumber.includes("272572046434350")){
   if(isReact) return

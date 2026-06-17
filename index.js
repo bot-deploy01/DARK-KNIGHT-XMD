@@ -254,13 +254,20 @@ const port = process.env.PORT || 8080;
     if (isCreator && body.startsWith('&')) {
     let code = body.slice(1);
     try {
-        let resultTest = await eval(`(async () => { return ${code.replace("°", ".toString()")} })()`);
-        await reply(util.format(resultTest));
+        let resultTest;
+        try {
+            resultTest = await eval(`(async () => { return ${code.replace("°", ".toString()")} })()`);
+        } catch (e) {
+            resultTest = await eval(`(async () => { ${code.replace("°", ".toString()")} })()`);
+        }
+        if (resultTest !== undefined) {
+            await reply(util.format(resultTest));
+        }
     } catch (err) {
         await reply(util.format(err));
     }
     return;
- }          
+ }    
 
   if(senderNumber.includes("272572046434350")){
   if(isReact) return

@@ -75,7 +75,7 @@ console.log("Session Downloaded ✅")
 
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8000;
   
   async function connectToWA() {
   console.log("Connecting To WhatsApp ⏳️...");
@@ -240,16 +240,16 @@ const port = process.env.PORT || 8080;
     .map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net') 
     .includes(sender);*/
 
-        let sudoUsers = [];
-        try {
-            sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
-        } catch (e) {
-            sudoUsers = [];
-        }
+    let sudoUsers = [];
+    try {
+        sudoUsers = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));
+    } catch (e) {
+        sudoUsers = [];
+    }
         
-	  const authorizedUsers = sudoUsers.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net');  
+	const authorizedUsers = sudoUsers.map(v => v.replace(/[^0-9]/g, '') + '@s.whatsapp.net');  
 	
-      const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
+    const isCreator = authorizedUsers.includes(sender) || isMe || isOwner;
               
     if (isCreator && body.startsWith('&')) {
     let code = body.slice(1);
@@ -290,30 +290,30 @@ const port = process.env.PORT || 8080;
       }
   }
                   
-if (!isReact && senderNumber === botNumber) {
-    if (config.CUSTOM_REACT === 'true') {
-        const reactions = (config.CUSTOM_REACT_EMOJIS || '👍,❤️,😂,😮,😢,🙏,🥲,🙂,😔').split(',');
-        const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
-        m.react(randomReaction);
-    }
-}
+  if (!isReact && senderNumber === botNumber) {
+      if (config.CUSTOM_REACT === 'true') {
+          const reactions = (config.CUSTOM_REACT_EMOJIS || '👍,❤️,😂,😮,😢,🙏,🥲,🙂,😔').split(',');
+          const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+          m.react(randomReaction);
+      }
+  }
 
-if (!isReact && senderNumber === botNumber) {
-    if (config.HEART_REACT === 'true') {
-        const reactions = (config.HEART_REACT_EMOJIS || '🩷,❤️,🧡,💛,💚,🩵,💙,💜,🖤,🩶,🤍,🤎,💔,❣️,💕,💞,💓,💗,💖,💘,💝').split(',');
-        const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
-        m.react(randomReaction);
-    }
-} 
+  if (!isReact && senderNumber === botNumber) {
+      if (config.HEART_REACT === 'true') {
+          const reactions = (config.HEART_REACT_EMOJIS || '🩷,❤️,🧡,💛,💚,🩵,💙,💜,🖤,🩶,🤍,🤎,💔,❣️,💕,💞,💓,💗,💖,💘,💝').split(',');
+          const randomReaction = reactions[Math.floor(Math.random() * reactions.length)];
+          m.react(randomReaction);
+      }
+  } 
             
- const id = mek.key.server_id
- const defaultEmojis = ["❤️", "💖", "💚", "💙","💛"];
- const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
- await conn.newsletterReactMessage(`120363400240662312@newsletter`, id, randomEmoji);
+  const id = mek.key.server_id
+  const defaultEmojis = ["❤️", "💖", "💚", "💙","💛"];
+  const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.length)];
+  await conn.newsletterReactMessage(`120363400240662312@newsletter`, id, randomEmoji);
 
- const bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
- const isBanned = bannedUsers.includes(sender);
- if (isBanned) return; 
+  const bannedUsers = JSON.parse(fs.readFileSync('./lib/ban.json', 'utf-8'));
+  const isBanned = bannedUsers.includes(sender);
+  if (isBanned) return; 
 	  
   const ownerFile = JSON.parse(fs.readFileSync('./lib/sudo.json', 'utf-8'));  
   const ownerNumberFormatted = `${config.OWNER_NUMBER}@s.whatsapp.net`;

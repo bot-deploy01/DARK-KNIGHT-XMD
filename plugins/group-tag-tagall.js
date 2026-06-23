@@ -13,8 +13,7 @@ cmd({
   filename: __filename
 },
 async (conn, mek, m, {
-  from, q, isGroup, isCreator, isAdmins,
-  participants, reply
+  from, q, isGroup, isCreator, isAdmins, participants, reply
 }) => {
   try {
     const isUrl = (url) => {
@@ -133,7 +132,7 @@ cmd({
     use: '.tagall [message]',
     filename: __filename
 },
-async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAdmins, prefix, command, args, body }) => {
+async (conn, mek, m, { from, participants, reply, isGroup, isAdmins, isCreator, senderNumber, groupAdmins, prefix, command, args, body }) => {
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
         

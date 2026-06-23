@@ -12,7 +12,7 @@ cmd({
     desc: "Get group invite link.",
     category: "group", // Already group
     filename: __filename,
-}, async (conn, mek, m, { from, quoted, body, args, q, isGroup, sender, reply }) => {
+}, async (conn, mek, m, { from, quoted, body, args, q, isGroup, isAdmins, isCreator, sender, reply }) => {
     try {
         // Ensure this is being used in a group
         if (!isGroup) return reply("𝐓𝐡𝐢𝐬 𝐅𝐞𝐚𝐭𝐮𝐫𝐞 𝐈𝐬 𝐎𝐧𝐥𝐲 𝐅𝐨𝐫 𝐆𝐫𝐨𝐮𝐩❗");

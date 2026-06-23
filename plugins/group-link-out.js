@@ -17,7 +17,9 @@ cmd({
         // Ensure this is being used in a group
         if (!isGroup) return reply("𝐓𝐡𝐢𝐬 𝐅𝐞𝐚𝐭𝐮𝐫𝐞 𝐈𝐬 𝐎𝐧𝐥𝐲 𝐅𝐨𝐫 𝐆𝐫𝐨𝐮𝐩❗");
 
-        // Get the sender's number
+        if (!isAdmins && !isCreator) return reply("❌ Only group admins can use this command.");
+
+        /*// Get the sender's number
         const senderNumber = sender.split('@')[0];
         const botNumber = conn.user.id.split(':')[0];
         
@@ -30,7 +32,7 @@ cmd({
 
         // Check if the sender is an admin
         const isAdmins = isGroup ? groupAdmins.some(admin => admin.id === sender) : false;
-        if (!isAdmins) return reply("𝐏𝐥𝐞𝐚𝐬𝐞 𝐏𝐫𝐨𝐯𝐢𝐝𝐞 𝐌𝐞 𝐀𝐝𝐦𝐢𝐧 𝐑𝐨𝐥𝐞 ❗");
+        if (!isAdmins) return reply("𝐏𝐥𝐞𝐚𝐬𝐞 𝐏𝐫𝐨𝐯𝐢𝐝𝐞 𝐌𝐞 𝐀𝐝𝐦𝐢𝐧 𝐑𝐨𝐥𝐞 ❗");*/
 
         // Get the invite code and generate the link
         const inviteCode = await conn.groupInviteCode(from);

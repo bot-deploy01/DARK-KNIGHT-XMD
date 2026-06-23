@@ -137,12 +137,14 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
     try {
         if (!isGroup) return reply("❌ This command can only be used in groups.");
         
-        const botOwner = conn.user.id.split(":")[0]; // Extract bot owner's number
+        if (!isAdmins && !isCreator) return reply("❌ Only group admins can use this command.");
+
+        /*const botOwner = conn.user.id.split(":")[0]; // Extract bot owner's number
         const senderJid = senderNumber + "@s.whatsapp.net";
 
         if (!groupAdmins.includes(senderJid) && senderNumber !== botOwner) {
             return reply("❌ Only group admins or the bot owner can use this command.");
-        }
+        }*/
 
         // Ensure group metadata is fetched properly
         let groupInfo = await conn.groupMetadata(from).catch(() => null);
@@ -175,4 +177,3 @@ async (conn, mek, m, { from, participants, reply, isGroup, senderNumber, groupAd
         reply(`❌ *Error Occurred !!*\n\n${e.message || e}`);
     }
 });
-      

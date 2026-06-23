@@ -223,8 +223,8 @@ const port = process.env.PORT || 8000;
   const groupName = groupMetadata.subject;
   const participants = groupMetadata.participants || [];
   const groupAdmins = isGroup ? getGroupAdmins(participants) : [];
-  const isBotAdmins = isGroup ? isParticipantAdmin(participants, [botNumber2, botLid, botNumber + '@s.whatsapp.net']) : false;
-  const isAdmins = isGroup ? isParticipantAdmin(participants, [sender, senderNumber + '@s.whatsapp.net', senderNumber + '@lid']) : false;
+  const isBotAdmins = isGroup ? isParticipantAdmin(participants, [botNumber2, botLid, botNumber + '@s.whatsapp.net']) || groupAdmins?.includes(botNumber2) || groupAdmins?.includes(botLid) : false;
+  const isAdmins = isGroup ? isParticipantAdmin(participants, [sender, senderNumber + '@s.whatsapp.net', senderNumber + '@lid']) || groupAdmins?.includes(sender) : false;
   const isReact = m.message.reactionMessage ? true : false
 	  
   const reply = (teks) => {

@@ -6,6 +6,302 @@ const NodeCache = require("node-cache");
 const movieCache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 const KEY = "vajira-VajiraOfficial2003";
 
+cmd({
+  pattern: "sinhalasubtv",
+  desc: "🎥 Search Sinhala subbed TV shows from Sinhalasub",
+  category: "media",
+  react: "📺",
+  filename: __filename
+}, async (conn, mek, m, { from, q }) => {
+
+  if (!q) {
+    return await conn.sendMessage(from, {
+      text: "*Use:* .sinhalasubtv <tvshow name>"
+    }, { quoted: mek });
+  }
+
+  try {
+    const apiKey = "charukalk_dab24168ab9b4e7daefa13b59b2447cc";
+    const cacheKey = `cinesubz_${q.toLowerCase()}`;
+    let data = movieCache.get(cacheKey);
+
+    if (!data) {
+      const url = `https://darkyasiya-new-movie-api.vercel.app/api/movie/sinhalasub/search?q=${encodeURIComponent(q)}`;
+      const res = await axios.get(url);
+      data = res.data;
+
+      if (!data.success || !data.data.tvshows?.length) {
+        return await conn.sendMessage(from, { 
+          text: "*No TV Shows found for your query.*" 
+        }, { quoted: mek });
+      }
+
+      movieCache.set(cacheKey, data);
+    }
+
+    const movieList = data.data.tvshows.map((item, index) => ({
+      number: index + 1,
+      title: item.title,
+      link: item.link
+    }));
+
+    let textList = "🔢 *Reply Below Number*\n━━━━━━━━━━━━━━━\n\n";
+    movieList.forEach((item) => {
+      textList += `🔸 *${item.number}. ${item.title}*\n`;
+    });
+    textList += "\n💬 *Reply with TV show number to view details.*";
+
+    const sentMsg = await conn.sendMessage(from, {
+      text: `*🔍 𝐒𝐈𝐍𝐇𝐀𝐋𝐀𝐒𝐔𝐁 𝑻𝑽 𝑺𝑬𝑨𝑹𝑪𝑯 📺*\n\n${textList}\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+    }, { quoted: mek });
+
+    const movieMap = new Map();
+
+    const listener = async (update) => {
+      const msg = update.messages?.[0];
+      if (!msg?.message?.extendedTextMessage) return;
+
+      const replyText = msg.message.extendedTextMessage.text.trim();
+      const repliedId = msg.message.extendedTextMessage.contextInfo?.stanzaId;
+
+      if (replyText.toLowerCase() === "done") {
+        conn.ev.off("messages.upsert", listener);
+        return conn.sendMessage(from, { text: "✅ *Process Cancelled*" }, { quoted: msg });
+      }
+
+      if (repliedId === sentMsg.key.id) {
+        const num = parseInt(replyText);
+        const selected = movieList.find(m => m.number === num);
+        if (!selected) {
+          return conn.sendMessage(from, { text: "*Invalid TV show number.*" }, { quoted: msg });
+        }
+
+        await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
+
+        const tvUrl = `https://mizuki-md-api.vercel.app/api/movie/sinhalasub/tvshow?q=${encodeURIComponent(selected.link)}&apiKey=${apiKey}`;
+        const tvRes = await axios.get(tvUrl);
+        const tvDataRaw = tvRes.data?.data;
+
+        if (!tvRes.data?.status || !tvDataRaw?.episodes?.length) {
+          return conn.sendMessage(from, { text: "*No TV Show episodes found.*" }, { quoted: msg });
+        }
+
+        let sNum = 1;
+        let curEps = [];
+
+        const seasonsMap = [...tvDataRaw.episodes].reverse().reduce((acc, ep) => {
+          curEps.push({
+            number: ep.epNum,
+            title: ep.epTitle,
+            url: ep.epUrl,
+            date: ep.epDate
+          });
+
+          if (ep.epTitle.includes("Last]")) {
+            const m = ep.epTitle.match(/\[S(\d+)\s+Last\]/i);
+            acc.push({
+              season: m ? parseInt(m[1]) : sNum++,
+              episodes: [...curEps]
+            });
+            curEps = [];
+          }
+
+          return acc;
+        }, []);
+
+        if (curEps.length) {
+          seasonsMap.push({
+            season: sNum,
+            episodes: curEps
+          });
+        }
+
+        seasonsMap.sort((a, b) => b.season - a.season);
+
+        const tvData = {
+          title: selected.title,
+          imdb: "N/A",
+          category: tvDataRaw.genres,
+          cast: tvDataRaw.stars,
+          mainImage: tvDataRaw.poster,
+          episodesDetails: seasonsMap
+        };
+
+        let castList = "N/A";
+        if (tvData.cast && Array.isArray(tvData.cast) && tvData.cast.length > 0) {
+          castList = tvData.cast
+            .map(c => typeof c === 'object' ? (c.actor?.name || c.actor || "") : c)
+            .filter(Boolean)
+            .join(", ");
+        }
+
+        let tvInfo = 
+          `🎬 *Title:* ${tvData.title || "N/A"}\n` +
+          `⭐ *IMDb:* ${tvData.imdb}\n` +
+          `🎭 *Category:* ${tvData.category ? tvData.category.join(", ") : "N/A"}\n` +
+          `👥 *Cast:* ${castList}\n\n` +
+          `📁 *Seasons:* 🔻\n\n`;
+
+        seasonsMap.forEach((s, index) => {
+          tvInfo += `🔷 ${index + 1}. *Season ${s.season}* (${s.episodes.length} Episodes)\n`;
+        });
+        tvInfo += "\n🔢 *Reply with season number.*";
+
+        const seasonMsg = await conn.sendMessage(from, {
+          image: { url: tvData.mainImage },
+          caption: tvInfo
+        }, { quoted: msg });
+
+        movieMap.set(seasonMsg.key.id, {
+          step: "SEASON",
+          selected,
+          tvData,
+          seasons: tvData.episodesDetails
+        });
+      }
+
+      else if (movieMap.has(repliedId)) {
+        const sessionData = movieMap.get(repliedId);
+        const num = parseInt(replyText);
+
+        if (sessionData.step === "SEASON") {
+          const chosenSeason = sessionData.seasons[num - 1];
+          if (!chosenSeason) {
+            return conn.sendMessage(from, { text: "❌ *Invalid season number.*" }, { quoted: msg });
+          }
+
+          const { tvData } = sessionData;
+
+          let castList = "N/A";
+          if (tvData?.cast && Array.isArray(tvData.cast) && tvData.cast.length > 0) {
+            castList = tvData.cast
+              .map(c => typeof c === 'object' ? (c.actor?.name || c.actor || "") : c)
+              .filter(Boolean)
+              .join(", ");
+          }
+
+          let epInfo = 
+            `📌 *Title:* ${tvData?.title || "N/A"}\n` +
+            `⭐ *IMDb:* ${tvData?.imdb || "N/A"}\n` +
+            `🎭 *Category:* ${tvData?.category ? tvData.category.join(", ") : "N/A"}\n` +
+            `👥 *Cast:* ${castList}\n\n` +
+            `📺 *Season ${chosenSeason.season} Episodes:* 🔻\n\n`;
+
+          chosenSeason.episodes.forEach((ep) => {
+            epInfo += `🔹 *${ep.number}. ${ep.title}*\n`;
+          });
+          epInfo += "\n🔢 *Reply with episode number.*";
+
+          const epMsg = await conn.sendMessage(from, {
+            image: tvData?.mainImage ? { url: tvData.mainImage } : undefined,
+            caption: epInfo
+          }, { quoted: msg });
+
+          movieMap.set(epMsg.key.id, {
+            step: "EPISODE",
+            selected: sessionData.selected,
+            episodes: chosenSeason.episodes
+          });
+        }
+
+        else if (sessionData.step === "EPISODE") {
+          const chosenEp = sessionData.episodes.find(e => parseInt(e.number) === num);
+          if (!chosenEp) {
+            return conn.sendMessage(from, { text: "*Invalid episode number.*" }, { quoted: msg });
+          }
+
+          await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
+
+          const epUrl = `https://mizuki-md-api.vercel.app/api/movie/sinhalasub/episode?q=${encodeURIComponent(chosenEp.url)}&apiKey=${apiKey}`;
+          const epRes = await axios.get(epUrl);
+          const epDataRaw = epRes.data?.data;
+
+          if (!epRes.data?.status || !epDataRaw?.dl_links) {
+            return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+          }
+
+          const downloadsArr = [];
+          Object.values(epDataRaw.dl_links).flat().forEach(item => {
+            if (item.url && (item.url.includes("cdn.sinhalasub.net") || item.url.includes("ddl.sinhalasub.net"))) {
+              downloadsArr.push({
+                quality: item.quality,
+                size: item.size,
+                language: item.option || "Direct",
+                link: item.url
+              });
+            }
+          });
+
+          if (!downloadsArr.length) {
+            return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+          }
+
+          const epData = {
+            maintitle: epDataRaw.serie || sessionData.selected.title,
+            title: epDataRaw.title || sessionData.selected.title,
+            episodeTitle: epDataRaw.episodeTitle || chosenEp.title,
+            dateCreate: chosenEp.date || "N/A",
+            downloadUrl: downloadsArr,
+            imageUrls: epDataRaw.poster ? [epDataRaw.poster] : []
+          };
+
+          let dlInfo = 
+            `🎬 *Main Title:* ${epData.maintitle || "N/A"}\n` +
+            `📌 *Title:* ${epData.title || "N/A"}\n` +
+            `📺 *Episode Title:* ${epData.episodeTitle || chosenEp.title}\n` +
+            `📅 *Date Created:* ${epData.dateCreate || "N/A"}\n\n` +
+            `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
+
+          epData.downloadUrl.forEach((d, index) => {
+            dlInfo += `♦️ ${index + 1}. *${d.quality}* — ${d.size} (${d.language || "N/A"})\n`;
+          });
+          dlInfo += "\n🔢 *Reply with quality number to download.*";
+
+          const imageUrl = epData.imageUrls && epData.imageUrls.length > 0 ? epData.imageUrls[0] : undefined;
+
+          const downloadMsg = await conn.sendMessage(from, {
+            image: imageUrl ? { url: imageUrl } : undefined,
+            caption: dlInfo
+          }, { quoted: msg });
+
+          movieMap.set(downloadMsg.key.id, {
+            step: "DOWNLOAD",
+            selected: { title: `${epData.title || sessionData.selected.title}` },
+            downloads: epData.downloadUrl
+          });
+        }
+
+        else if (sessionData.step === "DOWNLOAD") {
+          const chosen = sessionData.downloads[num - 1];
+          if (!chosen) {
+            return conn.sendMessage(from, { text: "*Invalid quality number.*" }, { quoted: msg });
+          }
+
+          await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
+
+          const size = chosen.size.toLowerCase();
+          const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
+
+          if (sizeGB > 2) {
+            return conn.sendMessage(from, { text: `⚠️ *File is too large (${chosen.size})` }, { quoted: msg });
+          }
+
+          await conn.sendMessage(from, {
+            document: { url: chosen.link },
+            mimetype: "video/mp4",
+            fileName: `${sessionData.selected.title} - ${chosen.quality}.mp4`,
+            caption: `🎬 *${sessionData.selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+          }, { quoted: msg });
+        }
+      }
+    };
+
+    conn.ev.on("messages.upsert", listener);
+
+  } catch (err) {
+    await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek }); 
+  }
+});
 
 cmd({
   pattern: "cinesubztv",
@@ -560,7 +856,7 @@ cmd({
       quality: m.Quality
     }));
 
-    let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
+    let textList = "🔢 *𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟*\n━━━━━━━━━━━━━━━━━\n\n";
     movieList.forEach((m) => {
       textList += `🔸 *${m.number}. ${m.title}*\n`;
     });
@@ -593,46 +889,39 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const infoUrl = `https://sinhalasubdl.vercel.app/api/download?url=${encodeURIComponent(selected.link)}`;
-        const infoRes = await axios.get(infoUrl);
-        const movie = infoRes.data;
+        const mizukiRes = await axios.get(`https://mizuki-md-api.vercel.app/api/movie/sinhalasub/movie?q=${encodeURIComponent(selected.link)}&apiKey=charukalk_dab24168ab9b4e7daefa13b59b2447cc`);
+        const movie = mizukiRes.data?.data;
 
-        if (!movie.status) {
-          return conn.sendMessage(from, {
-            text: "*❌ Failed to fetch movie details.*"
-          }, { quoted: msg });
-        }
+        const downloadList = Object.values(movie.downloads || {})
+          .flatMap(list => list)
+          .filter(d => d?.finalLink && (d.finalLink.includes("pixeldrain.com") || d.finalLink.includes("ddl.sinhalasub.net")))
+          .map(d => ({ quality: d.quality, size: d.size, link: d.finalLink }));
 
-        const pixeldrain = movie.result.downloads.filter(d =>
-          d.provider === "Pixeldrain" && d.direct_link
-        );
-
-        if (!pixeldrain.length) {
-          return conn.sendMessage(from, {
-            text: "*❌ Pixeldrain links not available.*"
-          }, { quoted: msg });
+        if (!downloadList.length) {
+          return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
         }
 
         let info =
-          `🎬 *${movie.result.title}*\n\n` +
-          `📅 *Released* ${movie.result.year}\n` +
-          `🕐 *Runtime:* ${movie.result.duration}\n` +
-          `🎭 *Quality:* ${selected.quality}\n` +
+          `🎬 *${movie.title}*\n\n` +
+          `⭐ *IMDb:* ${movie.imdb}\n` +
+          `📅 *Released:* ${movie.releaseDate}\n` +
+          `🕐 *Runtime:* ${movie.duration}\n` +
+          `🎭 *Category:* ${movie.genres?.join(", ")}\n` +
           `✍️ *Type:* ${selected.type}\n\n` +
-          `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥 📥\n\n`;
+          `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-        pixeldrain.forEach((d, i) => {
+        downloadList.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
 
         info += "\n🔢 *Reply with number to download.*";
 
         const downloadMsg = await conn.sendMessage(from, {
-          image: { url: movie.result.poster },
+          image: { url: movie.poster },
           caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { title: movie.result.title, downloads: pixeldrain });
+        movieMap.set(downloadMsg.key.id, { title: movie.title, downloads: downloadList });
       }
        
       else if (movieMap.has(repliedId)) {
@@ -641,12 +930,12 @@ cmd({
         const chosen = downloads[num - 1];
 
         if (!chosen) {
-          return conn.sendMessage(from, { text: "*❌ Invalid number.*" }, { quoted: msg });
+          return conn.sendMessage(from, { text: "* Invalid number.*" }, { quoted: msg });
         }
 
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
-        let directLink = chosen.direct_link;
+        let directLink = chosen.link;
 
         if (directLink.includes("pixeldrain.com")) {
           const match = directLink.match(/\/([A-Za-z0-9]+)$/);
@@ -657,9 +946,7 @@ cmd({
         const sizeGB = sizeText.includes("gb") ? parseFloat(sizeText) : parseFloat(sizeText) / 1024;
 
         if (sizeGB > 2) {
-          return conn.sendMessage(from, {
-            text: `⚠️ *Large File:* ${chosen.size}`
-          }, { quoted: msg });
+          return conn.sendMessage(from, { text: `⚠️ *File is too large (${chosen.size})` }, { quoted: msg });
         }
 
         await conn.sendMessage(from, {
@@ -779,7 +1066,7 @@ cmd({
         const num = parseInt(replyText);
         const chosen = downloads[num - 1];
 
-        if (!chosen) return conn.sendMessage(from, { text: "❌ Invalid download number." }, { quoted: msg });
+        if (!chosen) return conn.sendMessage(from, { text: "Invalid download number." }, { quoted: msg });
 
         await conn.sendMessage(from, { react: { text: "📥", key: msg.key } });
 
@@ -788,9 +1075,7 @@ cmd({
         const link = chosen.direct;
 
         if (sizeGB > 2) {
-          return conn.sendMessage(from, {
-            text: `⚠️ *File too large (${chosen.size})*`
-          }, { quoted: msg });
+          return conn.sendMessage(from, { text: `⚠️ *File too large (${chosen.size})*` }, { quoted: msg });
         }
 
         await conn.sendMessage(from, {
@@ -805,7 +1090,7 @@ cmd({
     conn.ev.on("messages.upsert", listener);
 
   } catch (err) {
-    await conn.sendMessage(from, { text: `❌ *Error:* ${err.message}` }, { quoted: mek });
+    await conn.sendMessage(from, { text: `*Error:* ${err.message}` }, { quoted: mek });
   }
 });
 
@@ -1002,7 +1287,7 @@ cmd({
       link: m.link
     }));
 
-    let textList = "🔢 𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟\n━━━━━━━━━━━━━━━━━\n\n";
+    let textList = "🔢 *𝑅𝑒𝑝𝑙𝑦 𝐵𝑒𝑙𝑜𝑤 𝑁𝑢𝑚𝑏𝑒𝑟*\n━━━━━━━━━━━━━━━━━\n\n";
     movieList.forEach((m) => {
       textList += `🔸 *${m.number}. ${m.title}*\n`;
     });
@@ -1035,43 +1320,44 @@ cmd({
 
         await conn.sendMessage(from, { react: { text: "🎯", key: msg.key } });
 
-        const movieUrl = `https://darkyasiya-new-movie-api.vercel.app/api/movie/sinhalasub/movie?url=${encodeURIComponent(selected.link)}`;
-        const movieRes = await axios.get(movieUrl);
-        const movie = movieRes.data.data;
+        const mizukiRes = await axios.get(`https://mizuki-md-api.vercel.app/api/movie/sinhalasub/movie?q=${encodeURIComponent(selected.link)}&apiKey=charukalk_dab24168ab9b4e7daefa13b59b2447cc`);
+        const movie = mizukiRes.data?.data;
 
-        movie.downloadUrl = movie.downloadUrl.filter(d => d.link.includes("pixeldrain.com") || d.link.includes("ddl.sinhalasub.net") );
+        const downloadList = Object.values(movie.downloads || {})
+          .flatMap(list => list)
+          .filter(d => d?.finalLink && (d.finalLink.includes("pixeldrain.com") || d.finalLink.includes("ddl.sinhalasub.net")))
+          .map(d => ({ quality: d.quality, size: d.size, link: d.finalLink }));
 
-        if (!movie.downloadUrl?.length) {
+        if (!downloadList.length) {
           return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
         }
 
         let info =
           `🎬 *${movie.title}*\n\n` +
-          `⭐ *IMDb:* ${movie.imdb?.value}\n` +
-          `📅 *Released:* ${movie.date}\n` +
+          `⭐ *IMDb:* ${movie.imdb}\n` +
+          `📅 *Released:* ${movie.releaseDate}\n` +
           `🌍 *Country:* ${movie.country}\n` +
-          `🕐 *Runtime:* ${movie.runtime}\n` +
-          `🎭 *Category:* ${movie.category?.join(", ")}\n` +
-          `✍️ Subtitle Author: ${movie.subtitle_author}\n` +
+          `🕐 *Runtime:* ${movie.duration}\n` +
+          `🎭 *Category:* ${movie.genres?.join(", ")}\n` +
           `🕵️ *Director:* ${movie.director}\n` +
-          `👷‍♂️ *Cast:* ${movie.cast.slice(0, 20).join(", ")}\n\n` +
+          `👷‍♂️ *Cast:* ${movie.cast?.slice(0, 10).join(", ")}\n\n` +
           `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
-        movie.downloadUrl.forEach((d, i) => {
+        downloadList.forEach((d, i) => {
           info += `♦️ ${i + 1}. *${d.quality}* — ${d.size}\n`;
         });
         info += "\n🔢 *Reply with number to download.*";
 
         const downloadMsg = await conn.sendMessage(from, {
-          image: { url: movie.mainImage },
+          image: { url: movie.poster },
           caption: info
         }, { quoted: msg });
 
-        movieMap.set(downloadMsg.key.id, { selected, downloads: movie.downloadUrl });
+        movieMap.set(downloadMsg.key.id, { title: movie.title, downloads: downloadList });
       }
 
       else if (movieMap.has(repliedId)) {
-        const { selected, downloads } = movieMap.get(repliedId);
+        const { title, downloads } = movieMap.get(repliedId);
         const num = parseInt(replyText);
         const chosen = downloads[num - 1];
         if (!chosen) {
@@ -1091,14 +1377,14 @@ cmd({
         const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
 
         if (sizeGB > 2) {
-          return conn.sendMessage(from, { text: `⚠️ *Large File (${chosen.size})*` }, { quoted: msg });
+          return conn.sendMessage(from, { text: `⚠️ *File is too large* (${chosen.size})` }, { quoted: msg });
         }
 
         await conn.sendMessage(from, {
           document: { url: directLink },
           mimetype: "video/mp4",
-          fileName: `${selected.title} - ${chosen.quality}.mp4`,
-          caption: `🎬 *${selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+          fileName: `${title} - ${chosen.quality}.mp4`,
+          caption: `🎬 *${title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
         }, { quoted: msg });
       }
     };

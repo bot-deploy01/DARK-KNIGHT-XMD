@@ -23,26 +23,35 @@ cmd({
   try {
     const apiKey = "charukalk_dab24168ab9b4e7daefa13b59b2447cc";
     const cacheKey = `cinesubz_${q.toLowerCase()}`;
-    let data = movieCache.get(cacheKey);
+    let data = typeof movieCache !== 'undefined' ? movieCache.get(cacheKey) : null;
 
     if (!data) {
       const url = `https://darkyasiya-new-movie-api.vercel.app/api/movie/sinhalasub/search?q=${encodeURIComponent(q)}`;
       const res = await axios.get(url);
       data = res.data;
 
-      if (!data.success || !data.data.tvshows?.length) {
+      if (!data.status && !data.success) {
         return await conn.sendMessage(from, { 
           text: "*No TV Shows found for your query.*" 
         }, { quoted: mek });
       }
 
-      movieCache.set(cacheKey, data);
+      // ළඟම එන API format දෙකටම ගැලපෙන ලෙස array එක ලබා ගැනීම
+      const tvshows = data.data?.tvshows || data.result || (Array.isArray(data.data) ? data.data : []);
+      if (!tvshows.length) {
+        return await conn.sendMessage(from, { 
+          text: "*No TV Shows found for your query.*" 
+        }, { quoted: mek });
+      }
+
+      data.tvshows = tvshows;
+      if (typeof movieCache !== 'undefined') movieCache.set(cacheKey, data);
     }
 
-    const movieList = data.data.tvshows.map((item, index) => ({
+    const movieList = data.tvshows.map((item, index) => ({
       number: index + 1,
       title: item.title,
-      link: item.link
+      link: item.link || item.url
     }));
 
     let textList = "🔢 *Reply Below Number*\n━━━━━━━━━━━━━━━\n\n";
@@ -69,6 +78,7 @@ cmd({
         return conn.sendMessage(from, { text: "✅ *Process Cancelled*" }, { quoted: msg });
       }
 
+      // Step 1: TV Show එක තේරීම
       if (repliedId === sentMsg.key.id) {
         const num = parseInt(replyText);
         const selected = movieList.find(m => m.number === num);
@@ -88,8 +98,9 @@ cmd({
 
         let sNum = 1;
         let curEps = [];
+        const reversedEpisodes = [...tvDataRaw.episodes].reverse();
 
-        const seasonsMap = [...tvDataRaw.episodes].reverse().reduce((acc, ep) => {
+        const seasonsMap = reversedEpisodes.reduce((acc, ep) => {
           curEps.push({
             number: ep.epNum,
             title: ep.epTitle,
@@ -98,9 +109,9 @@ cmd({
           });
 
           if (ep.epTitle.includes("Last]")) {
-            const m = ep.epTitle.match(/\[S(\d+)\s+Last\]/i);
+            const match = ep.epTitle.match(/\[S(\d+)\s+Last\]/i);
             acc.push({
-              season: m ? parseInt(m[1]) : sNum++,
+              season: match ? parseInt(match[1]) : sNum++,
               episodes: [...curEps]
             });
             curEps = [];
@@ -116,10 +127,10 @@ cmd({
           });
         }
 
-        seasonsMap.sort((a, b) => b.season - a.season);
+        seasonsMap.sort((a, b) => a.season - b.season);
 
         const tvData = {
-          title: selected.title,
+          title: tvDataRaw.title || selected.title,
           imdb: "N/A",
           category: tvDataRaw.genres,
           cast: tvDataRaw.stars,
@@ -136,8 +147,7 @@ cmd({
         }
 
         let tvInfo = 
-          `🎬 *Title:* ${tvData.title || "N/A"}\n` +
-          `⭐ *IMDb:* ${tvData.imdb}\n` +
+          `🎬 *Title:* ${tvData.title}\n` +
           `🎭 *Category:* ${tvData.category ? tvData.category.join(", ") : "N/A"}\n` +
           `👥 *Cast:* ${castList}\n\n` +
           `📁 *Seasons:* 🔻\n\n`;
@@ -156,10 +166,11 @@ cmd({
           step: "SEASON",
           selected,
           tvData,
-          seasons: tvData.episodesDetails
+          seasons: seasonsMap
         });
       }
 
+      // Step 2 & 3 & 4: Season, Episode සහ Download Quality තේරීම
       else if (movieMap.has(repliedId)) {
         const sessionData = movieMap.get(repliedId);
         const num = parseInt(replyText);
@@ -182,7 +193,6 @@ cmd({
 
           let epInfo = 
             `📌 *Title:* ${tvData?.title || "N/A"}\n` +
-            `⭐ *IMDb:* ${tvData?.imdb || "N/A"}\n` +
             `🎭 *Category:* ${tvData?.category ? tvData.category.join(", ") : "N/A"}\n` +
             `👥 *Cast:* ${castList}\n\n` +
             `📺 *Season ${chosenSeason.season} Episodes:* 🔻\n\n`;
@@ -226,47 +236,43 @@ cmd({
               downloadsArr.push({
                 quality: item.quality,
                 size: item.size,
-                language: item.option || "Direct",
+                language: item.option || "Direct Link",
                 link: item.url
               });
             }
           });
 
           if (!downloadsArr.length) {
-            return conn.sendMessage(from, { text: "*No download links available.*" }, { quoted: msg });
+            return conn.sendMessage(from, { text: "*No valid download links available.*" }, { quoted: msg });
           }
 
           const epData = {
             maintitle: epDataRaw.serie || sessionData.selected.title,
             title: epDataRaw.title || sessionData.selected.title,
             episodeTitle: epDataRaw.episodeTitle || chosenEp.title,
-            dateCreate: chosenEp.date || "N/A",
             downloadUrl: downloadsArr,
-            imageUrls: epDataRaw.poster ? [epDataRaw.poster] : []
+            poster: epDataRaw.poster
           };
 
           let dlInfo = 
-            `🎬 *Main Title:* ${epData.maintitle || "N/A"}\n` +
-            `📌 *Title:* ${epData.title || "N/A"}\n` +
-            `📺 *Episode Title:* ${epData.episodeTitle || chosenEp.title}\n` +
-            `📅 *Date Created:* ${epData.dateCreate || "N/A"}\n\n` +
+            `🎬 *Main Title:* ${epData.maintitle}\n` +
+            `📌 *Title:* ${epData.title}\n` +
+            `📺 *Episode Title:* ${epData.episodeTitle}\n\n` +
             `🎥 *𝑫𝒐𝒘𝒏𝒍𝒐𝒂𝒅 𝑳𝒊𝒏𝒌𝒔:* 📥\n\n`;
 
           epData.downloadUrl.forEach((d, index) => {
-            dlInfo += `♦️ ${index + 1}. *${d.quality}* — ${d.size} (${d.language || "N/A"})\n`;
+            dlInfo += `♦️ ${index + 1}. *${d.quality}* — ${d.size} (${d.language})\n`;
           });
           dlInfo += "\n🔢 *Reply with quality number to download.*";
 
-          const imageUrl = epData.imageUrls && epData.imageUrls.length > 0 ? epData.imageUrls[0] : undefined;
-
           const downloadMsg = await conn.sendMessage(from, {
-            image: imageUrl ? { url: imageUrl } : undefined,
+            image: epData.poster ? { url: epData.poster } : undefined,
             caption: dlInfo
           }, { quoted: msg });
 
           movieMap.set(downloadMsg.key.id, {
             step: "DOWNLOAD",
-            selected: { title: `${epData.title || sessionData.selected.title}` },
+            selected: { title: `${epData.title}` },
             downloads: epData.downloadUrl
           });
         }
@@ -283,15 +289,17 @@ cmd({
           const sizeGB = size.includes("gb") ? parseFloat(size) : parseFloat(size) / 1024;
 
           if (sizeGB > 2) {
-            return conn.sendMessage(from, { text: `⚠️ *File is too large (${chosen.size})` }, { quoted: msg });
+            return conn.sendMessage(from, { text: `⚠️ *File is too large (${chosen.size})*` }, { quoted: msg });
           }
 
           await conn.sendMessage(from, {
             document: { url: chosen.link },
             mimetype: "video/mp4",
             fileName: `${sessionData.selected.title} - ${chosen.quality}.mp4`,
-            caption: `🎬 *${sessionData.selected.title}*\n🎥 *${chosen.quality}*\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
+            caption: `🎬 *${sessionData.selected.title}*\n🎥 *Quality:* ${chosen.quality}\n📦 *Size:* ${chosen.size}\n\n> Powered by 𝙳𝙰𝚁𝙺-𝙺𝙽𝙸𝙶𝙷𝚃-𝚇𝙼𝙳`
           }, { quoted: msg });
+          
+          conn.ev.off("messages.upsert", listener);
         }
       }
     };
